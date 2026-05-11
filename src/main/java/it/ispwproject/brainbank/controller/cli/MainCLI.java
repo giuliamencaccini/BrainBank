@@ -1,9 +1,12 @@
 package it.ispwproject.brainbank.controller.cli;
 
+import it.ispwproject.brainbank.view.InitialView;
+
 public class MainCLI {
 
     public static void start() {
         CLIState stato = CLIState.INIZIALE;
+        InitialView initialView = new InitialView();
 
         while (stato != CLIState.USCITA) {
             stato = switch (stato) {
@@ -32,6 +35,6 @@ public class MainCLI {
             };
         }
 
-        System.out.println("\n  Arrivederci!");
+        initialView.mostraArrivederci();
     }
 }

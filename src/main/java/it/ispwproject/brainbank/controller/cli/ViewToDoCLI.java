@@ -5,7 +5,6 @@ import it.ispwproject.brainbank.controller.applicativo.ActivityController;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.view.ViewToDoView;
 
-
 import java.util.List;
 
 public class ViewToDoCLI {
@@ -20,7 +19,6 @@ public class ViewToDoCLI {
             List<ActivityBean> activities = activityController.getMyActivities();
             view.mostraAttivita(activities);
 
-            // Filtra solo quelle non completate
             List<ActivityBean> pending = activities.stream()
                     .filter(a -> !a.isCompleted())
                     .toList();
@@ -30,11 +28,7 @@ public class ViewToDoCLI {
                 return CLIState.DASHBOARD_STUDENT;
             }
 
-            // Mostra solo le attività non completate per la selezione
-            System.out.println("\n  ── Segna come completata");
-            for (int i = 0; i < pending.size(); i++) {
-                System.out.printf("  [%d] %s%n", i + 1, pending.get(i).getDescription());
-            }
+            view.mostraPendingPerSelezione(pending);
 
             int choice = view.chiediScelta("Seleziona attività completata (0 = torna indietro)",
                     0, pending.size());

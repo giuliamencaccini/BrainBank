@@ -29,4 +29,8 @@ public class InitialView {
     public void mostraErrore(String messaggio) {
         System.out.println("  ❌ " + messaggio);
     }
+
+    public void mostraArrivederci() {
+        System.out.println("\n  Arrivederci!");
+    }
 }

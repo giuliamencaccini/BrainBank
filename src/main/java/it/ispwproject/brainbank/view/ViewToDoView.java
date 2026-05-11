@@ -45,6 +45,13 @@ public class ViewToDoView {
         if (!hasCompleted) System.out.println("  Nessuna attività completata.");
     }
 
+    public void mostraPendingPerSelezione(List<ActivityBean> pending) {
+        System.out.println("\n  ── Segna come completata");
+        for (int i = 0; i < pending.size(); i++) {
+            System.out.printf("  [%d] %s%n", i + 1, pending.get(i).getDescription());
+        }
+    }
+
     public void mostraSuccesso(String messaggio) {
         System.out.println("  ✓ " + messaggio);
         System.out.println(SEPARATOR);
