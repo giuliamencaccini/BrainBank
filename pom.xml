@@ -13,10 +13,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.exclusions>
-            src/main/java/it/ispwproject/brainbank/controller/cli/**,
-            src/main/java/it/ispwproject/brainbank/view/**
-        </sonar.exclusions>
+        <sonar.organization>giuliamencaccini</sonar.organization>
+
     </properties>
 
     <dependencies>
