@@ -6,6 +6,7 @@ import it.ispwproject.brainbank.exception.BookingException;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.exception.NotificationException;
 import it.ispwproject.brainbank.model.*;
+import it.ispwproject.brainbank.util.logger.AppLogger;
 import it.ispwproject.brainbank.util.singleton.SessionManager;
 
 import java.util.ArrayList;
@@ -121,7 +122,7 @@ public class BookingController {
             NotificationController.sendBookingConfirmation(
                     student.getEmail(), student.getFullName(), response);
         } catch (NotificationException e) {
-            System.out.println("  ⚠️ Notifica email non inviata: " + e.getMessage());
+            AppLogger.logWarning("  ⚠️ Notifica email non inviata: " + e.getMessage());
         }
 
         return response;
@@ -177,7 +178,7 @@ public class BookingController {
                 NotificationController.sendBookingCancellation(
                         user.getEmail(), user.getFullName(), toCancel);
             } catch (NotificationException e) {
-                System.out.println("  ⚠️ Notifica email non inviata: " + e.getMessage());
+                AppLogger.logWarning("  ⚠️ Notifica email non inviata: " + e.getMessage());
             }
         }
     }
