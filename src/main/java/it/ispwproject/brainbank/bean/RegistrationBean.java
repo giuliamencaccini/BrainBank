@@ -23,6 +23,7 @@ public class RegistrationBean {
     private List<SubjectBean> subjects;
 
     public RegistrationBean() {}
+    // Default constructor required for bean usage
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

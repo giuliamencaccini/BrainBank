@@ -24,25 +24,30 @@ public class RegistrationController {
 
     private static final String EMAIL_REGEX =
             "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
     private final RegistrationDAO registrationDAO;
-    private final SubjectDAO      subjectDAO;
+    private final SubjectDAO subjectDAO;
 
     public RegistrationController() {
         this.registrationDAO = DAOFactory.getRegistrationDAO();
-        this.subjectDAO      = DAOFactory.getSubjectDAO();
+        this.subjectDAO = DAOFactory.getSubjectDAO();
     }
 
     public List<SubjectBean> getAvailableSubjects() throws DAOException {
         List<SubjectBean> result = new ArrayList<>();
-        for (Subject s : subjectDAO.getAll()) {
-            result.add(new SubjectBean(s.getId(), s.getName()));
+
+        for (Subject subject : subjectDAO.getAll()) {
+            result.add(new SubjectBean(subject.getId(), subject.getName()));
         }
+
         return result;
     }
 
-    public void register(RegistrationBean bean) throws DAOException, RegistrationException {
+    public void register(RegistrationBean bean)
+            throws DAOException, RegistrationException {
+
         validateBean(bean);
 
         if (registrationDAO.emailExists(bean.getEmail())) {
@@ -52,56 +57,123 @@ public class RegistrationController {
         String hashedPassword = hashPassword(bean.getPassword());
 
         User user;
+
         if (bean.getRole() == Role.TUTOR) {
-            user = new Tutor(0, bean.getName(), bean.getSurname(),
-                    bean.getEmail(), hashedPassword, bean.getBio());
+            user = new Tutor(
+                    0,
+                    bean.getName(),
+                    bean.getSurname(),
+                    bean.getEmail(),
+                    hashedPassword,
+                    bean.getBio()
+            );
         } else {
-            user = new Student(0, bean.getName(), bean.getSurname(),
-                    bean.getEmail(), hashedPassword);
+            user = new Student(
+                    0,
+                    bean.getName(),
+                    bean.getSurname(),
+                    bean.getEmail(),
+                    hashedPassword
+            );
         }
 
         List<Integer> subjectIds = new ArrayList<>();
+
         if (bean.getSubjects() != null) {
-            for (SubjectBean s : bean.getSubjects()) {
-                subjectIds.add(s.getId());
+            for (SubjectBean subject : bean.getSubjects()) {
+                subjectIds.add(subject.getId());
             }
         }
 
         registrationDAO.save(user, bean.getBio(), subjectIds);
     }
 
-    private void validateBean(RegistrationBean bean) throws RegistrationException {
-        if (bean.getName() == null || bean.getName().isBlank())
-            throw new RegistrationException("Il nome è obbligatorio.");
-        if (bean.getSurname() == null || bean.getSurname().isBlank())
-            throw new RegistrationException("Il cognome è obbligatorio.");
-        if (bean.getEmail() == null || bean.getEmail().isBlank())
-            throw new RegistrationException("L'email è obbligatoria.");
-        if (!EMAIL_PATTERN.matcher(bean.getEmail()).matches())
-            throw new RegistrationException("Email non valida.");
-        if (bean.getPassword() == null || bean.getPassword().length() < 8)
-            throw new RegistrationException("La password deve essere di almeno 8 caratteri.");
-        if (!bean.getPassword().equals(bean.getConfirmPassword()))
-            throw new RegistrationException("Le password non coincidono.");
-        if (bean.getRole() == null)
-            throw new RegistrationException("Seleziona un ruolo.");
-        if (bean.getRole() == Role.TUTOR) {
-            if (bean.getBio() == null || bean.getBio().isBlank())
-                throw new RegistrationException("La bio è obbligatoria per i tutor.");
-            if (bean.getSubjects() == null || bean.getSubjects().isEmpty())
-                throw new RegistrationException("Seleziona almeno una materia.");
+    private void validateBean(RegistrationBean bean)
+            throws RegistrationException {
+
+        if (bean == null) {
+            throw new RegistrationException("Dati di registrazione non validi.");
+        }
+
+        validateRequiredField(bean.getName(), "Il nome è obbligatorio.");
+        validateRequiredField(bean.getSurname(), "Il cognome è obbligatorio.");
+        validateRequiredField(bean.getEmail(), "L'email è obbligatoria.");
+        validateEmail(bean.getEmail());
+        validatePassword(bean);
+        validateRole(bean);
+        validateTutorFields(bean);
+    }
+
+    private void validateRequiredField(String value, String message)
+            throws RegistrationException {
+
+        if (value == null || value.isBlank()) {
+            throw new RegistrationException(message);
         }
     }
 
-    private String hashPassword(String password) throws RegistrationException {
+    private void validateEmail(String email)
+            throws RegistrationException {
+
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            throw new RegistrationException("Email non valida.");
+        }
+    }
+
+    private void validatePassword(RegistrationBean bean)
+            throws RegistrationException {
+
+        if (bean.getPassword() == null || bean.getPassword().length() < 8) {
+            throw new RegistrationException("La password deve essere di almeno 8 caratteri.");
+        }
+
+        if (!bean.getPassword().equals(bean.getConfirmPassword())) {
+            throw new RegistrationException("Le password non coincidono.");
+        }
+    }
+
+    private void validateRole(RegistrationBean bean)
+            throws RegistrationException {
+
+        if (bean.getRole() == null) {
+            throw new RegistrationException("Seleziona un ruolo.");
+        }
+    }
+
+    private void validateTutorFields(RegistrationBean bean)
+            throws RegistrationException {
+
+        if (bean.getRole() != Role.TUTOR) {
+            return;
+        }
+
+        validateRequiredField(bean.getBio(), "La bio è obbligatoria per i tutor.");
+
+        if (bean.getSubjects() == null || bean.getSubjects().isEmpty()) {
+            throw new RegistrationException("Seleziona almeno una materia.");
+        }
+    }
+
+    private String hashPassword(String password)
+            throws RegistrationException {
+
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+
             StringBuilder sb = new StringBuilder();
-            for (byte b : hashBytes) sb.append(String.format("%02x", b));
+
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+
             return sb.toString();
+
         } catch (NoSuchAlgorithmException e) {
-            throw new RegistrationException("Errore interno durante la codifica della password.", e);
+            throw new RegistrationException(
+                    "Errore interno durante la codifica della password.",
+                    e
+            );
         }
     }
 }

@@ -28,169 +28,210 @@ public class BookingDAODB extends AbstractBookingDAO {
 
     private static final String FIND_BY_STUDENT =
             "SELECT b.id, b.status, b.meet_link, b.created_at, " +
-                    "       u_s.id s_id, u_s.name s_name, u_s.surname s_surname, u_s.email s_email, " +
-                    "       u_t.id t_id, u_t.name t_name, u_t.surname t_surname, td.bio t_bio, " +
-                    "       sub.id sub_id, sub.name sub_name, " +
-                    "       ts.id ts_id, ts.date ts_date, ts.start_time, ts.end_time, ts.available " +
+                    "u_s.id s_id, u_s.name s_name, u_s.surname s_surname, u_s.email s_email, " +
+                    "u_t.id t_id, u_t.name t_name, u_t.surname t_surname, td.bio t_bio, " +
+                    "sub.id sub_id, sub.name sub_name, " +
+                    "ts.id ts_id, ts.date ts_date, ts.start_time, ts.end_time, ts.available " +
                     "FROM booking b " +
                     "JOIN user u_s ON b.student_id = u_s.id " +
-                    "JOIN user u_t ON b.tutor_id   = u_t.id " +
+                    "JOIN user u_t ON b.tutor_id = u_t.id " +
                     "LEFT JOIN tutor_detail td ON u_t.id = td.user_id " +
                     "JOIN subject sub ON b.subject_id = sub.id " +
-                    "JOIN time_slot ts ON b.slot_id   = ts.id " +
+                    "JOIN time_slot ts ON b.slot_id = ts.id " +
                     "WHERE b.student_id = ? ORDER BY b.created_at DESC";
 
     private static final String FIND_COMPLETED_BY_STUDENT_AND_TUTOR =
             "SELECT b.id, b.status, b.meet_link, b.created_at, " +
-                    "       u_s.id s_id, u_s.name s_name, u_s.surname s_surname, u_s.email s_email, " +
-                    "       u_t.id t_id, u_t.name t_name, u_t.surname t_surname, td.bio t_bio, " +
-                    "       sub.id sub_id, sub.name sub_name, " +
-                    "       ts.id ts_id, ts.date ts_date, ts.start_time, ts.end_time, ts.available " +
+                    "u_s.id s_id, u_s.name s_name, u_s.surname s_surname, u_s.email s_email, " +
+                    "u_t.id t_id, u_t.name t_name, u_t.surname t_surname, td.bio t_bio, " +
+                    "sub.id sub_id, sub.name sub_name, " +
+                    "ts.id ts_id, ts.date ts_date, ts.start_time, ts.end_time, ts.available " +
                     "FROM booking b " +
                     "JOIN user u_s ON b.student_id = u_s.id " +
-                    "JOIN user u_t ON b.tutor_id   = u_t.id " +
+                    "JOIN user u_t ON b.tutor_id = u_t.id " +
                     "LEFT JOIN tutor_detail td ON u_t.id = td.user_id " +
                     "JOIN subject sub ON b.subject_id = sub.id " +
-                    "JOIN time_slot ts ON b.slot_id   = ts.id " +
+                    "JOIN time_slot ts ON b.slot_id = ts.id " +
                     "WHERE b.student_id = ? AND b.tutor_id = ? " +
-                    "  AND b.status = 'CONFIRMED' AND ts.date <= CURDATE() " +
+                    "AND b.status = 'CONFIRMED' AND ts.date <= CURDATE() " +
                     "ORDER BY ts.date DESC";
 
     private static final String FIND_UPCOMING_BY_STUDENT_AND_TUTOR =
             "SELECT b.id, b.status, b.meet_link, b.created_at, " +
-                    "       u_s.id s_id, u_s.name s_name, u_s.surname s_surname, u_s.email s_email, " +
-                    "       u_t.id t_id, u_t.name t_name, u_t.surname t_surname, td.bio t_bio, " +
-                    "       sub.id sub_id, sub.name sub_name, " +
-                    "       ts.id ts_id, ts.date ts_date, ts.start_time, ts.end_time, ts.available " +
+                    "u_s.id s_id, u_s.name s_name, u_s.surname s_surname, u_s.email s_email, " +
+                    "u_t.id t_id, u_t.name t_name, u_t.surname t_surname, td.bio t_bio, " +
+                    "sub.id sub_id, sub.name sub_name, " +
+                    "ts.id ts_id, ts.date ts_date, ts.start_time, ts.end_time, ts.available " +
                     "FROM booking b " +
                     "JOIN user u_s ON b.student_id = u_s.id " +
-                    "JOIN user u_t ON b.tutor_id   = u_t.id " +
+                    "JOIN user u_t ON b.tutor_id = u_t.id " +
                     "LEFT JOIN tutor_detail td ON u_t.id = td.user_id " +
                     "JOIN subject sub ON b.subject_id = sub.id " +
-                    "JOIN time_slot ts ON b.slot_id   = ts.id " +
+                    "JOIN time_slot ts ON b.slot_id = ts.id " +
                     "WHERE b.student_id = ? AND b.tutor_id = ? " +
-                    "  AND b.status = 'CONFIRMED' AND ts.date > CURDATE() " +
+                    "AND b.status = 'CONFIRMED' AND ts.date > CURDATE() " +
                     "ORDER BY ts.date ASC";
-
-    // ================================================================== //
-    //  Save
-    // ================================================================== //
 
     @Override
     public void save(Booking booking) throws DAOException {
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement(
-                     INSERT_BOOKING, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            try {
+                conn.setAutoCommit(false);
 
-            ps.setInt(1, booking.getStudent().getId());
-            ps.setInt(2, booking.getTutor().getId());
-            ps.setInt(3, booking.getSubject().getId());
-            ps.setInt(4, booking.getTimeSlot().getId());
-            ps.setString(5, booking.getMeetLink());
-            ps.executeUpdate();
+                insertBooking(conn, booking);
+                updateSlotAvailability(conn, booking.getTimeSlot().getId(), false);
 
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) booking.setId(keys.getInt(1));
+                conn.commit();
+
+                booking.setStatus(BookingStatus.CONFIRMED);
+                addToCache(booking);
+
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
             }
-
-            booking.setStatus(BookingStatus.CONFIRMED);
-            updateSlotAvailability(conn, booking.getTimeSlot().getId(), false);
-            addToCache(booking);
 
         } catch (SQLException e) {
             throw new DAOException("Errore durante il salvataggio: " + e.getMessage(), e);
         }
     }
 
-    // ================================================================== //
-    //  Find
-    // ================================================================== //
+    private void insertBooking(Connection conn, Booking booking) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(
+                INSERT_BOOKING, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setInt(1, booking.getStudent().getId());
+            ps.setInt(2, booking.getTutor().getId());
+            ps.setInt(3, booking.getSubject().getId());
+            ps.setInt(4, booking.getTimeSlot().getId());
+            ps.setString(5, booking.getMeetLink());
+
+            ps.executeUpdate();
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    booking.setId(keys.getInt(1));
+                }
+            }
+        }
+    }
 
     @Override
     public List<Booking> findByStudent(int studentId) throws DAOException {
         List<Booking> cached = findInCacheByStudent(studentId);
-        if (!cached.isEmpty()) return cached;
+
+        if (!cached.isEmpty()) {
+            return cached;
+        }
 
         List<Booking> result = new ArrayList<>();
+
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_BY_STUDENT)) {
+
             ps.setInt(1, studentId);
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Booking b = mapToBooking(rs);
-                    addToCache(b);
-                    result.add(b);
+                    Booking booking = mapToBooking(rs);
+                    addToCache(booking);
+                    result.add(booking);
                 }
             }
+
         } catch (SQLException e) {
             throw new DAOException("Errore nel caricamento prenotazioni: " + e.getMessage(), e);
         }
+
         return result;
     }
 
     @Override
-    public List<Booking> findCompletedByStudentAndTutor(int studentId, int tutorId) throws DAOException {
-        List<Booking> result = new ArrayList<>();
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement(FIND_COMPLETED_BY_STUDENT_AND_TUTOR)) {
-            ps.setInt(1, studentId);
-            ps.setInt(2, tutorId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) result.add(mapToBooking(rs));
-            }
-        } catch (SQLException e) {
-            throw new DAOException("Errore nel caricamento lezioni effettuate: " + e.getMessage(), e);
-        }
-        return result;
+    public List<Booking> findCompletedByStudentAndTutor(int studentId, int tutorId)
+            throws DAOException {
+
+        return findByStudentAndTutor(studentId, tutorId, FIND_COMPLETED_BY_STUDENT_AND_TUTOR,
+                "Errore nel caricamento lezioni effettuate: ");
     }
 
     @Override
-    public List<Booking> findUpcomingByStudentAndTutor(int studentId, int tutorId) throws DAOException {
+    public List<Booking> findUpcomingByStudentAndTutor(int studentId, int tutorId)
+            throws DAOException {
+
+        return findByStudentAndTutor(studentId, tutorId, FIND_UPCOMING_BY_STUDENT_AND_TUTOR,
+                "Errore nel caricamento lezioni programmate: ");
+    }
+
+    private List<Booking> findByStudentAndTutor(int studentId, int tutorId,
+                                                String query, String errorMessage)
+            throws DAOException {
+
         List<Booking> result = new ArrayList<>();
+
         try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement(FIND_UPCOMING_BY_STUDENT_AND_TUTOR)) {
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
             ps.setInt(1, studentId);
             ps.setInt(2, tutorId);
+
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) result.add(mapToBooking(rs));
+                while (rs.next()) {
+                    result.add(mapToBooking(rs));
+                }
             }
+
         } catch (SQLException e) {
-            throw new DAOException("Errore nel caricamento lezioni programmate: " + e.getMessage(), e);
+            throw new DAOException(errorMessage + e.getMessage(), e);
         }
+
         return result;
     }
 
-    // ================================================================== //
-    //  Cancel — transazione atomica, Sonar-clean
-    // ================================================================== //
-
-    /**
-     * Cancella la prenotazione e ripristina lo slot in una transazione atomica.
-     * Se una delle due operazioni fallisce → ROLLBACK automatico.
-     * Gestisce la concorrenza: due utenti non possono modificare
-     * la stessa prenotazione in modo inconsistente.
-     */
     @Override
     public void cancel(int bookingId, int studentId) throws DAOException {
         try (Connection conn = ConnectionFactory.getConnection()) {
-            conn.setAutoCommit(false);
-            executeCancel(conn, bookingId, studentId);
-            conn.commit();
-            conn.setAutoCommit(true);
-            updateInCache(bookingId);
+            try {
+                conn.setAutoCommit(false);
+
+                cancelBooking(conn, bookingId, studentId);
+                freeSlot(conn, bookingId, studentId);
+
+                conn.commit();
+
+                updateInCache(bookingId);
+
+            } catch (SQLException | DAOException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+
         } catch (SQLException e) {
             throw new DAOException("Errore durante l'annullamento: " + e.getMessage(), e);
         }
     }
 
-    private void executeCancel(Connection conn, int bookingId,
-                               int studentId) throws SQLException, DAOException {
-        freeSlot(conn, bookingId, studentId);
-        cancelBooking(conn, bookingId, studentId);
+    private void cancelBooking(Connection conn, int bookingId, int studentId)
+            throws SQLException, DAOException {
+
+        try (PreparedStatement ps = conn.prepareStatement(CANCEL_BOOKING)) {
+            ps.setInt(1, bookingId);
+            ps.setInt(2, studentId);
+
+            int rows = ps.executeUpdate();
+
+            if (rows == 0) {
+                throw new DAOException("Prenotazione non trovata o non autorizzata.");
+            }
+        }
     }
 
-    private void freeSlot(Connection conn, int bookingId,
-                          int studentId) throws SQLException {
+    private void freeSlot(Connection conn, int bookingId, int studentId)
+            throws SQLException {
+
         try (PreparedStatement ps = conn.prepareStatement(FREE_SLOT)) {
             ps.setInt(1, bookingId);
             ps.setInt(2, studentId);
@@ -198,24 +239,9 @@ public class BookingDAODB extends AbstractBookingDAO {
         }
     }
 
-    private void cancelBooking(Connection conn, int bookingId,
-                               int studentId) throws SQLException, DAOException {
-        try (PreparedStatement ps = conn.prepareStatement(CANCEL_BOOKING)) {
-            ps.setInt(1, bookingId);
-            ps.setInt(2, studentId);
-            int rows = ps.executeUpdate();
-            if (rows == 0) {
-                throw new DAOException("Prenotazione non trovata o non autorizzata.");
-            }
-        }
-    }
+    private void updateSlotAvailability(Connection conn, int slotId, boolean available)
+            throws SQLException {
 
-    // ================================================================== //
-    //  Metodi privati
-    // ================================================================== //
-
-    private void updateSlotAvailability(Connection conn, int slotId,
-                                        boolean available) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement(UPDATE_SLOT_AVAILABILITY)) {
             ps.setBoolean(1, available);
             ps.setInt(2, slotId);
@@ -225,20 +251,34 @@ public class BookingDAODB extends AbstractBookingDAO {
 
     private Booking mapToBooking(ResultSet rs) throws SQLException {
         Student student = new Student(
-                rs.getInt("s_id"), rs.getString("s_name"),
-                rs.getString("s_surname"), rs.getString("s_email"), null);
+                rs.getInt("s_id"),
+                rs.getString("s_name"),
+                rs.getString("s_surname"),
+                rs.getString("s_email"),
+                null
+        );
 
         Tutor tutor = new Tutor(
-                rs.getInt("t_id"), rs.getString("t_name"),
-                rs.getString("t_surname"), null, null, rs.getString("t_bio"));
+                rs.getInt("t_id"),
+                rs.getString("t_name"),
+                rs.getString("t_surname"),
+                null,
+                null,
+                rs.getString("t_bio")
+        );
 
-        Subject subject = new Subject(rs.getInt("sub_id"), rs.getString("sub_name"));
+        Subject subject = new Subject(
+                rs.getInt("sub_id"),
+                rs.getString("sub_name")
+        );
 
         TimeSlot slot = new TimeSlot(
                 rs.getInt("ts_id"),
                 rs.getDate("ts_date").toLocalDate(),
                 rs.getTime("start_time").toLocalTime(),
-                rs.getTime("end_time").toLocalTime());
+                rs.getTime("end_time").toLocalTime()
+        );
+
         slot.setAvailable(rs.getBoolean("available"));
 
         Booking booking = new Booking(student, tutor, subject, slot);
@@ -247,56 +287,11 @@ public class BookingDAODB extends AbstractBookingDAO {
         booking.setMeetLink(rs.getString("meet_link"));
 
         Timestamp createdAt = rs.getTimestamp("created_at");
-        if (createdAt != null) booking.setCreatedAt(createdAt.toLocalDateTime());
+
+        if (createdAt != null) {
+            booking.setCreatedAt(createdAt.toLocalDateTime());
+        }
 
         return booking;
-    }
-
-    public static class SubjectDAOdb {
-
-        private static final String GET_ALL =
-                "SELECT id, name FROM subject";
-
-        private static final String FIND_BY_ID =
-                "SELECT id, name FROM subject WHERE id = ?";
-
-        public SubjectDAOdb() {}
-
-        public List<Subject> getAll() throws DAOException {
-            List<Subject> result = new ArrayList<>();
-
-            try (Connection conn = ConnectionFactory.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(GET_ALL);
-                 ResultSet rs = ps.executeQuery()) {
-
-                while (rs.next()) {
-                    result.add(new Subject(rs.getInt("id"), rs.getString("name")));
-                }
-
-            } catch (SQLException e) {
-                throw new DAOException("Errore nel caricamento delle materie: " + e.getMessage());
-            }
-
-            return result;
-        }
-
-        public Subject findById(int id) throws DAOException {
-            try (Connection conn = ConnectionFactory.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(FIND_BY_ID)) {
-
-                ps.setInt(1, id);
-
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        return new Subject(rs.getInt("id"), rs.getString("name"));
-                    }
-                }
-
-            } catch (SQLException e) {
-                throw new DAOException("Errore nel caricamento della materia: " + e.getMessage());
-            }
-
-            return null;
-        }
     }
 }
