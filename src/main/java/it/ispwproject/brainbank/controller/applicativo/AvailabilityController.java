@@ -20,29 +20,18 @@ public class AvailabilityController {
         this.timeSlotDAO = DAOFactory.getTimeSlotDAO();
     }
 
-    // ================================================================== //
-    //  Use case: SetAvailability
-    // ================================================================== //
-
     public void addSlot(TimeSlotBean slotBean) throws DAOException, AvailabilityException {
         if (slotBean.getDate().isBefore(LocalDate.now())) {
             throw new AvailabilityException("Non puoi aggiungere slot nel passato.");
         }
-
         if (!slotBean.getStartTime().isBefore(slotBean.getEndTime())) {
             throw new AvailabilityException("L'ora di inizio deve essere precedente all'ora di fine.");
         }
 
         Tutor tutor = (Tutor) SessionManager.getInstance().getLoggedUser();
+        TimeSlot newSlot = new TimeSlot(0, tutor, slotBean.getDate(),
+                slotBean.getStartTime(), slotBean.getEndTime());
 
-        TimeSlot newSlot = new TimeSlot(
-                0, tutor,
-                slotBean.getDate(),
-                slotBean.getStartTime(),
-                slotBean.getEndTime()
-        );
-
-        // Controllo sovrapposizione con gli slot esistenti
         List<TimeSlot> existing = timeSlotDAO.getAvailableByTutor(tutor);
         for (TimeSlot s : existing) {
             if (newSlot.overlaps(s)) {
@@ -55,10 +44,6 @@ public class AvailabilityController {
         timeSlotDAO.save(newSlot, tutor.getId());
         slotBean.setId(newSlot.getId());
     }
-
-    // ================================================================== //
-    //  Use case: ViewSlots
-    // ================================================================== //
 
     public List<TimeSlotBean> getSlots() throws DAOException {
         Tutor tutor = (Tutor) SessionManager.getInstance().getLoggedUser();

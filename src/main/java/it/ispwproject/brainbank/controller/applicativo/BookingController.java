@@ -29,10 +29,6 @@ public class BookingController {
         this.timeSlotDAO = DAOFactory.getTimeSlotDAO();
     }
 
-    // ================================================================== //
-    //  Use case: BookLesson
-    // ================================================================== //
-
     public List<SubjectBean> getAvailableSubjects() throws DAOException {
         List<SubjectBean> result = new ArrayList<>();
         for (Subject subject : subjectDAO.getAll()) {
@@ -81,13 +77,11 @@ public class BookingController {
         if (subject == null) throw new DAOException("Materia non trovata.");
         if (slot    == null) throw new DAOException("Slot non trovato.");
 
-        return new BookingResponseBean(
-                0, "PENDING", null,
+        return new BookingResponseBean(0, "PENDING", null,
                 new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), false),
                 new SubjectBean(subject.getId(), subject.getName()),
                 new TimeSlotBean(slot.getId(), slot.getDate(),
-                        slot.getStartTime(), slot.getEndTime(), slot.isAvailable())
-        );
+                        slot.getStartTime(), slot.getEndTime(), slot.isAvailable()));
     }
 
     public BookingResponseBean createBooking(BookingRequestBean request)
@@ -105,32 +99,24 @@ public class BookingController {
         Booking booking = new Booking(student, tutor, subject, slot);
         booking.setMeetLink(MEET_LINK_BASE + UUID.randomUUID().toString().substring(0, 8));
         booking.confirm();
-
         bookingDAO.save(booking);
 
         BookingResponseBean response = new BookingResponseBean(
-                booking.getId(),
-                booking.getStatus().name(),
-                booking.getMeetLink(),
+                booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
                 new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), false),
                 new SubjectBean(subject.getId(), subject.getName()),
                 new TimeSlotBean(slot.getId(), slot.getDate(),
-                        slot.getStartTime(), slot.getEndTime(), slot.isAvailable())
-        );
+                        slot.getStartTime(), slot.getEndTime(), slot.isAvailable()));
 
         try {
             NotificationController.sendBookingConfirmation(
                     student.getEmail(), student.getFullName(), response);
         } catch (NotificationException e) {
-            AppLogger.logWarning("  ⚠️ Notifica email non inviata: " + e.getMessage());
+            AppLogger.logWarning("Notifica email non inviata: " + e.getMessage());
         }
 
         return response;
     }
-
-    // ================================================================== //
-    //  Use case: ViewBookings
-    // ================================================================== //
 
     public List<BookingResponseBean> getStudentBookings(int studentId)
             throws DAOException, BookingException {
@@ -144,22 +130,15 @@ public class BookingController {
             if (tutor == null || subject == null || slot == null) continue;
 
             result.add(new BookingResponseBean(
-                    booking.getId(),
-                    booking.getStatus().name(),
-                    booking.getMeetLink(),
+                    booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
                     new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), false),
                     new SubjectBean(subject.getId(), subject.getName()),
                     new TimeSlotBean(slot.getId(), slot.getDate(),
-                            slot.getStartTime(), slot.getEndTime(), slot.isAvailable())
-            ));
+                            slot.getStartTime(), slot.getEndTime(), slot.isAvailable())));
         }
 
         return result;
     }
-
-    // ================================================================== //
-    //  Use case: CancelBooking
-    // ================================================================== //
 
     public void cancelBooking(int bookingId, int studentId)
             throws DAOException, BookingException {
@@ -178,7 +157,7 @@ public class BookingController {
                 NotificationController.sendBookingCancellation(
                         user.getEmail(), user.getFullName(), toCancel);
             } catch (NotificationException e) {
-                AppLogger.logWarning("  ⚠️ Notifica email non inviata: " + e.getMessage());
+                AppLogger.logWarning("Notifica email non inviata: " + e.getMessage());
             }
         }
     }

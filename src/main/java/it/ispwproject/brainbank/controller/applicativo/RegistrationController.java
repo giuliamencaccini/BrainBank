@@ -27,7 +27,7 @@ public class RegistrationController {
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
     private final RegistrationDAO registrationDAO;
-    private final SubjectDAO subjectDAO;
+    private final SubjectDAO      subjectDAO;
 
     public RegistrationController() {
         this.registrationDAO = DAOFactory.getRegistrationDAO();
@@ -60,7 +60,6 @@ public class RegistrationController {
                     bean.getEmail(), hashedPassword);
         }
 
-        // Converte List<SubjectBean> in List<Integer> per il DAO
         List<Integer> subjectIds = new ArrayList<>();
         if (bean.getSubjects() != null) {
             for (SubjectBean s : bean.getSubjects()) {
@@ -72,34 +71,25 @@ public class RegistrationController {
     }
 
     private void validateBean(RegistrationBean bean) throws RegistrationException {
-        if (bean.getName() == null || bean.getName().isBlank()) {
+        if (bean.getName() == null || bean.getName().isBlank())
             throw new RegistrationException("Il nome è obbligatorio.");
-        }
-        if (bean.getSurname() == null || bean.getSurname().isBlank()) {
+        if (bean.getSurname() == null || bean.getSurname().isBlank())
             throw new RegistrationException("Il cognome è obbligatorio.");
-        }
-        if (bean.getEmail() == null || bean.getEmail().isBlank()) {
+        if (bean.getEmail() == null || bean.getEmail().isBlank())
             throw new RegistrationException("L'email è obbligatoria.");
-        }
-        if (!EMAIL_PATTERN.matcher(bean.getEmail()).matches()) {
+        if (!EMAIL_PATTERN.matcher(bean.getEmail()).matches())
             throw new RegistrationException("Email non valida.");
-        }
-        if (bean.getPassword() == null || bean.getPassword().length() < 8) {
+        if (bean.getPassword() == null || bean.getPassword().length() < 8)
             throw new RegistrationException("La password deve essere di almeno 8 caratteri.");
-        }
-        if (!bean.getPassword().equals(bean.getConfirmPassword())) {
+        if (!bean.getPassword().equals(bean.getConfirmPassword()))
             throw new RegistrationException("Le password non coincidono.");
-        }
-        if (bean.getRole() == null) {
+        if (bean.getRole() == null)
             throw new RegistrationException("Seleziona un ruolo.");
-        }
         if (bean.getRole() == Role.TUTOR) {
-            if (bean.getBio() == null || bean.getBio().isBlank()) {
+            if (bean.getBio() == null || bean.getBio().isBlank())
                 throw new RegistrationException("La bio è obbligatoria per i tutor.");
-            }
-            if (bean.getSubjects() == null || bean.getSubjects().isEmpty()) {
+            if (bean.getSubjects() == null || bean.getSubjects().isEmpty())
                 throw new RegistrationException("Seleziona almeno una materia.");
-            }
         }
     }
 
@@ -108,9 +98,7 @@ public class RegistrationController {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(password.getBytes(StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
-            for (byte b : hashBytes) {
-                sb.append(String.format("%02x", b));
-            }
+            for (byte b : hashBytes) sb.append(String.format("%02x", b));
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
             throw new RegistrationException("Errore interno durante la codifica della password.", e);

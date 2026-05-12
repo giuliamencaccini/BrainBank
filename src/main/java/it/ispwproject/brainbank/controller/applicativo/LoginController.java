@@ -2,8 +2,10 @@ package it.ispwproject.brainbank.controller.applicativo;
 
 import it.ispwproject.brainbank.bean.SessionBean;
 import it.ispwproject.brainbank.dao.ConnectionFactory;
+import it.ispwproject.brainbank.dao.DAOFactory;
 import it.ispwproject.brainbank.dao.LoginDAO;
 import it.ispwproject.brainbank.dao.UserDAO;
+import it.ispwproject.brainbank.dao.memory.LoginDAOMemory;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.exception.LoginException;
 import it.ispwproject.brainbank.model.Credentials;
@@ -22,25 +24,24 @@ public class LoginController {
 
     public LoginResult login(String email, String password) throws LoginException {
 
-        // Fase 1: autenticazione
-        Credentials credentials = LoginDAO.execute(email, password);
+        Credentials credentials = getCredentials(email, password);
 
-        // Fase 2: cambia connessione al ruolo dell'utente loggato
-        try {
-            ConnectionFactory.changeRole(credentials.getRole());
-        } catch (SQLException e) {
-            throw new LoginException("Errore durante il cambio ruolo: " + e.getMessage(), e);
+        if (!DAOFactory.MEMORY.equalsIgnoreCase(DAOFactory.getPersistence())) {
+            try {
+                ConnectionFactory.changeRole(credentials.getRole());
+            } catch (SQLException e) {
+                throw new LoginException("Errore durante il cambio ruolo: " + e.getMessage(), e);
+            }
         }
 
-        // Fase 3: carica User completo senza password
         User user;
         try {
-            user = UserDAO.findByEmail(email);
+            UserDAO userDAO = DAOFactory.getUserDAO();
+            user = userDAO.findByEmail(email);
         } catch (DAOException e) {
             throw new LoginException("Errore nel caricamento utente: " + e.getMessage(), e);
         }
 
-        // Fase 4: salva in sessione
         SessionManager.getInstance().setLoggedUser(user);
         SessionManager.getInstance().setSessionBean(
                 new SessionBean(user.getEmail(), credentials.getRole())
@@ -51,5 +52,12 @@ public class LoginController {
             case TUTOR   -> LoginResult.SUCCESSO_TUTOR;
             case ADMIN   -> LoginResult.SUCCESSO_ADMIN;
         };
+    }
+
+    private Credentials getCredentials(String email, String password) throws LoginException {
+        if (DAOFactory.MEMORY.equalsIgnoreCase(DAOFactory.getPersistence())) {
+            return LoginDAOMemory.execute(email, password);
+        }
+        return LoginDAO.execute(email, password);
     }
 }
