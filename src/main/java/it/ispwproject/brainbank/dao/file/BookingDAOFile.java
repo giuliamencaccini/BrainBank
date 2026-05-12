@@ -1,8 +1,9 @@
-package it.ispwproject.brainbank.dao;
+package it.ispwproject.brainbank.dao.file;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import it.ispwproject.brainbank.dao.AbstractBookingDAO;
 import it.ispwproject.brainbank.enumerator.BookingStatus;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Booking;

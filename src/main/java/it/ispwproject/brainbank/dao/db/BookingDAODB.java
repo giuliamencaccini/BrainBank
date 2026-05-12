@@ -1,5 +1,7 @@
-package it.ispwproject.brainbank.dao;
+package it.ispwproject.brainbank.dao.db;
 
+import it.ispwproject.brainbank.dao.AbstractBookingDAO;
+import it.ispwproject.brainbank.dao.ConnectionFactory;
 import it.ispwproject.brainbank.enumerator.BookingStatus;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.*;
@@ -248,5 +250,53 @@ public class BookingDAODB extends AbstractBookingDAO {
         if (createdAt != null) booking.setCreatedAt(createdAt.toLocalDateTime());
 
         return booking;
+    }
+
+    public static class SubjectDAOdb {
+
+        private static final String GET_ALL =
+                "SELECT id, name FROM subject";
+
+        private static final String FIND_BY_ID =
+                "SELECT id, name FROM subject WHERE id = ?";
+
+        public SubjectDAOdb() {}
+
+        public List<Subject> getAll() throws DAOException {
+            List<Subject> result = new ArrayList<>();
+
+            try (Connection conn = ConnectionFactory.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(GET_ALL);
+                 ResultSet rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+                    result.add(new Subject(rs.getInt("id"), rs.getString("name")));
+                }
+
+            } catch (SQLException e) {
+                throw new DAOException("Errore nel caricamento delle materie: " + e.getMessage());
+            }
+
+            return result;
+        }
+
+        public Subject findById(int id) throws DAOException {
+            try (Connection conn = ConnectionFactory.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(FIND_BY_ID)) {
+
+                ps.setInt(1, id);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return new Subject(rs.getInt("id"), rs.getString("name"));
+                    }
+                }
+
+            } catch (SQLException e) {
+                throw new DAOException("Errore nel caricamento della materia: " + e.getMessage());
+            }
+
+            return null;
+        }
     }
 }

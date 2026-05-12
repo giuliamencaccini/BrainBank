@@ -1,64 +1,74 @@
 package it.ispwproject.brainbank.dao;
 
+import it.ispwproject.brainbank.dao.db.*;
+import it.ispwproject.brainbank.dao.file.BookingDAOFile;
+import it.ispwproject.brainbank.dao.memory.*;
+
 public class DAOFactory {
 
-    public static final String FILE     = "file";
     public static final String DATABASE = "database";
+    public static final String FILE     = "file";
+    public static final String MEMORY   = "memory";
 
-    private static String bookingPersistence = DATABASE;
+    private static String persistence = DATABASE;
 
     private DAOFactory() {}
 
-    // ================================================================== //
-    //  BookingDAO — doppia persistenza FILE / DATABASE
-    // ================================================================== //
+    public static void setPersistence(String mode) {
+        if (mode != null && !mode.isBlank()) {
+            persistence = mode;
+        }
+    }
+
+    public static String getPersistence() {
+        return persistence;
+    }
 
     public static BookingDAO getBookingDAO() {
-        if (DATABASE.equalsIgnoreCase(bookingPersistence)) {
-            return new BookingDAODB();
-        }
-        return new BookingDAOFile();
-    }
-
-    public static void setBookingPersistence(String persistence) {
-        if (persistence != null && !persistence.isBlank()) {
-            bookingPersistence = persistence;
-        }
-    }
-
-    // ================================================================== //
-    //  Altri DAO — singola persistenza DB
-    // ================================================================== //
-
-    public static UserDAO getUserDAO() {
-        return new UserDAO();
+        return switch (persistence.toLowerCase()) {
+            case FILE   -> new BookingDAOFile();
+            case MEMORY -> new BookingDAOMemory();
+            default     -> new BookingDAODB();
+        };
     }
 
     public static SubjectDAO getSubjectDAO() {
-        return new SubjectDAO();
+        if (MEMORY.equalsIgnoreCase(persistence)) return new SubjectDAOMemory();
+        return new SubjectDAODB();
     }
 
     public static TutorDAO getTutorDAO() {
-        return new TutorDAO();
+        if (MEMORY.equalsIgnoreCase(persistence)) return new TutorDAOMemory();
+        return new TutorDAODB();
     }
 
     public static TimeSlotDAO getTimeSlotDAO() {
-        return new TimeSlotDAO();
+        if (MEMORY.equalsIgnoreCase(persistence)) return new TimeSlotDAOMemory();
+        return new TimeSlotDAODB();
     }
 
     public static StudentDAO getStudentDAO() {
-        return new StudentDAO();
+        if (MEMORY.equalsIgnoreCase(persistence)) return new StudentDAOMemory();
+        return new StudentDAODB();
     }
 
     public static ActivityDAO getActivityDAO() {
-        return new ActivityDAO();
+        if (MEMORY.equalsIgnoreCase(persistence)) return new ActivityDAOMemory();
+        return new ActivityDAODB();
     }
 
     public static ProgressDAO getProgressDAO() {
-        return new ProgressDAO();
+        if (MEMORY.equalsIgnoreCase(persistence)) return new ProgressDAOMemory();
+        return new ProgressDAODB();
     }
 
     public static RegistrationDAO getRegistrationDAO() {
-        return new RegistrationDAO();
+        if (MEMORY.equalsIgnoreCase(persistence)) return new RegistrationDAOMemory();
+        return new RegistrationDAODB();
+    }
+
+    public static UserDAO getUserDAO() {
+        if (MEMORY.equalsIgnoreCase(persistence)) return new UserDAOMemory();
+        return new UserDAODB();
     }
 }
