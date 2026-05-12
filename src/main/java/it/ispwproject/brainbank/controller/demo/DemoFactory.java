@@ -2,31 +2,27 @@ package it.ispwproject.brainbank.controller.demo;
 
 import it.ispwproject.brainbank.controller.applicativo.BookingController;
 import it.ispwproject.brainbank.controller.applicativo.LoginController;
+import it.ispwproject.brainbank.dao.DAOFactory;
 
+/**
+ * Factory per la modalità demo.
+ * Imposta la persistenza MEMORY e restituisce i controller applicativi standard.
+ * NON ci sono più controller demo separati — si usano gli stessi controller
+ * con DAO Memory invece di DAO DB.
+ */
 public class DemoFactory {
-
-    // cambiare flag DEMO_MODE per modalita demo
-    private static final boolean DEMO_MODE = false;
-
-    // Singleton — stessa istanza condivisa tra tutti i CLI controller
-    private static BookingController bookingControllerInstance;
 
     private DemoFactory() {}
 
+    public static void enableDemoMode() {
+        DAOFactory.setPersistence(DAOFactory.MEMORY);
+    }
+
     public static LoginController getLoginController() {
-        if (DEMO_MODE) {
-            return new LoginControllerDemo();
-        }
         return new LoginController();
     }
 
     public static BookingController getBookingController() {
-        if (DEMO_MODE) {
-            if (bookingControllerInstance == null) {
-                bookingControllerInstance = new BookingControllerDemo();
-            }
-            return bookingControllerInstance;
-        }
         return new BookingController();
     }
 }
