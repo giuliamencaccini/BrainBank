@@ -22,8 +22,9 @@ public class RegistrationBean {
      */
     private List<SubjectBean> subjects;
 
-    public RegistrationBean() {}
-    // Default constructor required for bean usage
+    public RegistrationBean() {
+        // Fields are populated step by step during CLI registration
+    }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

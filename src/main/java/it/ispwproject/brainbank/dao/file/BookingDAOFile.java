@@ -11,7 +11,9 @@ import it.ispwproject.brainbank.model.Student;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,8 @@ public class BookingDAOFile extends AbstractBookingDAO {
     public BookingDAOFile() {
         this.gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
                 .setPrettyPrinting()
                 .create();
 
@@ -41,9 +45,13 @@ public class BookingDAOFile extends AbstractBookingDAO {
     public List<Booking> findByStudent(int studentId) throws DAOException {
         List<Booking> cached = findInCacheByStudent(studentId);
         if (!cached.isEmpty()) return cached;
-
         loadAllFromFile().forEach(this::addToCache);
         return findInCacheByStudent(studentId);
+    }
+
+    @Override
+    public List<Booking> findAll() throws DAOException {
+        return new ArrayList<>(identityMap);
     }
 
     @Override
@@ -67,16 +75,13 @@ public class BookingDAOFile extends AbstractBookingDAO {
     @Override
     public void cancel(int bookingId, int studentId) throws DAOException {
         Booking booking = findInCache(bookingId);
-
         if (booking == null) {
             throw new DAOException("Prenotazione non trovata (ID: " + bookingId + ")");
         }
-
         Student student = booking.getStudent();
         if (student == null || student.getId() != studentId) {
             throw new DAOException("Non puoi annullare una prenotazione che non ti appartiene.");
         }
-
         booking.cancel();
         updateInCache(bookingId);
         saveToFile();
@@ -92,7 +97,6 @@ public class BookingDAOFile extends AbstractBookingDAO {
     private List<Booking> loadAllFromFile() {
         File file = new File(FILE_PATH);
         if (!file.exists()) return new ArrayList<>();
-
         try (Reader reader = new FileReader(file)) {
             Type listType = new TypeToken<List<Booking>>() {}.getType();
             List<Booking> loaded = gson.fromJson(reader, listType);
@@ -108,10 +112,5 @@ public class BookingDAOFile extends AbstractBookingDAO {
         } catch (IOException e) {
             // log silenzioso
         }
-    }
-
-    @Override
-    public List<Booking> findAll() throws DAOException {
-        return new ArrayList<>(identityMap);
     }
 }

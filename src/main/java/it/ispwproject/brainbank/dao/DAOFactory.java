@@ -2,6 +2,7 @@ package it.ispwproject.brainbank.dao;
 
 import it.ispwproject.brainbank.dao.db.*;
 import it.ispwproject.brainbank.dao.file.BookingDAOFile;
+import it.ispwproject.brainbank.dao.file.TimeSlotDAOFile;
 import it.ispwproject.brainbank.dao.memory.*;
 
 public class DAOFactory {
@@ -37,6 +38,14 @@ public class DAOFactory {
         };
     }
 
+    public static TimeSlotDAO getTimeSlotDAO() {
+        return switch (persistence.toLowerCase()) {
+            case FILE   -> new TimeSlotDAOFile();
+            case MEMORY -> new TimeSlotDAOMemory();
+            default     -> new TimeSlotDAODB();
+        };
+    }
+
     public static SubjectDAO getSubjectDAO() {
         if (MEMORY.equalsIgnoreCase(persistence)) return new SubjectDAOMemory();
         return new SubjectDAODB();
@@ -45,11 +54,6 @@ public class DAOFactory {
     public static TutorDAO getTutorDAO() {
         if (MEMORY.equalsIgnoreCase(persistence)) return new TutorDAOMemory();
         return new TutorDAODB();
-    }
-
-    public static TimeSlotDAO getTimeSlotDAO() {
-        if (MEMORY.equalsIgnoreCase(persistence)) return new TimeSlotDAOMemory();
-        return new TimeSlotDAODB();
     }
 
     public static StudentDAO getStudentDAO() {
