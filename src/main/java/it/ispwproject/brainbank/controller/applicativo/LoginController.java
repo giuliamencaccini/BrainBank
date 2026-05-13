@@ -3,9 +3,7 @@ package it.ispwproject.brainbank.controller.applicativo;
 import it.ispwproject.brainbank.bean.SessionBean;
 import it.ispwproject.brainbank.dao.ConnectionFactory;
 import it.ispwproject.brainbank.dao.DAOFactory;
-import it.ispwproject.brainbank.dao.LoginDAO;
 import it.ispwproject.brainbank.dao.UserDAO;
-import it.ispwproject.brainbank.dao.memory.LoginDAOMemory;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.exception.LoginException;
 import it.ispwproject.brainbank.model.Credentials;
@@ -24,7 +22,7 @@ public class LoginController {
 
     public LoginResult login(String email, String password) throws LoginException {
 
-        Credentials credentials = getCredentials(email, password);
+        Credentials credentials = DAOFactory.getLoginDAO().execute(email, password);
 
         if (!DAOFactory.MEMORY.equalsIgnoreCase(DAOFactory.getPersistence())) {
             try {
@@ -52,12 +50,5 @@ public class LoginController {
             case TUTOR   -> LoginResult.SUCCESSO_TUTOR;
             case ADMIN   -> LoginResult.SUCCESSO_ADMIN;
         };
-    }
-
-    private Credentials getCredentials(String email, String password) throws LoginException {
-        if (DAOFactory.MEMORY.equalsIgnoreCase(DAOFactory.getPersistence())) {
-            return LoginDAOMemory.execute(email, password);
-        }
-        return LoginDAO.execute(email, password);
     }
 }

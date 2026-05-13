@@ -24,6 +24,11 @@ public class DAOFactory {
         return persistence;
     }
 
+    public static LoginDAO getLoginDAO() {
+        if (MEMORY.equalsIgnoreCase(persistence)) return new LoginDAOMemory();
+        return new LoginDAODB();
+    }
+
     public static BookingDAO getBookingDAO() {
         return switch (persistence.toLowerCase()) {
             case FILE   -> new BookingDAOFile();

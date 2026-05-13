@@ -1,6 +1,7 @@
 package it.ispwproject.brainbank.dao.db;
 
 import it.ispwproject.brainbank.dao.ConnectionFactory;
+import it.ispwproject.brainbank.dao.LoginDAO;
 import it.ispwproject.brainbank.enumerator.Role;
 import it.ispwproject.brainbank.exception.LoginException;
 import it.ispwproject.brainbank.model.Credentials;
@@ -13,11 +14,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class LoginDAODB {
+public class LoginDAODB implements LoginDAO {
 
-    private LoginDAODB() {}
-
-    public static Credentials execute(String email, String plainPassword) throws LoginException {
+    @Override
+    public Credentials execute(String email, String plainPassword) throws LoginException {
         String hashedPassword = hashPassword(plainPassword);
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -25,10 +25,10 @@ public class LoginDAODB {
 
             cs.setString(1, email);
             cs.setString(2, hashedPassword);
-            cs.registerOutParameter(3, Types.INTEGER); // p_id
-            cs.registerOutParameter(4, Types.VARCHAR); // p_name
-            cs.registerOutParameter(5, Types.VARCHAR); // p_surname
-            cs.registerOutParameter(6, Types.VARCHAR); // p_role
+            cs.registerOutParameter(3, Types.INTEGER);
+            cs.registerOutParameter(4, Types.VARCHAR);
+            cs.registerOutParameter(5, Types.VARCHAR);
+            cs.registerOutParameter(6, Types.VARCHAR);
 
             cs.execute();
 
@@ -39,7 +39,6 @@ public class LoginDAODB {
             }
 
             Role role = Role.valueOf(roleStr.toUpperCase());
-
             return new Credentials(email, hashedPassword, role);
 
         } catch (SQLException e) {
@@ -47,18 +46,13 @@ public class LoginDAODB {
         }
     }
 
-    private static String hashPassword(String password) throws LoginException {
+    private String hashPassword(String password) throws LoginException {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(password.getBytes(StandardCharsets.UTF_8));
-
             StringBuilder sb = new StringBuilder();
-            for (byte b : hashBytes) {
-                sb.append(String.format("%02x", b));
-            }
-
+            for (byte b : hashBytes) sb.append(String.format("%02x", b));
             return sb.toString();
-
         } catch (NoSuchAlgorithmException e) {
             throw new LoginException("Errore interno durante la codifica della password.", e);
         }
