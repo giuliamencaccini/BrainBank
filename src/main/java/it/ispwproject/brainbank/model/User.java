@@ -19,9 +19,9 @@ public abstract class User {
     private String password;
     private Role role;
 
-    public User() {}
+    protected User() {}
 
-    public User(int id, String name, String surname, String email,
+    protected User(int id, String name, String surname, String email,
                 String password, Role role) {
         this.id       = id;
         this.name     = name;
