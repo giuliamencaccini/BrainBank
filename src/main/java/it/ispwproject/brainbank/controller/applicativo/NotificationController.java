@@ -44,7 +44,7 @@ public class NotificationController {
                                                BookingResponseBean booking) throws NotificationException {
         Personalization p = buildPersonalization(toEmail, studentName, booking);
         p.addDynamicTemplateData("meetLink", booking.getMeetLink());
-        sendTemplateEmail(TEMPLATE_CONFIRMATION, toEmail, p);
+        sendTemplateEmail(TEMPLATE_CONFIRMATION, p);
     }
 
     // ================================================================== //
@@ -54,7 +54,7 @@ public class NotificationController {
     public static void sendBookingCancellation(String toEmail, String studentName,
                                                BookingResponseBean booking) throws NotificationException {
         Personalization p = buildPersonalization(toEmail, studentName, booking);
-        sendTemplateEmail(TEMPLATE_CANCELLATION, toEmail, p);
+        sendTemplateEmail(TEMPLATE_CANCELLATION, p);
     }
 
     // ================================================================== //
@@ -74,7 +74,7 @@ public class NotificationController {
         return p;
     }
 
-    private static void sendTemplateEmail(String templateId, String toEmail,
+    private static void sendTemplateEmail(String templateId,
                                           Personalization personalization) throws NotificationException {
         Mail mail = new Mail();
         mail.setFrom(new Email(FROM_EMAIL, "BrainBank"));
