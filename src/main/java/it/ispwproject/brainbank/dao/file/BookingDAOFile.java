@@ -109,4 +109,9 @@ public class BookingDAOFile extends AbstractBookingDAO {
             // log silenzioso
         }
     }
+
+    @Override
+    public List<Booking> findAll() throws DAOException {
+        return new ArrayList<>(identityMap);
+    }
 }

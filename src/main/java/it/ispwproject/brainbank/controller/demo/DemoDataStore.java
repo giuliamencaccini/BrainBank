@@ -50,10 +50,13 @@ public class DemoDataStore {
         Tutor   t1 = new Tutor(3, "Demo", "Tutor", "tutor@demo", null, "Tutor demo");
         Tutor   t2 = new Tutor(4, "Gabriele", "Bianchi", "gabriele@demo", null,
                 "Laurea in Matematica, 5 anni di esperienza");
+        Admin admin = new Admin(5, "Admin", "BrainBank", "admin@demo", null);
+
         users.add(s1);
         users.add(s2);
         users.add(t1);
         users.add(t2);
+        users.add(admin);
 
         subjects.add(new Subject(1, "Analisi 1"));
         subjects.add(new Subject(2, "Fisica 1"));

@@ -31,6 +31,10 @@ public class MainCLI {
                 case ASSIGN_ACTIVITY  -> new AssignActivityCLI().start();
                 case MONITOR_PROGRESS -> new MonitorProgressCLI().start();
 
+                // ── Admin ────────────────────────────────────────────────
+                case DASHBOARD_ADMIN    -> new DashboardAdminCLI().start();
+                case REPORT_STATISTICS  -> new ReportStatisticsCLI().start();
+
                 default -> CLIState.USCITA;
             };
         }

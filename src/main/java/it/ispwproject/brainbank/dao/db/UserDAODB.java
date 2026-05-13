@@ -4,6 +4,7 @@ import it.ispwproject.brainbank.dao.ConnectionFactory;
 import it.ispwproject.brainbank.dao.UserDAO;
 import it.ispwproject.brainbank.enumerator.Role;
 import it.ispwproject.brainbank.exception.DAOException;
+import it.ispwproject.brainbank.model.Admin;
 import it.ispwproject.brainbank.model.Student;
 import it.ispwproject.brainbank.model.Tutor;
 import it.ispwproject.brainbank.model.User;
@@ -42,6 +43,7 @@ public class UserDAODB implements UserDAO {
         return switch (role) {
             case STUDENT -> new Student(id, name, surname, email, null);
             case TUTOR   -> new Tutor(id, name, surname, email, null, bio);
+            case ADMIN -> new Admin(id, name, surname, email, null);
             default      -> throw new DAOException("Ruolo non riconosciuto: " + role);
         };
     }

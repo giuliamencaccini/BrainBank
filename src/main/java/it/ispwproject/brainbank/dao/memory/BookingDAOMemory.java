@@ -9,6 +9,7 @@ import it.ispwproject.brainbank.model.Student;
 import it.ispwproject.brainbank.model.TimeSlot;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,6 +34,11 @@ public class BookingDAOMemory implements BookingDAO {
         return store.getBookings().stream()
                 .filter(b -> b.getStudent() != null && b.getStudent().getId() == studentId)
                 .toList();
+    }
+
+    @Override
+    public List<Booking> findAll() throws DAOException {
+        return new ArrayList<>(store.getBookings());
     }
 
     @Override
@@ -63,12 +69,10 @@ public class BookingDAOMemory implements BookingDAO {
                 .filter(b -> b.getId() == bookingId)
                 .findFirst()
                 .orElseThrow(() -> new DAOException("Prenotazione non trovata (ID: " + bookingId + ")"));
-
         Student student = booking.getStudent();
         if (student == null || student.getId() != studentId) {
             throw new DAOException("Non puoi annullare una prenotazione che non ti appartiene.");
         }
-
         booking.cancel();
         TimeSlot slot = booking.getTimeSlot();
         if (slot != null) slot.setAvailable(true);
