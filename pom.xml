@@ -67,7 +67,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>it.brainbank.Main</mainClass>
+                    <mainClass>it.ispw.brainbank.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>

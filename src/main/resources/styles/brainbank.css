@@ -1,0 +1,434 @@
+/* ═══════════════════════════════════════════════════════
+   BrainBank – Stylesheet
+   Palette:
+     Primary bg  : #8EADC2
+     Light bg    : #CFE5F9
+     Dark text   : #4B4B4B
+     White       : #FFFFFF
+     Error       : #C0392B
+     Success     : #27AE60
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Base ────────────────────────────────────────────── */
+
+.root {
+    -fx-font-family: "Poppins";
+    -fx-background-color: #8EADC2;
+}
+
+/* ── Backgrounds ─────────────────────────────────────── */
+
+.brainbank-background {
+    -fx-background-color: #8EADC2;
+}
+
+.light-background {
+    -fx-background-color: #CFE5F9;
+}
+
+.navbar {
+    -fx-background-color: #CFE5F9;
+    -fx-padding: 8 20 8 16;
+}
+
+/* ── Typography ──────────────────────────────────────── */
+
+.title-label {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4B4B4B;
+}
+
+.brand-label {
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+    -fx-font-style: italic;
+    -fx-text-fill: #4B4B4B;
+}
+
+.subtitle-label {
+    -fx-font-size: 22px;
+    -fx-text-fill: #4B4B4B;
+}
+
+/* Ruolo nella navbar (es. "Studente", "Tutor") */
+.role-label {
+    -fx-font-size: 20px;
+    -fx-font-style: italic;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4B4B4B;
+}
+
+/* Benvenuto nella navbar */
+.welcome-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4B4B4B;
+}
+
+.field-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4B4B4B;
+}
+
+/* Label più piccola, es. dentro card o form secondari */
+.small-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4B4B4B;
+}
+
+.register-label {
+    -fx-font-size: 15px;
+    -fx-font-weight: normal;
+    -fx-text-fill: #4B4B4B;
+}
+
+/* Testo calendario (titolo sezione) */
+.calendar-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4B4B4B;
+}
+
+/* Etichette ore nel calendario */
+.calendar-hour-label {
+    -fx-font-size: 9px;
+    -fx-text-fill: #bbb;
+}
+
+/* GMT label */
+.calendar-gmt-label {
+    -fx-font-size: 8px;
+    -fx-text-fill: #bbb;
+}
+
+/* Intestazioni giorni */
+.calendar-day-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4B4B4B;
+}
+
+/* Badge giorno corrente */
+.calendar-today-badge {
+    -fx-background-color: #8EADC2;
+    -fx-background-radius: 12;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+}
+
+.error-label {
+    -fx-text-fill: #C0392B;
+    -fx-font-size: 12px;
+}
+
+.success-label {
+    -fx-text-fill: #27AE60;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+
+/* Bottone standard (Log out, Registrami, Login, ecc.) */
+.button {
+    -fx-background-color: #4B4B4B;
+    -fx-text-fill: white;
+    -fx-background-radius: 22;
+    -fx-cursor: hand;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.button:hover {
+    -fx-background-color: #3A3A3A;
+}
+
+/* Bottone ← Indietro nelle schermate secondarie */
+.back-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-border-radius: 0;
+    -fx-text-fill: #4B4B4B;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.back-button:hover {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3A3A3A;
+}
+
+/* Bottone Next nelle schermate wizard */
+.next-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-text-fill: #4B4B4B;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.next-button:hover {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3A3A3A;
+}
+
+/* Bottoni azione dashboard (tile scuri con icona) */
+.action-tile {
+    -fx-background-color: #4B4B4B;
+    -fx-background-radius: 18;
+    -fx-cursor: hand;
+}
+
+.action-tile:hover {
+    -fx-background-color: #3A3A3A;
+}
+
+/* Testo dentro action-tile */
+.action-tile-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+/* Bottone annulla (rosso) */
+.danger-button {
+    -fx-background-color: #E74C3C;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+}
+
+.danger-button:hover {
+    -fx-background-color: #C0392B;
+}
+
+/* Bottone conferma (verde) */
+.success-button {
+    -fx-background-color: #27AE60;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.success-button:hover {
+    -fx-background-color: #1e8449;
+}
+
+/* ── Inputs ──────────────────────────────────────────── */
+
+.text-field,
+.password-field {
+    -fx-background-color: #CFE5F9;
+    -fx-background-radius: 7;
+    -fx-border-radius: 7;
+    -fx-border-color: transparent;
+    -fx-padding: 8 12;
+    -fx-font-size: 15px;
+}
+
+.text-field:focused,
+.password-field:focused {
+    -fx-border-color: #8EADC2;
+    -fx-border-width: 1.5;
+}
+
+.text-area {
+    -fx-background-color: #CFE5F9;
+    -fx-background-radius: 7;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+}
+
+.text-area .content {
+    -fx-background-color: #CFE5F9;
+    -fx-background-radius: 7;
+}
+
+.text-area:focused {
+    -fx-border-color: #8EADC2;
+    -fx-border-width: 1.5;
+}
+
+.date-picker .text-field {
+    -fx-background-color: #CFE5F9;
+    -fx-border-color: transparent;
+}
+
+/* ── ComboBox ────────────────────────────────────────── */
+
+.combo-box {
+    -fx-background-color: #CFE5F9;
+    -fx-background-radius: 7;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: #CFE5F9;
+    -fx-text-fill: #4B4B4B;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #CFE5F9;
+    -fx-border-color: transparent;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: #CFE5F9;
+    -fx-text-fill: #4B4B4B;
+    -fx-font-size: 13px;
+    -fx-padding: 6 12;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #b8d4ea;
+}
+
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #8EADC2;
+    -fx-text-fill: white;
+}
+
+/* ── ListView ────────────────────────────────────────── */
+
+.list-view {
+    -fx-background-color: #CFE5F9;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+.list-cell {
+    -fx-background-color: #CFE5F9;
+    -fx-text-fill: #4B4B4B;
+    -fx-font-size: 13px;
+    -fx-padding: 6 12;
+}
+
+.list-cell:hover {
+    -fx-background-color: #b8d4ea;
+}
+
+.list-cell:selected {
+    -fx-background-color: #8EADC2;
+    -fx-text-fill: white;
+}
+
+/* ── ToggleButton (card selezionabili nel wizard) ────── */
+
+.toggle-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-text-fill: #4B4B4B;
+    -fx-font-size: 13px;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-alignment: center-left;
+    -fx-padding: 0 14;
+}
+
+.toggle-card:hover {
+    -fx-background-color: #e8f0f7;
+}
+
+.toggle-card:selected {
+    -fx-background-color: #4B4B4B;
+    -fx-text-fill: white;
+}
+
+/* ── Cards ───────────────────────────────────────────── */
+
+/* Card statistica admin */
+.stat-card {
+    -fx-background-color: #CFE5F9;
+    -fx-background-radius: 16;
+    -fx-padding: 18;
+}
+
+.stat-value {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4B4B4B;
+}
+
+.stat-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #4B4B4B;
+}
+
+/* Card generica (prenotazioni, slot, attività) */
+.info-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-padding: 12 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 4, 0, 0, 1);
+}
+
+/* Card info utente nella dashboard */
+.user-info-card {
+    -fx-background-color: #CFE5F9;
+    -fx-background-radius: 16;
+    -fx-padding: 16 20;
+}
+
+/* Card riepilogo prenotazione (wizard BookLesson) */
+.summary-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-padding: 24 32;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 8, 0, 0, 2);
+}
+
+/* ── Topbar schermate secondarie ─────────────────────── */
+
+.page-topbar {
+    -fx-background-color: #CFE5F9;
+    -fx-padding: 10 20 10 16;
+}
+
+/* Titolo centrato nelle schermate secondarie */
+.page-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4B4B4B;
+}
+
+/* ── Misc ────────────────────────────────────────────── */
+
+.hyperlink {
+    -fx-text-fill: #CFE5F9;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.check-box {
+    -fx-font-size: 13px;
+    -fx-text-fill: #4B4B4B;
+}
+
+.separator {
+    -fx-background-color: #b8d4ea;
+}
+
+/* ScrollPane trasparente */
+.transparent-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.transparent-scroll .viewport {
+    -fx-background-color: transparent;
+}
