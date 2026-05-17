@@ -5,9 +5,11 @@ import it.ispwproject.brainbank.controller.applicativo.ReportStatisticsControlle
 import it.ispwproject.brainbank.exception.DAOException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -18,74 +20,107 @@ public class ReportStatisticsGUI {
     private final Stage stage;
     private final ReportStatisticsController controller = new ReportStatisticsController();
 
-    public ReportStatisticsGUI(Stage stage) {
-        this.stage = stage;
-    }
+    public ReportStatisticsGUI(Stage stage) { this.stage = stage; }
 
     public void show() {
-        VBox root = new VBox(22);
-        root.setAlignment(Pos.TOP_CENTER);
-        root.setPadding(new Insets(35, 60, 35, 60));
+        BorderPane root = new BorderPane();
         root.getStyleClass().add("brainbank-background");
+        root.setTop(buildTopBar());
+        root.setCenter(buildContent());
+        stage.setScene(GUIUtils.createScene(root));
+        stage.show();
+    }
 
-        Label title = new Label("Report statistiche");
-        title.getStyleClass().add("title-label");
+    // ── Topbar ───────────────────────────────────────────────────────────
 
-        VBox contentBox = new VBox(18);
-        contentBox.setAlignment(Pos.CENTER);
-        contentBox.setMaxWidth(700);
+    private HBox buildTopBar() {
+        HBox bar = new HBox();
+        bar.getStyleClass().add("page-topbar");
+        bar.setAlignment(Pos.CENTER);
+
+        Button backBtn = new Button("⟪  Indietro");
+        backBtn.getStyleClass().add("back-button");
+        backBtn.setOnAction(e -> MainGUI.showDashboardAdmin());
+
+        Label title = new Label("Report Statistiche");
+        title.getStyleClass().add("page-title");
+        title.setMaxWidth(Double.MAX_VALUE);
+        title.setAlignment(Pos.CENTER);
+        HBox.setHgrow(title, Priority.ALWAYS);
+
+        var logoStream = getClass().getResourceAsStream("/images/logo.png");
+        if (logoStream != null) {
+            ImageView logo = new ImageView(new Image(logoStream, 60, 60, true, true));
+            logo.setFitHeight(38); logo.setPreserveRatio(true); logo.setSmooth(true);
+            bar.getChildren().addAll(backBtn, title, logo);
+        } else {
+            bar.getChildren().addAll(backBtn, title);
+        }
+
+        return bar;
+    }
+
+    // ── Contenuto ────────────────────────────────────────────────────────
+
+    private VBox buildContent() {
+        VBox content = new VBox(24);
+        content.getStyleClass().add("brainbank-background");
+        content.setAlignment(Pos.TOP_CENTER);
+        content.setPadding(new Insets(30, 60, 30, 60));
 
         try {
             StatisticsBean stats = controller.getStatistics();
 
-            HBox cardsBox = new HBox(18);
-            cardsBox.setAlignment(Pos.CENTER);
+            // ── Riga card numeriche ──────────────────────────
+            HBox numCards = new HBox(16);
+            numCards.setAlignment(Pos.CENTER);
+            numCards.setMaxWidth(760);
 
-            cardsBox.getChildren().addAll(
-                    buildStatCard("Prenotazioni totali", String.valueOf(stats.getTotalBookings())),
-                    buildStatCard("Prenotazioni annullate", String.valueOf(stats.getCancelledBookings())),
-                    buildStatCard("Tasso cancellazione", String.format("%.2f%%", stats.getCancellationRate()))
+            numCards.getChildren().addAll(
+                    buildNumCard("Prenotazioni totali",
+                            String.valueOf(stats.getTotalBookings()),
+                            "green"),
+                    buildNumCard("Prenotazioni annullate",
+                            String.valueOf(stats.getCancelledBookings()),
+                            "red"),
+                    buildNumCard("Tasso cancellazione",
+                            String.format("%.1f%%", stats.getCancellationRate()),
+                            "orange")
             );
 
-            HBox rankingBox = new HBox(24);
-            rankingBox.setAlignment(Pos.TOP_CENTER);
+            // ── Riga card ranking ────────────────────────────
+            HBox rankCards = new HBox(20);
+            rankCards.setAlignment(Pos.TOP_CENTER);
+            rankCards.setMaxWidth(760);
 
-            rankingBox.getChildren().addAll(
-                    buildRankingCard("Top Tutor", stats.getTopTutors()),
-                    buildRankingCard("Top Materie", stats.getTopSubjects())
+            rankCards.getChildren().addAll(
+                    buildRankingCard("🏆  Top Tutor",    stats.getTopTutors(),    "lezioni"),
+                    buildRankingCard("📚  Top Materie",  stats.getTopSubjects(),  "prenotazioni")
             );
 
-            contentBox.getChildren().addAll(cardsBox, rankingBox);
+            content.getChildren().addAll(numCards, rankCards);
 
         } catch (DAOException e) {
-            Label errorLabel = new Label("Errore nel caricamento delle statistiche: " + e.getMessage());
+            Label errorLabel = new Label("Errore: " + e.getMessage());
             errorLabel.getStyleClass().add("error-label");
-            contentBox.getChildren().add(errorLabel);
+            content.getChildren().add(errorLabel);
         }
 
-        Button backBtn = new Button("Torna alla dashboard");
-        backBtn.setPrefWidth(220);
-        backBtn.setPrefHeight(42);
-        backBtn.setOnAction(e -> MainGUI.showDashboardAdmin());
-
-        root.getChildren().addAll(title, contentBox, backBtn);
-
-        Scene scene = GUIUtils.createScene(root);
-        stage.setScene(scene);
-        stage.show();
+        return content;
     }
 
-    private VBox buildStatCard(String label, String value) {
-        VBox card = new VBox(8);
-        card.setAlignment(Pos.CENTER);
-        card.setPadding(new Insets(18));
-        card.setPrefWidth(200);
-        card.getStyleClass().add("stat-card");
+    // ── Card numerica con bordo colorato ─────────────────────────────────
+
+    private VBox buildNumCard(String labelText, String value, String color) {
+        VBox card = new VBox(6);
+        card.getStyleClass().add("stat-card-" + color);
+        card.setAlignment(Pos.CENTER_LEFT);
+        card.setPrefWidth(220);
 
         Label valueLabel = new Label(value);
-        valueLabel.getStyleClass().add("stat-value");
+        valueLabel.getStyleClass().add("stat-value-" + color);
 
-        Label textLabel = new Label(label);
+        Label textLabel = new Label(labelText);
         textLabel.getStyleClass().add("stat-label");
         textLabel.setWrapText(true);
 
@@ -93,27 +128,47 @@ public class ReportStatisticsGUI {
         return card;
     }
 
-    private VBox buildRankingCard(String title, Map<String, Integer> data) {
-        VBox card = new VBox(10);
-        card.setPadding(new Insets(18));
-        card.setPrefWidth(300);
-        card.getStyleClass().add("stat-card");
+    // ── Card ranking con lista ────────────────────────────────────────────
+
+    private VBox buildRankingCard(String title, Map<String, Integer> data,
+                                  String unit) {
+        VBox card = new VBox(12);
+        card.getStyleClass().add("ranking-card");
+        card.setPrefWidth(350);
 
         Label titleLabel = new Label(title);
-        titleLabel.getStyleClass().add("field-label");
+        titleLabel.getStyleClass().add("ranking-title");
 
-        card.getChildren().add(titleLabel);
+        card.getChildren().addAll(titleLabel, new Separator());
 
         if (data == null || data.isEmpty()) {
-            Label emptyLabel = new Label("Nessun dato disponibile");
-            emptyLabel.getStyleClass().add("register-label");
-            card.getChildren().add(emptyLabel);
+            Label empty = new Label("Nessun dato disponibile");
+            empty.getStyleClass().add("register-label");
+            card.getChildren().add(empty);
             return card;
         }
 
+        int rank = 1;
         for (Map.Entry<String, Integer> entry : data.entrySet()) {
-            Label row = new Label(entry.getKey() + " — " + entry.getValue());
-            row.getStyleClass().add("register-label");
+            HBox row = new HBox(10);
+            row.setAlignment(Pos.CENTER_LEFT);
+
+            // Numero posizione
+            Label pos = new Label("#" + rank++);
+            pos.getStyleClass().add("ranking-badge");
+            pos.setPrefWidth(40);
+            pos.setAlignment(Pos.CENTER);
+
+            // Nome
+            Label name = new Label(entry.getKey());
+            name.getStyleClass().add("ranking-row");
+            HBox.setHgrow(name, Priority.ALWAYS);
+
+            // Valore
+            Label val = new Label(entry.getValue() + " " + unit);
+            val.getStyleClass().add("ranking-badge");
+
+            row.getChildren().addAll(pos, name, val);
             card.getChildren().add(row);
         }
 

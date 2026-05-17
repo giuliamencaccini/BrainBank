@@ -3,58 +3,86 @@ package it.ispwproject.brainbank.controller.gui;
 import it.ispwproject.brainbank.util.singleton.SessionManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 public class DashboardAdminGUI {
 
     private final Stage stage;
 
-    public DashboardAdminGUI(Stage stage) {
-        this.stage = stage;
-    }
+    public DashboardAdminGUI(Stage stage) { this.stage = stage; }
 
     public void show() {
-        VBox root = new VBox(24);
-        root.setAlignment(Pos.CENTER);
-        root.setPadding(new Insets(40));
+        BorderPane root = new BorderPane();
         root.getStyleClass().add("brainbank-background");
+        root.setTop(buildNavbar());
+        root.setCenter(buildBody());
+        stage.setScene(GUIUtils.createScene(root));
+        stage.show();
+    }
 
-        String nome = SessionManager.getInstance().getLoggedUser().getName();
+    // ── Navbar ───────────────────────────────────────────────────────────
 
-        Label title = new Label("Benvenuto, " + nome);
-        title.getStyleClass().add("title-label");
+    private HBox buildNavbar() {
+        HBox navbar = new HBox();
+        navbar.getStyleClass().add("navbar");
+        navbar.setAlignment(Pos.CENTER_LEFT);
 
-        Label subtitle = new Label("Dashboard Admin");
-        subtitle.getStyleClass().add("subtitle-label");
+        var logoStream = getClass().getResourceAsStream("/images/logo.png");
+        if (logoStream != null) {
+            ImageView logoView = new ImageView(
+                    new Image(logoStream, 80, 80, true, true));
+            logoView.setFitHeight(56); logoView.setFitWidth(56);
+            logoView.setPreserveRatio(true); logoView.setSmooth(true);
+            String nome = SessionManager.getInstance().getLoggedUser().getName();
+            Label welcome = new Label("Benvenuto\n" + nome + "!");
+            welcome.getStyleClass().add("welcome-label");
+            HBox left = new HBox(10, logoView, welcome);
+            left.setAlignment(Pos.CENTER_LEFT);
+            HBox.setHgrow(left, Priority.ALWAYS);
+            navbar.getChildren().add(left);
+        }
+
+        Label ruolo = new Label("Admin");
+        ruolo.getStyleClass().add("role-label");
+        ruolo.setMaxWidth(Double.MAX_VALUE);
+        ruolo.setAlignment(Pos.CENTER);
+        HBox.setHgrow(ruolo, Priority.ALWAYS);
+
+        Button logoutBtn = new Button("Log out");
+        logoutBtn.getStyleClass().add("button");
+        logoutBtn.setPadding(new Insets(6, 18, 6, 18));
+        logoutBtn.setOnAction(e -> {
+            SessionManager.getInstance().clearSession();
+            MainGUI.showLogin();
+        });
+        HBox right = new HBox(logoutBtn);
+        right.setAlignment(Pos.CENTER_RIGHT);
+        HBox.setHgrow(right, Priority.ALWAYS);
+
+        navbar.getChildren().addAll(ruolo, right);
+        return navbar;
+    }
+
+    // ── Body ─────────────────────────────────────────────────────────────
+
+    private VBox buildBody() {
+        VBox body = new VBox(20);
+        body.getStyleClass().add("brainbank-background");
+        body.setAlignment(Pos.CENTER);
+        body.setPadding(new Insets(40));
 
         Button reportBtn = new Button("Report statistiche");
+        reportBtn.getStyleClass().add("button");
         reportBtn.setPrefWidth(220);
         reportBtn.setPrefHeight(42);
         reportBtn.setOnAction(e -> new ReportStatisticsGUI(stage).show());
 
-        Button logoutBtn = new Button("Logout");
-        logoutBtn.setPrefWidth(220);
-        logoutBtn.setPrefHeight(42);
-        logoutBtn.setOnAction(e -> handleLogout());
-
-        root.getChildren().addAll(
-                title,
-                subtitle,
-                reportBtn,
-                logoutBtn
-        );
-
-        Scene scene = GUIUtils.createScene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    private void handleLogout() {
-        SessionManager.getInstance().clearSession();
-        MainGUI.showLogin();
+        body.getChildren().add(reportBtn);
+        return body;
     }
 }

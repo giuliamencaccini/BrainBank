@@ -23,8 +23,8 @@ public class MainGUI extends Application {
         stage.setTitle("BrainBank");
         stage.setWidth(WINDOW_WIDTH);
         stage.setHeight(WINDOW_HEIGHT);
-        stage.setMinWidth(1000);
-        stage.setMinHeight(600);
+        stage.setMinWidth(WINDOW_WIDTH);
+        stage.setMinHeight(WINDOW_HEIGHT);
         stage.setResizable(true);
 
         showLogin();

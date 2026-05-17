@@ -27,11 +27,11 @@ import java.util.Locale;
 public class DashboardStudentGUI {
 
     private static final int HOUR_START   = 8;
-    private static final int HOUR_END     = 18;
-    private static final int HOUR_HEIGHT  = 44;  // altezza pixel per ora
-    private static final int LABEL_WIDTH  = 48;  // larghezza colonna ore
-    private static final int HEADER_H     = 68;  // altezza header (mese + giorno)
-    private static final int DAYS         = 7;   // DOM → SAB
+    private static final int HOUR_END     = 19;
+    private static final int HOUR_HEIGHT  = 30;  // altezza pixel per ora
+    private static final int LABEL_WIDTH  = 42;  // larghezza colonna ore
+    private static final int HEADER_H     = 72;  // altezza header (mese + giorno)
+    private static final int DAYS         = 7;   // LUN → DOM
 
     private static final String BOOKING_COLOR = "#8FBC8F";
 
@@ -114,6 +114,8 @@ public class DashboardStudentGUI {
 
     private VBox buildCalendarSection() {
         VBox section = new VBox(10);
+        section.setPrefWidth(620);
+        section.setMaxWidth(620);
         section.setAlignment(Pos.TOP_LEFT);
         VBox.setVgrow(section, Priority.ALWAYS);
 
@@ -177,8 +179,7 @@ public class DashboardStudentGUI {
 
         Pane pane = new Pane();
         pane.setPrefSize(LABEL_WIDTH + DAYS * colW, gridHeight + HEADER_H);
-        pane.setStyle("-fx-background-color: white; -fx-background-radius: 12; " +
-                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);");
+        pane.getStyleClass().add("calendar-pane");
 
         addMonthRow(pane, monday, colW);
         addDayHeaders(pane, monday, today, colW);
@@ -199,8 +200,8 @@ public class DashboardStudentGUI {
                 + " " + lastDay.getYear();
 
         Label lbl = new Label(month);
-        lbl.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #4B4B4B;");
-        lbl.setLayoutX(LABEL_WIDTH); lbl.setLayoutY(4);
+        lbl.getStyleClass().add("calendar-month-label");
+        lbl.setLayoutX(LABEL_WIDTH); lbl.setLayoutY(8);
         lbl.setPrefWidth(DAYS * colW); lbl.setAlignment(Pos.CENTER);
         pane.getChildren().add(lbl);
 
@@ -220,15 +221,15 @@ public class DashboardStudentGUI {
 
             Label dayAbbr = new Label(dayName);
             dayAbbr.getStyleClass().add("calendar-day-label");
-            dayAbbr.setLayoutX(x); dayAbbr.setLayoutY(24);
+            dayAbbr.setLayoutX(x); dayAbbr.setLayoutY(32);
             dayAbbr.setPrefWidth(colW); dayAbbr.setAlignment(Pos.CENTER);
             pane.getChildren().add(dayAbbr);
 
             if (isToday) {
                 Label badge = new Label(String.valueOf(date.getDayOfMonth()));
                 badge.getStyleClass().add("calendar-today-badge");
-                badge.setPrefSize(26, 26); badge.setAlignment(Pos.CENTER);
-                badge.setLayoutX(x + (colW - 26) / 2.0);
+                badge.setPrefSize(22, 22); badge.setAlignment(Pos.CENTER);
+                badge.setLayoutX(x + (colW - 22) / 2.0);
                 badge.setLayoutY(HEADER_H - 30);
                 pane.getChildren().add(badge);
             } else {
@@ -245,7 +246,7 @@ public class DashboardStudentGUI {
         // Linea separatrice sotto header
         Region sep = new Region();
         sep.setPrefSize(DAYS * colW, 1);
-        sep.setStyle("-fx-background-color: #dde6ee;");
+        sep.getStyleClass().add("calendar-separator");
         sep.setLayoutX(LABEL_WIDTH); sep.setLayoutY(HEADER_H);
         pane.getChildren().add(sep);
 
@@ -262,7 +263,7 @@ public class DashboardStudentGUI {
 
             Region hLine = new Region();
             hLine.setPrefSize(DAYS * colW, 1);
-            hLine.setStyle("-fx-background-color: #eef2f6;");
+            hLine.getStyleClass().add("calendar-grid-line");
             hLine.setLayoutX(LABEL_WIDTH); hLine.setLayoutY(y);
             pane.getChildren().add(hLine);
         }
@@ -270,7 +271,7 @@ public class DashboardStudentGUI {
         for (int d = 1; d < DAYS; d++) {
             Region vLine = new Region();
             vLine.setPrefSize(1, gridHeight);
-            vLine.setStyle("-fx-background-color: #eef2f6;");
+            vLine.getStyleClass().add("calendar-grid-line");
             vLine.setLayoutX(LABEL_WIDTH + d * colW); vLine.setLayoutY(HEADER_H);
             pane.getChildren().add(vLine);
         }
@@ -298,15 +299,15 @@ public class DashboardStudentGUI {
             block.setLayoutY(HEADER_H + sf * HOUR_HEIGHT);
             block.setPrefWidth(colW - 4);
             block.setPrefHeight(Math.max((ef - sf) * HOUR_HEIGHT - 2, 20));
-            block.setPadding(new Insets(3, 4, 3, 4));
+            block.setPadding(new Insets(2, 3, 2, 3));
             block.setStyle("-fx-background-color: " + BOOKING_COLOR + "; -fx-background-radius: 4;");
 
             Label s = new Label(b.getSubject().getName() + " " + b.getTutor().getSurname());
-            s.setStyle("-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: white;");
+            s.getStyleClass().add("calendar-block-title");
             s.setWrapText(true);
             Label t = new Label(bStart.getHour() + "-" + bEnd.getHour() +
                     (bEnd.getHour() < 12 ? "AM" : "PM"));
-            t.setStyle("-fx-font-size: 8px; -fx-text-fill: white;");
+            t.getStyleClass().add("calendar-block-time");
             block.getChildren().addAll(s, t);
             pane.getChildren().add(block);
         }
@@ -315,11 +316,15 @@ public class DashboardStudentGUI {
     // ── Sezione destra ────────────────────────────────────────────────────
 
     private VBox buildRightSection() {
-        VBox section = new VBox(16);
+        VBox section = new VBox(14);
         section.setAlignment(Pos.TOP_CENTER);
-        section.setPrefWidth(390);
-        section.setPadding(new Insets(10, 0, 0, 0));
-        section.getChildren().addAll(buildActionGrid(), buildUserInfoCard());
+        section.setPrefWidth(360);
+        section.setPadding(new Insets(0));
+
+        Region spacer = new Region();
+        spacer.setPrefHeight(42); spacer.setMinHeight(42); spacer.setMaxHeight(42);
+
+        section.getChildren().addAll(spacer, buildActionGrid(), buildUserInfoAccordion());
         return section;
     }
 
@@ -343,39 +348,125 @@ public class DashboardStudentGUI {
         HBox tile = new HBox(14);
         tile.getStyleClass().add("action-tile");
         tile.setAlignment(Pos.CENTER_LEFT);
-        tile.setPrefSize(175, 90);
+        tile.setPrefSize(160, 85);
         tile.setPadding(new Insets(14, 18, 14, 18));
         tile.setOnMouseClicked(e -> handler.handle(new ActionEvent(tile, null)));
 
-        var iconStream = getClass().getResourceAsStream("/icons/" + iconFile);
-        if (iconStream != null) {
-            ImageView icon = new ImageView(
-                    new Image(iconStream, 48, 48, true, true));
-            icon.setFitHeight(30); icon.setFitWidth(30);
-            icon.setPreserveRatio(true); icon.setSmooth(true);
-            ColorAdjust ca = new ColorAdjust(); ca.setBrightness(1.0);
-            icon.setEffect(ca);
-            tile.getChildren().add(icon);
-        }
+        ImageView icon = new ImageView(new Image(
+                getClass().getResourceAsStream("/icons/" + iconFile), 48, 48, true, true));
+        icon.setFitHeight(30); icon.setFitWidth(30);
+        icon.setPreserveRatio(true); icon.setSmooth(true);
+        ColorAdjust ca = new ColorAdjust(); ca.setBrightness(1.0);
+        icon.setEffect(ca);
 
         Label lbl = new Label(text);
         lbl.getStyleClass().add("action-tile-label");
         lbl.setWrapText(true);
-        tile.getChildren().add(lbl);
+
+        tile.getChildren().addAll(icon, lbl);
         return tile;
     }
 
-    private VBox buildUserInfoCard() {
+    private VBox buildUserInfoAccordion() {
         User user = SessionManager.getInstance().getLoggedUser();
-        VBox card = new VBox(10);
-        card.getStyleClass().add("user-info-card");
-        Label title = new Label("Le tue informazioni");
-        title.getStyleClass().add("small-label");
-        card.getChildren().addAll(title, new Separator(),
+
+        HBox header = new HBox(8);
+        header.getStyleClass().addAll("accordion-header");
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(12, 16, 12, 16));
+
+        Label headerLbl = new Label("Le tue informazioni");
+        headerLbl.getStyleClass().add("small-label");
+        HBox.setHgrow(headerLbl, Priority.ALWAYS);
+
+        Label arrow = new Label("▼");
+        arrow.getStyleClass().add("accordion-arrow");
+        header.getChildren().addAll(headerLbl, arrow);
+
+        VBox content = new VBox(10);
+        content.getStyleClass().add("accordion-content");
+        content.setPadding(new Insets(10, 16, 14, 16));
+        content.getChildren().addAll(
+                new Separator(),
                 infoRow("Nome",    user.getName()),
                 infoRow("Cognome", user.getSurname()),
-                infoRow("Email",   user.getEmail()));
-        return card;
+                buildEmailRow(user));
+        content.setVisible(false);
+        content.setManaged(false);
+
+        final boolean[] open = {false};
+        header.setOnMouseClicked(e -> {
+            open[0] = !open[0];
+            content.setVisible(open[0]);
+            content.setManaged(open[0]);
+            arrow.setText(open[0] ? "▲" : "▼");
+            header.getStyleClass().setAll(open[0] ? "accordion-header-open" : "accordion-header");
+        });
+
+        VBox accordion = new VBox(0, header, content);
+        accordion.getStyleClass().add("accordion-panel");
+        return accordion;
+    }
+
+    private HBox buildEmailRow(User user) {
+        Label emailLbl = new Label(user.getEmail() != null ? user.getEmail() : "—");
+        emailLbl.getStyleClass().add("register-label");
+        emailLbl.getStyleClass().add("info-text");
+
+        // Icona matita da file con fallback emoji
+        Button editBtn = new Button();
+        var pencilStream = getClass().getResourceAsStream("/icons/pencil.png");
+        if (pencilStream != null) {
+            ImageView pencilIcon = new ImageView(new Image(pencilStream, 32, 32, true, true));
+            pencilIcon.setFitHeight(16); pencilIcon.setFitWidth(16);
+            pencilIcon.setPreserveRatio(true); pencilIcon.setSmooth(true);
+            editBtn.setGraphic(pencilIcon);
+        } else {
+            editBtn.setText("✏");
+        }
+        editBtn.getStyleClass().add("edit-button");
+
+        Label emailKey = new Label("Email:");
+        emailKey.getStyleClass().add("small-label");
+        emailKey.setPrefWidth(70);
+
+        HBox viewRow = new HBox(8, emailKey, emailLbl, editBtn);
+        viewRow.setAlignment(Pos.CENTER_LEFT);
+
+        TextField emailField = new TextField(user.getEmail());
+        emailField.getStyleClass().add("text-field");
+        emailField.setPrefHeight(32);
+
+        Button saveBtn   = new Button("✓");
+        Button cancelBtn = new Button("✗");
+        saveBtn.getStyleClass().add("save-button");
+        cancelBtn.getStyleClass().add("cancel-inline-button");
+
+        HBox editRow = new HBox(6, emailField, saveBtn, cancelBtn);
+        editRow.setAlignment(Pos.CENTER_LEFT);
+        editRow.setVisible(false); editRow.setManaged(false);
+
+        VBox emailContainer = new VBox(4, viewRow, editRow);
+
+        editBtn.setOnAction(e -> {
+            viewRow.setVisible(false); viewRow.setManaged(false);
+            editRow.setVisible(true);  editRow.setManaged(true);
+            emailField.requestFocus();
+        });
+        cancelBtn.setOnAction(e -> {
+            emailField.setText(user.getEmail());
+            editRow.setVisible(false);  editRow.setManaged(false);
+            viewRow.setVisible(true);   viewRow.setManaged(true);
+        });
+        saveBtn.setOnAction(e -> {
+            String newEmail = emailField.getText().trim();
+            if (!newEmail.isEmpty() && newEmail.contains("@"))
+                emailLbl.setText(newEmail);
+            editRow.setVisible(false);  editRow.setManaged(false);
+            viewRow.setVisible(true);   viewRow.setManaged(true);
+        });
+
+        return new HBox(emailContainer);
     }
 
     private HBox infoRow(String label, String value) {
@@ -384,7 +475,7 @@ public class DashboardStudentGUI {
         lbl.setPrefWidth(70);
         Label val = new Label(value != null ? value : "—");
         val.getStyleClass().add("register-label");
-        val.setStyle("-fx-font-size: 12px;");
+        val.getStyleClass().add("info-text");
         val.setWrapText(true);
         HBox row = new HBox(8, lbl, val);
         row.setAlignment(Pos.CENTER_LEFT);
@@ -395,17 +486,14 @@ public class DashboardStudentGUI {
 
     private Button makeNavBtn(String text, EventHandler<ActionEvent> h) {
         Button btn = new Button(text);
-        btn.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; " +
-                "-fx-text-fill: #4B4B4B; -fx-cursor: hand; -fx-background-color: transparent;");
+        btn.getStyleClass().add("nav-button");
         btn.setOnAction(h);
         return btn;
     }
 
     private Button makeTodayBtn(EventHandler<ActionEvent> h) {
         Button btn = new Button("Oggi");
-        btn.setStyle("-fx-font-size: 11px; -fx-padding: 3 10; " +
-                "-fx-background-color: #4B4B4B; -fx-text-fill: white; " +
-                "-fx-background-radius: 12; -fx-cursor: hand;");
+        btn.getStyleClass().add("today-button");
         btn.setOnAction(h);
         return btn;
     }
