@@ -2,7 +2,7 @@ Progetto sviluppato per il corso di Ingegneria del Software e Progettazione Web 
 ![BrainBank Logo](src/main/resources/images/brand_logo.png)
 ## Descrizione
 
-BrainBank permette a studenti e tutor di interagire tramite un'interfaccia CLI (e in futuro GUI JavaFX):
+BrainBank permette a studenti e tutor di interagire tramite un'interfaccia CLI o GUI (JavaFX):
 
 - Gli **studenti** possono cercare tutor per materia, prenotare lezioni e ricevere notifiche via email
 - I **tutor** possono gestire la propria disponibilità e monitorare i progressi degli studenti
