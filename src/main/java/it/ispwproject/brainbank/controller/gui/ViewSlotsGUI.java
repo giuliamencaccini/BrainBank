@@ -4,13 +4,10 @@ import it.ispwproject.brainbank.bean.TimeSlotBean;
 import it.ispwproject.brainbank.bean.BookingResponseBean;
 import it.ispwproject.brainbank.controller.applicativo.AvailabilityController;
 import it.ispwproject.brainbank.controller.applicativo.BookingController;
-import it.ispwproject.brainbank.exception.BookingException;
 import it.ispwproject.brainbank.exception.DAOException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -39,10 +36,9 @@ public class ViewSlotsGUI {
                     .getInstance().getLoggedUser().getId();
 
             java.util.Map<Integer, String> subjectBySlot = new java.util.HashMap<>();
-            try {
-                for (BookingResponseBean b : bookingController.getTutorBookings(tutorId))
-                    subjectBySlot.put(b.getTimeSlot().getId(), b.getSubject().getName());
-            } catch (Exception ignored) {}
+            for (BookingResponseBean b : bookingController.getTutorBookings(tutorId)) {
+                subjectBySlot.put(b.getTimeSlot().getId(), b.getSubject().getName());
+            }
 
             List<TimeSlotBean> prenotati   = slots.stream().filter(s -> !s.isAvailable()).toList();
             List<TimeSlotBean> disponibili = slots.stream().filter(TimeSlotBean::isAvailable).toList();

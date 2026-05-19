@@ -2,7 +2,6 @@ package it.ispwproject.brainbank.controller.gui;
 
 import it.ispwproject.brainbank.bean.BookingResponseBean;
 import it.ispwproject.brainbank.controller.applicativo.BookingController;
-import it.ispwproject.brainbank.exception.BookingException;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.User;
 import it.ispwproject.brainbank.util.singleton.SessionManager;
@@ -163,7 +162,7 @@ public class DashboardStudentGUI {
         try {
             return bookingController.getStudentBookings(
                     SessionManager.getInstance().getLoggedUser().getId());
-        } catch (DAOException | BookingException e) { return List.of(); }
+        } catch (DAOException e) { return List.of(); }
     }
 
     private Pane buildWeekCalendar(List<BookingResponseBean> bookings, double availWidth) {
