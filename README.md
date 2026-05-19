@@ -1,5 +1,5 @@
-![BrainBank Logo](src/main/resources/images/brand_logo.png)
 Progetto sviluppato per il corso di Ingegneria del Software e Progettazione Web — Università degli Studi di Roma Tor Vergata.
+![BrainBank Logo](src/main/resources/images/brand_logo.png)
 ## Descrizione
 
 BrainBank permette a studenti e tutor di interagire tramite un'interfaccia CLI (e in futuro GUI JavaFX):
@@ -12,7 +12,7 @@ BrainBank permette a studenti e tutor di interagire tramite un'interfaccia CLI (
 - Java 17
 - Maven
 - MySQL
-- JavaFX *(in sviluppo)*
+- JavaFX 
 - SendGrid API *(notifiche email)*
 - Jitsi Meet *(link videolezioni)*
 
@@ -32,24 +32,35 @@ Il sistema supporta tre modalità di persistenza:
 
 ## Avvio
 
-Per avviare in **modalità demo** (no DB richiesto):
-```java
-// In Main.java
-private static final boolean DEMO_MODE = true;
+All’avvio dell’applicazione viene richiesto di selezionare la modalità di persistenza:
+
+- `Demo` → dati simulati in memoria
+- `Database` → persistenza MySQL
+- `File` → persistenza su file JSON
+
+Successivamente viene richiesto di selezionare l’interfaccia:
+
+- `CLI` → interfaccia testuale
+- `GUI` → interfaccia grafica
+
+Per utilizzare la modalità database è necessario configurare:
+
+```text
+src/main/resources/db.properties
 ```
 
-Per avviare in **modalità full** con MySQL:
-```java
-private static final boolean DEMO_MODE = false;
-```
-
-Configurare `src/main/resources/db.properties` con le credenziali del DB e la API key SendGrid.
+con:
+- credenziali MySQL
+- configurazione database
+- API key SendGrid
 
 ## Credenziali demo
 
-| Ruolo | Email | Password |
-|-------|-------|----------|
-| Studente | `student@demo` | qualsiasi |
-| Tutor | `tutor@demo` | qualsiasi |
+| Ruolo     | Email             | Password   |
+|------------|------------------|------------|
+| Studente  | `student@demo`   | qualsiasi |
+| Tutor     | `tutor@demo`     | qualsiasi |
+| Admin     | `admin@demo`     | qualsiasi |
 
-
+## Autrice
+Mencaccini Giulia
