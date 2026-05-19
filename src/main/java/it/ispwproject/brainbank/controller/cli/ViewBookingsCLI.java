@@ -18,7 +18,7 @@ public class ViewBookingsCLI {
 
         try {
             view.mostraPrenotazioni(bookingController.getStudentBookings(studentId));
-        } catch (DAOException | BookingException e) {
+        } catch (DAOException e) {
             view.mostraErrore(e.getMessage());
         }
 

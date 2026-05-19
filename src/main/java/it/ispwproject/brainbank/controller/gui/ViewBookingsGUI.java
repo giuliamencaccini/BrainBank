@@ -88,7 +88,7 @@ public class ViewBookingsGUI {
 
             content.getChildren().addAll(toggleBar, listBox);
 
-        } catch (DAOException | BookingException e) {
+        } catch (DAOException e) {
             errorLabel.setText("Errore: " + e.getMessage());
         }
 

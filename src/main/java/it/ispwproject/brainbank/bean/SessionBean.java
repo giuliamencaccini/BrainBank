@@ -7,10 +7,7 @@ import it.ispwproject.brainbank.enumerator.Role;
  *
  * Contiene solo email e role — dati minimi per l'autorizzazione.
  * Per i dati completi dell'utente usa SessionManager.getLoggedUser().
- *
- * TODO GUI: usare getRole() per mostrare menu corretto
- *           usare getEmail() per identificare l'utente nelle chiamate
- */
+ **/
 public class SessionBean {
 
     private final String email;
@@ -22,6 +19,7 @@ public class SessionBean {
     }
 
     public String getEmail() { return email; }
-    public Role getRole()    { return role; }
+    public Role getRole()    {
+        return role; }
 }
 

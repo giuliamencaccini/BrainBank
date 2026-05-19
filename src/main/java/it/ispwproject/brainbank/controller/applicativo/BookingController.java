@@ -137,7 +137,7 @@ public class BookingController {
     }
 
     public List<BookingResponseBean> getTutorBookings(int tutorId)
-            throws DAOException, BookingException {
+            throws DAOException {
         List<BookingResponseBean> result = new ArrayList<>();
         for (Booking booking : bookingDAO.findByTutor(tutorId)) {
             Tutor    tutor   = booking.getTutor();
@@ -155,7 +155,7 @@ public class BookingController {
     }
 
     public List<BookingResponseBean> getStudentBookings(int studentId)
-            throws DAOException, BookingException {
+            throws DAOException{
         List<BookingResponseBean> result = new ArrayList<>();
 
         for (Booking booking : bookingDAO.findByStudent(studentId)) {

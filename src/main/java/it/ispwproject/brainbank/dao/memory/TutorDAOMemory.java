@@ -16,16 +16,17 @@ public class TutorDAOMemory implements TutorDAO {
     public List<Tutor> getBySubject(Subject subject) throws DAOException {
         // In demo tutti i tutor insegnano tutte le materie
         return store.getUsers().stream()
-                .filter(u -> u instanceof Tutor)
-                .map(u -> (Tutor) u)
+                .filter(Tutor.class::isInstance)
+                .map(Tutor.class::cast)
                 .toList();
     }
 
     @Override
     public Tutor findById(int id) throws DAOException {
         return store.getUsers().stream()
-                .filter(u -> u instanceof Tutor && u.getId() == id)
-                .map(u -> (Tutor) u)
+                .filter(Tutor.class::isInstance)
+                .map(Tutor.class::cast)
+                .filter(tutor -> tutor.getId() == id)
                 .findFirst()
                 .orElse(null);
     }
