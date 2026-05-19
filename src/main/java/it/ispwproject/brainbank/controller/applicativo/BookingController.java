@@ -21,12 +21,14 @@ public class BookingController {
     private final SubjectDAO  subjectDAO;
     private final TutorDAO    tutorDAO;
     private final TimeSlotDAO timeSlotDAO;
+    private final StudentDAO studentDAO;
 
     public BookingController() {
         this.bookingDAO  = DAOFactory.getBookingDAO();
         this.subjectDAO  = DAOFactory.getSubjectDAO();
         this.tutorDAO    = DAOFactory.getTutorDAO();
         this.timeSlotDAO = DAOFactory.getTimeSlotDAO();
+        this.studentDAO  = DAOFactory.getStudentDAO();
     }
 
     public List<SubjectBean> getAvailableSubjects() throws DAOException {
@@ -47,9 +49,10 @@ public class BookingController {
         }
 
         for (Tutor tutor : tutorDAO.getBySubject(subject)) {
-            boolean favourite = student.hasFavourite(tutor.getId());
+            boolean favourite =
+                    studentDAO.isFavouriteTutor(student.getId(), tutor.getId());
             result.add(new TutorBean(tutor.getId(), tutor.getName(),
-                    tutor.getSurname(), tutor.getBio(), favourite));
+                    tutor.getSurname(), tutor.getBio(), tutor.getEmail(), favourite));
         }
 
         return result;
@@ -78,7 +81,7 @@ public class BookingController {
         if (slot    == null) throw new DAOException("Slot non trovato.");
 
         return new BookingResponseBean(0, "PENDING", null,
-                new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), false),
+                new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
                 new SubjectBean(subject.getId(), subject.getName()),
                 new TimeSlotBean(slot.getId(), slot.getDate(),
                         slot.getStartTime(), slot.getEndTime(), slot.isAvailable()));
@@ -96,6 +99,21 @@ public class BookingController {
         if (subject == null) throw new DAOException("Materia non trovata.");
         if (slot    == null) throw new DAOException("Slot non trovato.");
 
+        // Controllo sovrapposizione prenotazioni studente
+        for (Booking b : bookingDAO.findByStudent(student.getId())) {
+            if (b.getStatus().name().equals("CANCELLED")) continue;
+            TimeSlot existing = b.getTimeSlot();
+            if (existing != null &&
+                    existing.getDate().equals(slot.getDate()) &&
+                    existing.getStartTime().isBefore(slot.getEndTime()) &&
+                    slot.getStartTime().isBefore(existing.getEndTime())) {
+                throw new BookingException(
+                        "Hai già una prenotazione sovrapposta: " +
+                                existing.getDate() + " " +
+                                existing.getStartTime() + " – " + existing.getEndTime());
+            }
+        }
+
         Booking booking = new Booking(student, tutor, subject, slot);
         booking.setMeetLink(MEET_LINK_BASE + UUID.randomUUID().toString().substring(0, 8));
         booking.confirm();
@@ -103,7 +121,7 @@ public class BookingController {
 
         BookingResponseBean response = new BookingResponseBean(
                 booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
-                new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), false),
+                new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
                 new SubjectBean(subject.getId(), subject.getName()),
                 new TimeSlotBean(slot.getId(), slot.getDate(),
                         slot.getStartTime(), slot.getEndTime(), slot.isAvailable()));
@@ -116,6 +134,24 @@ public class BookingController {
         }
 
         return response;
+    }
+
+    public List<BookingResponseBean> getTutorBookings(int tutorId)
+            throws DAOException, BookingException {
+        List<BookingResponseBean> result = new ArrayList<>();
+        for (Booking booking : bookingDAO.findByTutor(tutorId)) {
+            Tutor    tutor   = booking.getTutor();
+            Subject  subject = booking.getSubject();
+            TimeSlot slot    = booking.getTimeSlot();
+            if (tutor == null || subject == null || slot == null) continue;
+            result.add(new BookingResponseBean(
+                    booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
+                    new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
+                    new SubjectBean(subject.getId(), subject.getName()),
+                    new TimeSlotBean(slot.getId(), slot.getDate(),
+                            slot.getStartTime(), slot.getEndTime(), slot.isAvailable())));
+        }
+        return result;
     }
 
     public List<BookingResponseBean> getStudentBookings(int studentId)
@@ -131,7 +167,7 @@ public class BookingController {
 
             result.add(new BookingResponseBean(
                     booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
-                    new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), false),
+                    new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
                     new SubjectBean(subject.getId(), subject.getName()),
                     new TimeSlotBean(slot.getId(), slot.getDate(),
                             slot.getStartTime(), slot.getEndTime(), slot.isAvailable())));
@@ -160,5 +196,17 @@ public class BookingController {
                 AppLogger.logWarning("Notifica email non inviata: " + e.getMessage());
             }
         }
+    }
+
+    public void addTutorToFavourites(int studentId, int tutorId)
+            throws DAOException {
+
+        studentDAO.addFavouriteTutor(studentId, tutorId);
+    }
+
+    public void removeTutorFromFavourites(int studentId, int tutorId)
+            throws DAOException {
+
+        studentDAO.removeFavouriteTutor(studentId, tutorId);
     }
 }

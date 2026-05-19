@@ -37,6 +37,14 @@ public class BookingDAOMemory implements BookingDAO {
     }
 
     @Override
+    public List<Booking> findByTutor(int tutorId) throws DAOException {
+        return store.getBookings().stream()
+                .filter(b -> b.getTutor() != null && b.getTutor().getId() == tutorId
+                        && b.getStatus() == BookingStatus.CONFIRMED)
+                .toList();
+    }
+
+    @Override
     public List<Booking> findAll() throws DAOException {
         return new ArrayList<>(store.getBookings());
     }

@@ -29,7 +29,7 @@ public class BookingDAODB extends AbstractBookingDAO {
     private static final String SELECT_BOOKINGS =
             "SELECT b.id, b.status, b.meet_link, b.created_at, " +
                     "       u_s.id s_id, u_s.name s_name, u_s.surname s_surname, u_s.email s_email, " +
-                    "       u_t.id t_id, u_t.name t_name, u_t.surname t_surname, td.bio t_bio, " +
+                    "       u_t.id t_id, u_t.name t_name, u_t.surname t_surname, u_t.email t_email, td.bio t_bio, " +
                     "       sub.id sub_id, sub.name sub_name, " +
                     "       ts.id ts_id, ts.date ts_date, ts.start_time, ts.end_time, ts.available " +
                     "FROM booking b " +
@@ -41,6 +41,9 @@ public class BookingDAODB extends AbstractBookingDAO {
 
     private static final String FIND_BY_STUDENT = SELECT_BOOKINGS +
             "WHERE b.student_id = ? ORDER BY b.created_at DESC";
+
+    private static final String FIND_BY_TUTOR = SELECT_BOOKINGS +
+            "WHERE b.tutor_id = ? AND b.status = 'CONFIRMED' ORDER BY ts.date ASC";
 
     private static final String FIND_ALL = SELECT_BOOKINGS +
             "ORDER BY b.created_at DESC";
@@ -94,6 +97,21 @@ public class BookingDAODB extends AbstractBookingDAO {
             }
         } catch (SQLException e) {
             throw new DAOException("Errore nel caricamento prenotazioni: " + e.getMessage(), e);
+        }
+        return result;
+    }
+
+    @Override
+    public List<Booking> findByTutor(int tutorId) throws DAOException {
+        List<Booking> result = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(FIND_BY_TUTOR)) {
+            ps.setInt(1, tutorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) result.add(mapToBooking(rs));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Errore nel caricamento prenotazioni tutor: " + e.getMessage(), e);
         }
         return result;
     }
@@ -193,7 +211,7 @@ public class BookingDAODB extends AbstractBookingDAO {
         Student student = new Student(rs.getInt("s_id"), rs.getString("s_name"),
                 rs.getString("s_surname"), rs.getString("s_email"), null);
         Tutor tutor = new Tutor(rs.getInt("t_id"), rs.getString("t_name"),
-                rs.getString("t_surname"), null, null, rs.getString("t_bio"));
+                rs.getString("t_surname"), rs.getString("t_email"), null, rs.getString("t_bio"));
         Subject subject = new Subject(rs.getInt("sub_id"), rs.getString("sub_name"));
         TimeSlot slot = new TimeSlot(rs.getInt("ts_id"),
                 rs.getDate("ts_date").toLocalDate(),

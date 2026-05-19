@@ -21,6 +21,15 @@ public class StudentDAODB implements StudentDAO {
                     "WHERE b.tutor_id = ? AND b.status = 'CONFIRMED' " +
                     "ORDER BY u.name";
 
+    private static final String ADD_FAVOURITE_TUTOR =
+            "INSERT IGNORE INTO student_favourite_tutor (student_id, tutor_id) VALUES (?, ?)";
+
+    private static final String REMOVE_FAVOURITE_TUTOR =
+            "DELETE FROM student_favourite_tutor WHERE student_id = ? AND tutor_id = ?";
+
+    private static final String IS_FAVOURITE_TUTOR =
+            "SELECT COUNT(*) FROM student_favourite_tutor WHERE student_id = ? AND tutor_id = ?";
+
     @Override
     public Student findById(int id) throws DAOException {
         try (Connection conn = ConnectionFactory.getConnection();
@@ -48,6 +57,51 @@ public class StudentDAODB implements StudentDAO {
             throw new DAOException("Errore nel caricamento degli studenti: " + e.getMessage(), e);
         }
         return result;
+    }
+
+    @Override
+    public void addFavouriteTutor(int studentId, int tutorId) throws DAOException {
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(ADD_FAVOURITE_TUTOR)) {
+
+            ps.setInt(1, studentId);
+            ps.setInt(2, tutorId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DAOException("Errore nell'aggiunta del tutor preferito: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void removeFavouriteTutor(int studentId, int tutorId) throws DAOException {
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(REMOVE_FAVOURITE_TUTOR)) {
+
+            ps.setInt(1, studentId);
+            ps.setInt(2, tutorId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DAOException("Errore nella rimozione del tutor preferito: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public boolean isFavouriteTutor(int studentId, int tutorId) throws DAOException {
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(IS_FAVOURITE_TUTOR)) {
+
+            ps.setInt(1, studentId);
+            ps.setInt(2, tutorId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException("Errore nel controllo del tutor preferito: " + e.getMessage(), e);
+        }
     }
 
     private Student mapToStudent(ResultSet rs) throws SQLException {

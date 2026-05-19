@@ -50,6 +50,14 @@ public class BookingDAOFile extends AbstractBookingDAO {
     }
 
     @Override
+    public List<Booking> findByTutor(int tutorId) throws DAOException {
+        return identityMap.stream()
+                .filter(b -> b.getTutor() != null && b.getTutor().getId() == tutorId
+                        && b.getStatus() == BookingStatus.CONFIRMED)
+                .toList();
+    }
+
+    @Override
     public List<Booking> findAll() throws DAOException {
         return new ArrayList<>(identityMap);
     }

@@ -4,12 +4,15 @@ import it.ispwproject.brainbank.controller.demo.DemoDataStore;
 import it.ispwproject.brainbank.dao.StudentDAO;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Student;
+import java.util.ArrayList;
+import java.util.Map;
 
 import java.util.List;
 
 public class StudentDAOMemory implements StudentDAO {
 
     private final DemoDataStore store = DemoDataStore.getInstance();
+    private final Map<Integer, List<Integer>> favouritesByStudent = new java.util.HashMap<>();
 
     @Override
     public Student findById(int id) throws DAOException {
@@ -33,4 +36,30 @@ public class StudentDAOMemory implements StudentDAO {
                 .map(u -> (Student) u)
                 .toList();
     }
+    @Override
+    public void addFavouriteTutor(int studentId, int tutorId) throws DAOException {
+        favouritesByStudent
+                .computeIfAbsent(studentId, id -> new ArrayList<>());
+
+        if (!favouritesByStudent.get(studentId).contains(tutorId)) {
+            favouritesByStudent.get(studentId).add(tutorId);
+        }
+    }
+
+    @Override
+    public void removeFavouriteTutor(int studentId, int tutorId) throws DAOException {
+        List<Integer> favourites = favouritesByStudent.get(studentId);
+
+        if (favourites != null) {
+            favourites.remove(Integer.valueOf(tutorId));
+        }
+    }
+
+    @Override
+    public boolean isFavouriteTutor(int studentId, int tutorId) throws DAOException {
+        List<Integer> favourites = favouritesByStudent.get(studentId);
+
+        return favourites != null && favourites.contains(tutorId);
+    }
+
 }
