@@ -92,6 +92,7 @@ public class LoginGUI {
         emailField.setPromptText("Inserisci email");
         emailField.setPrefWidth(250);
         emailField.setPrefHeight(48);
+        emailField.setOnAction(e -> passwordField.requestFocus());
 
         VBox emailBox = new VBox(5, emailLabel, emailField);
         emailBox.setAlignment(Pos.CENTER_LEFT);
@@ -104,11 +105,13 @@ public class LoginGUI {
         passwordField.setPromptText("Inserisci password");
         passwordField.setPrefWidth(250);
         passwordField.setPrefHeight(48);
+        passwordField.setOnAction(e -> handleLogin());
 
         visiblePasswordField = new TextField();
         visiblePasswordField.setPromptText("Inserisci password");
         visiblePasswordField.setPrefWidth(250);
         visiblePasswordField.setPrefHeight(48);
+        visiblePasswordField.setOnAction(e -> handleLogin());
 
         visiblePasswordField.setVisible(false);
 

@@ -9,11 +9,10 @@ import it.ispwproject.brainbank.util.singleton.SessionManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class BookLessonGUI {
@@ -27,169 +26,330 @@ public class BookLessonGUI {
 
     public BookLessonGUI(Stage stage) { this.stage = stage; }
 
-    public void show() { showStepSubject(); }
+    public void show() {
+        BorderPane root = new BorderPane();
+        root.getStyleClass().add("brainbank-background");
+        root.setTop(buildTopBar());
 
-    // ── Step 1: materia ──────────────────────────────────────────────────
+        // ── Lifeline con GridPane ─────────────────────────────────────────
+        Region step1Dot = stepDot(false);
+        Region step2Dot = stepDot(false);
+        Region step3Dot = stepDot(false);
 
-    private void showStepSubject() {
+        GridPane lifeline = new GridPane();
+        lifeline.setPadding(new Insets(30, 12, 0, 20));
+        lifeline.setMinWidth(90);
+
+        // Col 0: pallino + linea centrati | Col 1: testo
+        ColumnConstraints dotCol = new ColumnConstraints(20);
+        dotCol.setHalignment(javafx.geometry.HPos.CENTER);
+        ColumnConstraints txtCol = new ColumnConstraints();
+        lifeline.getColumnConstraints().addAll(dotCol, txtCol);
+
+        // Step 1
+        Label lbl1 = stepLabel("Materia");
+        lifeline.add(step1Dot, 0, 0);
+        lifeline.add(lbl1,     1, 0);
+
+        // Linea 1→2
+        Region line1 = stepLine();
+        lifeline.add(line1, 0, 1);
+        GridPane.setHalignment(line1, javafx.geometry.HPos.CENTER);
+
+        // Step 2
+        Label lbl2 = stepLabel("Tutor");
+        lifeline.add(step2Dot, 0, 2);
+        lifeline.add(lbl2,     1, 2);
+
+        // Linea 2→3
+        Region line2 = stepLine();
+        lifeline.add(line2, 0, 3);
+        GridPane.setHalignment(line2, javafx.geometry.HPos.CENTER);
+
+        // Step 3
+        Label lbl3 = stepLabel("Orario");
+        lifeline.add(step3Dot, 0, 4);
+        lifeline.add(lbl3,     1, 4);
+
+        VBox form = new VBox(20);
+        form.setAlignment(Pos.TOP_CENTER);
+        form.setPadding(new Insets(20, 0, 20, 0));
+        form.setPrefWidth(540);
+
         Label errorLabel = new Label("");
         errorLabel.getStyleClass().add("error-label");
+        errorLabel.setWrapText(true);
 
-        Label subtitle = new Label("Seleziona Materia");
-        subtitle.getStyleClass().add("register-label");
+        // ── 1. Materia ────────────────────────────────────────────────────
+        VBox subjectSection = buildSection("1.  Materia");
 
-        ComboBox<SubjectBean> combo = new ComboBox<>();
-        combo.getStyleClass().add("combo-box");
-        combo.setPromptText("Seleziona...");
-        combo.setPrefWidth(260); combo.setPrefHeight(40);
-        combo.setCellFactory(lv -> subjectCell());
-        combo.setButtonCell(subjectCell());
+        TextField subjectField = new TextField();
+        subjectField.getStyleClass().add("text-field");
+        subjectField.setPromptText("Cerca materia...");
+        subjectField.setPrefHeight(40);
 
-        try { combo.getItems().setAll(bookingController.getAvailableSubjects()); }
-        catch (DAOException e) { errorLabel.setText("Errore: " + e.getMessage()); }
+        ListView<SubjectBean> subjectList = new ListView<>();
+        subjectList.getStyleClass().add("list-view");
+        subjectList.setPrefHeight(-1);
+        subjectList.setMaxHeight(120);
+        subjectList.setVisible(false); subjectList.setManaged(false);
+        subjectList.setCellFactory(lv -> subjectCell());
 
-        VBox content = new VBox(16, subtitle, combo, errorLabel);
-        content.setAlignment(Pos.CENTER);
+        List<SubjectBean> allSubjects;
+        try { allSubjects = bookingController.getAvailableSubjects(); }
+        catch (DAOException e) { allSubjects = List.of(); }
+        final List<SubjectBean> subjects = allSubjects;
 
-        buildAndShow("Home", true, () -> {
-            SubjectBean sel = combo.getValue();
-            if (sel == null) { errorLabel.setText("Seleziona una materia."); return; }
-            selectedSubject = sel;
-            showStepTutor();
-        }, content);
-    }
+        subjectSection.getChildren().addAll(subjectField, subjectList);
 
-    // ── Step 2: tutor ────────────────────────────────────────────────────
+        // ── 2. Tutor ──────────────────────────────────────────────────────
+        VBox tutorSection = buildSection("2.  Tutor");
+        tutorSection.setOpacity(0.5);
+        ToggleGroup tutorGroup = new ToggleGroup();
+        final ToggleGroup[] tutorGroupRef = {tutorGroup};
+        VBox tutorList = new VBox(6);
+        Label tutorHint = hintLabel("Seleziona prima una materia");
+        tutorList.getChildren().add(tutorHint);
+        tutorSection.getChildren().add(tutorList);
 
-    private void showStepTutor() {
-        Label errorLabel = new Label("");
-        errorLabel.getStyleClass().add("error-label");
+        // ── 3. Orario ─────────────────────────────────────────────────────
+        VBox slotSection = buildSection("3.  Orario");
+        slotSection.setOpacity(0.5);
+        ToggleGroup slotGroup = new ToggleGroup();
+        final ToggleGroup[] slotGroupRef = {slotGroup};
+        VBox slotList = new VBox(6);
+        Label slotHint = hintLabel("Seleziona prima un tutor");
+        slotList.getChildren().add(slotHint);
+        slotSection.getChildren().add(slotList);
 
-        Label subtitle = new Label("Tutor disponibili per: " + selectedSubject.getName());
-        subtitle.getStyleClass().add("register-label");
-
-        ToggleGroup group = new ToggleGroup();
-        VBox tutorList = new VBox(8);
-        tutorList.setAlignment(Pos.CENTER);
-
-        try {
-            for (TutorBean t : bookingController.getTutorsBySubject(selectedSubject))
-                tutorList.getChildren().add(buildToggleCard(
-                        (t.isFavourite() ? "⭐ " : "") + t.getName() + " " + t.getSurname(),
-                        t, group));
-        } catch (DAOException e) { errorLabel.setText("Errore: " + e.getMessage()); }
-
-        ScrollPane scroll = buildTransparentScroll(tutorList, 220);
-
-        VBox content = new VBox(14, subtitle, scroll, errorLabel);
-        content.setAlignment(Pos.CENTER);
-
-        buildAndShow("Back", false, () -> {
-            Toggle sel = group.getSelectedToggle();
-            if (sel == null) { errorLabel.setText("Seleziona un tutor."); return; }
-            selectedTutor = (TutorBean) sel.getUserData();
-            showStepSlot();
-        }, content);
-    }
-
-    // ── Step 3: slot ─────────────────────────────────────────────────────
-
-    private void showStepSlot() {
-        Label errorLabel = new Label("");
-        errorLabel.getStyleClass().add("error-label");
-
-        Label subtitle = new Label(
-                "Slot disponibili per: " + selectedTutor.getName() + " " + selectedTutor.getSurname());
-        subtitle.getStyleClass().add("register-label");
-
-        ToggleGroup group = new ToggleGroup();
-        VBox slotList = new VBox(8);
-        slotList.setAlignment(Pos.CENTER);
-
-        try {
-            List<TimeSlotBean> available = bookingController
-                    .getTutorAvailability(selectedTutor)
-                    .stream().filter(TimeSlotBean::isAvailable).toList();
-            if (available.isEmpty()) {
-                Label empty = new Label("Nessuno slot disponibile.");
-                empty.getStyleClass().add("register-label");
-                slotList.getChildren().add(empty);
-            } else {
-                for (TimeSlotBean s : available)
-                    slotList.getChildren().add(buildToggleCard(
-                            s.getDate() + "   " + s.getStartTime() + " – " + s.getEndTime(),
-                            s, group));
-            }
-        } catch (DAOException e) { errorLabel.setText("Errore: " + e.getMessage()); }
-
-        ScrollPane scroll = buildTransparentScroll(slotList, 200);
-
-        VBox content = new VBox(14, subtitle, scroll, errorLabel);
-        content.setAlignment(Pos.CENTER);
-
-        buildAndShow("Back", false, () -> {
-            Toggle sel = group.getSelectedToggle();
-            if (sel == null) { errorLabel.setText("Seleziona uno slot."); return; }
-            selectedSlot = (TimeSlotBean) sel.getUserData();
-            showStepSummary();
-        }, content);
-    }
-
-    // ── Step 4: riepilogo ────────────────────────────────────────────────
-
-    private void showStepSummary() {
-        Label errorLabel = new Label("");
-        errorLabel.getStyleClass().add("error-label");
-
-        Label cardTitle = new Label("Riepilogo prenotazione");
-        cardTitle.getStyleClass().add("field-label");
-
-        Label timeIcon = new Label("🕐 " + selectedSlot.getStartTime().getHour() + ":" +
-                String.format("%02d", selectedSlot.getStartTime().getMinute()));
-        timeIcon.getStyleClass().add("small-label");
-        HBox timeRow = new HBox(timeIcon);
-        timeRow.setAlignment(Pos.CENTER_RIGHT);
-
-        GridPane grid = new GridPane();
-        grid.setHgap(20); grid.setVgap(12);
-        addSummaryRow(grid, 0, "Materia:",         selectedSubject.getName());
-        addSummaryRow(grid, 1, "Tutor:",
-                selectedTutor.getName() + " " + selectedTutor.getSurname());
-        addSummaryRow(grid, 2, "Giorno:",
-                selectedSlot.getDate().getDayOfMonth() + "-" +
-                        selectedSlot.getDate().getMonthValue() + "-" +
-                        selectedSlot.getDate().getYear());
-        addSummaryRow(grid, 3, "Slot:",
-                selectedSlot.getStartTime() + " - " + selectedSlot.getEndTime());
-
+        // ── Bottone Prenota ───────────────────────────────────────────────
         Button bookBtn = new Button("Prenota");
         bookBtn.getStyleClass().add("button");
-        bookBtn.setPrefWidth(140); bookBtn.setPrefHeight(40);
-        bookBtn.setOnAction(e -> confirmBooking(errorLabel));
+        bookBtn.setPrefWidth(180); bookBtn.setPrefHeight(44);
+        bookBtn.setDisable(true);
 
         HBox btnRow = new HBox(bookBtn);
         btnRow.setAlignment(Pos.CENTER);
 
-        VBox card = new VBox(14, timeRow, cardTitle, grid, errorLabel, btnRow);
-        card.getStyleClass().add("summary-card");
-        card.setMaxWidth(420);
+        // ── Logica cascata ────────────────────────────────────────────────
 
-        VBox content = new VBox(card);
-        content.setAlignment(Pos.CENTER);
-        content.setPadding(new Insets(20));
+        subjectField.textProperty().addListener((obs, oldVal, newVal) -> {
+            // Non resettare se il testo corrisponde alla materia già selezionata
+            if (selectedSubject != null && selectedSubject.getName().equals(newVal)) return;
+            selectedSubject = null;
+            bookBtn.setDisable(true);
+            // Reset tutor e slot
+            tutorList.getChildren().setAll(hintLabel("Seleziona prima una materia"));
+            tutorGroup.getToggles().clear();
+            tutorSection.setOpacity(0.5);
+            slotList.getChildren().setAll(hintLabel("Seleziona prima un tutor"));
+            slotGroup.getToggles().clear();
+            slotSection.setOpacity(0.5);
 
-        BorderPane root = buildShell("Indietro", false, null);
-        // Override back → torna allo slot
-        HBox topBar = (HBox) root.getTop();
-        ((Button) topBar.getChildren().get(0)).setOnAction(e -> showStepSlot());
+            if (newVal.isBlank()) {
+                subjectList.setVisible(false); subjectList.setManaged(false);
+            } else {
+                List<SubjectBean> filtered = subjects.stream()
+                        .filter(s -> s.getName().toLowerCase().contains(newVal.toLowerCase()))
+                        .toList();
+                subjectList.getItems().setAll(filtered);
+                subjectList.setVisible(!filtered.isEmpty());
+                subjectList.setManaged(!filtered.isEmpty());
+            }
+        });
 
-        VBox center = new VBox(content);
-        center.getStyleClass().add("brainbank-background");
-        center.setAlignment(Pos.CENTER);
-        root.setCenter(center);
+        // Aggiorna dot step 1 quando si seleziona materia
+        subjectList.setOnMouseClicked(e -> {
+            SubjectBean sel = subjectList.getSelectionModel().getSelectedItem();
+            if (sel == null) return;
+            selectedSubject = sel;
+            subjectField.setText(sel.getName());
+            subjectList.setVisible(false); subjectList.setManaged(false);
+            setStepDone(step1Dot);
+
+            tutorList.getChildren().clear();
+            tutorGroupRef[0] = new ToggleGroup();
+            tutorGroupRef[0].selectedToggleProperty().addListener((o, oldT, newT) -> {
+                if (newT == null) return;
+                selectedTutor = (TutorBean) newT.getUserData();
+                setStepDone(step2Dot);
+                setStepPending(step3Dot);
+                selectedSlot = null;
+                bookBtn.setDisable(true);
+                slotList.getChildren().clear();
+                slotGroupRef[0] = new ToggleGroup();
+                slotGroupRef[0].selectedToggleProperty().addListener((oo, oS, nS) -> {
+                    if (nS == null) return;
+                    selectedSlot = (TimeSlotBean) nS.getUserData();
+                    setStepDone(step3Dot);
+                    bookBtn.setDisable(false);
+                });
+                slotSection.setOpacity(1.0);
+                try {
+                    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    List<TimeSlotBean> slots = bookingController
+                            .getTutorAvailability(selectedTutor)
+                            .stream().filter(TimeSlotBean::isAvailable).toList();
+                    if (slots.isEmpty()) {
+                        slotList.getChildren().add(hintLabel("Nessuno slot disponibile"));
+                    } else {
+                        for (TimeSlotBean s : slots)
+                            slotList.getChildren().add(buildToggle(
+                                    s.getDate().format(fmt) + "   " +
+                                            s.getStartTime() + " – " + s.getEndTime(), s, slotGroupRef[0]));
+                    }
+                } catch (DAOException ex2) { errorLabel.setText("Errore: " + ex2.getMessage()); }
+            });
+            tutorSection.setOpacity(1.0);
+            try {
+                List<TutorBean> tutors = bookingController.getTutorsBySubject(sel);
+                if (tutors.isEmpty()) {
+                    tutorList.getChildren().add(hintLabel("Nessun tutor disponibile"));
+                } else {
+                    // Ordina: preferiti prima
+                    List<TutorBean> sorted = new java.util.ArrayList<>(tutors);
+                    sorted.sort((a, b2) -> Boolean.compare(!a.isFavourite(), !b2.isFavourite()));
+                    for (TutorBean t : sorted)
+                        tutorList.getChildren().add(buildTutorRow(t, tutorGroupRef[0], errorLabel));
+                }
+            } catch (DAOException ex) { errorLabel.setText("Errore: " + ex.getMessage()); }
+        });
+
+        bookBtn.setOnAction(e -> {
+            if (selectedSubject == null || selectedTutor == null || selectedSlot == null) {
+                errorLabel.setText("Completa tutte le selezioni.");
+                return;
+            }
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Conferma prenotazione");
+            confirm.setHeaderText(null);
+            confirm.setContentText(
+                    "Confermi la prenotazione?\n\n" +
+                            "Materia:  " + selectedSubject.getName() + "\n" +
+                            "Tutor:    " + selectedTutor.getName() + " " + selectedTutor.getSurname() + "\n" +
+                            "Giorno:   " + selectedSlot.getDate().format(fmt) + "\n" +
+                            "Orario:   " + selectedSlot.getStartTime() + " – " + selectedSlot.getEndTime());
+            confirm.showAndWait().ifPresent(r -> {
+                if (r == ButtonType.OK) confirmBooking(errorLabel);
+            });
+        });
+
+        form.getChildren().addAll(subjectSection, tutorSection, slotSection, errorLabel, btnRow);
+
+        Region rightSpacer = new Region();
+        rightSpacer.setPrefWidth(90); // stessa larghezza della lifeline
+        HBox.setHgrow(rightSpacer, Priority.NEVER);
+
+        HBox formWrapper = new HBox(lifeline, form, rightSpacer);
+        formWrapper.setAlignment(Pos.TOP_CENTER);
+        formWrapper.getStyleClass().add("brainbank-background");
+        formWrapper.setPadding(new Insets(20, 0, 20, 0));
+        HBox.setHgrow(form, Priority.ALWAYS);
+
+        ScrollPane scroll = new ScrollPane(formWrapper);
+        scroll.getStyleClass().add("transparent-scroll");
+        scroll.setFitToWidth(true);
+
+        root.setCenter(scroll);
 
         stage.setScene(GUIUtils.createScene(root));
         stage.show();
+    }
+
+    private Region stepDot(boolean done) {
+        Region dot = new Region();
+        dot.getStyleClass().add(done ? "step-dot-done" : "step-dot");
+        return dot;
+    }
+
+    private void setStepDone(Region dot) {
+        dot.getStyleClass().setAll("step-dot-done");
+    }
+
+    private void setStepPending(Region dot) {
+        dot.getStyleClass().setAll("step-dot");
+    }
+
+    private Label stepLabel(String text) {
+        Label lbl = new Label(text);
+        lbl.setStyle("-fx-font-size: 11px; -fx-text-fill: #4B4B4B; -fx-padding: 0 0 0 6;");
+        return lbl;
+    }
+
+    private Region stepLine() {
+        Region line = new Region();
+        line.setPrefWidth(2); line.setMaxWidth(2);
+        line.setPrefHeight(50);
+        line.setStyle("-fx-background-color: #b8d4ea;");
+        return line;
+    }
+
+    private VBox buildSection(String title) {
+        VBox section = new VBox(10);
+        section.getStyleClass().add("info-card");
+        section.setMaxWidth(500);
+        Label lbl = new Label(title);
+        lbl.getStyleClass().add("small-label");
+        section.getChildren().add(lbl);
+        return section;
+    }
+
+    private Label hintLabel(String text) {
+        Label lbl = new Label(text);
+        lbl.getStyleClass().add("info-text");
+        lbl.setStyle("-fx-text-fill: #aaa; -fx-font-style: italic;");
+        return lbl;
+    }
+
+    private HBox buildTutorRow(TutorBean t, ToggleGroup group, Label errorLabel) {
+        // Toggle principale
+        ToggleButton toggle = new ToggleButton(t.getName() + " " + t.getSurname());
+        toggle.getStyleClass().add("toggle-card");
+        toggle.setToggleGroup(group);
+        toggle.setUserData(t);
+        toggle.setPrefHeight(38);
+        HBox.setHgrow(toggle, Priority.ALWAYS);
+
+        // Stella cliccabile
+        boolean[] fav = {t.isFavourite()};
+        Button star = new Button("★");
+        star.getStyleClass().add("star-button");
+        star.setPrefWidth(36);
+        star.setPrefHeight(38);
+        star.setStyle("-fx-text-fill: " + (fav[0] ? "#F1C40F" : "#CCCCCC") + ";");
+
+        star.setOnAction(e -> {
+            try {
+                int studentId = SessionManager.getInstance().getLoggedUser().getId();
+                if (fav[0]) {
+                    bookingController.removeTutorFromFavourites(studentId, t.getId());
+                    fav[0] = false;
+                    star.setStyle("-fx-text-fill: #CCCCCC;");
+                } else {
+                    bookingController.addTutorToFavourites(studentId, t.getId());
+                    fav[0] = true;
+                    star.setStyle("-fx-text-fill: #F1C40F;");
+                }
+            } catch (DAOException ex) {
+                errorLabel.setText("Errore: " + ex.getMessage());
+            }
+        });
+
+        HBox row = new HBox(4, toggle, star);
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.setMaxWidth(Double.MAX_VALUE);
+        return row;
+    }
+
+    private ToggleButton buildToggle(String text, Object userData, ToggleGroup group) {
+        ToggleButton btn = new ToggleButton(text);
+        btn.getStyleClass().add("toggle-card");
+        btn.setToggleGroup(group);
+        btn.setUserData(userData);
+        btn.setMaxWidth(Double.MAX_VALUE);
+        btn.setPrefHeight(38);
+        return btn;
     }
 
     private void confirmBooking(Label errorLabel) {
@@ -210,30 +370,17 @@ public class BookLessonGUI {
         }
     }
 
-    // ── Shell comune ─────────────────────────────────────────────────────
+    private HBox buildTopBar() {
+        HBox bar = new HBox();
+        bar.getStyleClass().add("navbar");
+        bar.setAlignment(Pos.CENTER_LEFT);
 
-    private void buildAndShow(String backLabel, boolean backToDash,
-                              Runnable onNext, javafx.scene.Node content) {
-        BorderPane root = buildShell(backLabel, backToDash, onNext);
-        VBox center = new VBox(content);
-        center.getStyleClass().add("brainbank-background");
-        center.setAlignment(Pos.CENTER);
-        root.setCenter(center);
-        stage.setScene(GUIUtils.createScene(root));
-        stage.show();
-    }
-
-    private BorderPane buildShell(String backLabel, boolean backToDash, Runnable onNext) {
-        BorderPane shell = new BorderPane();
-        shell.getStyleClass().add("brainbank-background");
-
-        HBox topBar = new HBox();
-        topBar.getStyleClass().add("page-topbar");
-        topBar.setAlignment(Pos.CENTER);
-
-        Button backBtn = new Button("⟪  " + backLabel);
+        Button backBtn = new Button("⟪  Indietro");
         backBtn.getStyleClass().add("back-button");
-        if (backToDash) backBtn.setOnAction(e -> MainGUI.showDashboardStudent());
+        backBtn.setOnAction(e -> MainGUI.showDashboardStudent());
+        HBox left = new HBox(backBtn);
+        left.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(left, Priority.ALWAYS);
 
         Label title = new Label("Prenota Lezione");
         title.getStyleClass().add("page-title");
@@ -241,53 +388,22 @@ public class BookLessonGUI {
         title.setAlignment(Pos.CENTER);
         HBox.setHgrow(title, Priority.ALWAYS);
 
-        ImageView logoView = new ImageView(new Image(
-                getClass().getResourceAsStream("/images/logo.png"), 60, 60, true, true));
-        logoView.setFitHeight(38); logoView.setPreserveRatio(true); logoView.setSmooth(true);
-
-        topBar.getChildren().add(backBtn);
-        topBar.getChildren().add(title);
-
-        if (onNext != null) {
-            Button nextBtn = new Button("Next  ⟫");
-            nextBtn.getStyleClass().add("next-button");
-            nextBtn.setOnAction(e -> onNext.run());
-            HBox rightBox = new HBox(12, nextBtn, logoView);
-            rightBox.setAlignment(Pos.CENTER_RIGHT);
-            topBar.getChildren().add(rightBox);
-        } else {
-            topBar.getChildren().add(logoView);
+        var logoStream = getClass().getResourceAsStream("/images/logo.png");
+        HBox right = new HBox();
+        right.setAlignment(Pos.CENTER_RIGHT);
+        HBox.setHgrow(right, Priority.ALWAYS);
+        if (logoStream != null) {
+            javafx.scene.image.ImageView logo = new javafx.scene.image.ImageView(
+                    new javafx.scene.image.Image(logoStream, 60, 60, true, true));
+            logo.setFitHeight(56); logo.setPreserveRatio(true); logo.setSmooth(true);
+            right.getChildren().add(logo);
         }
 
-        shell.setTop(topBar);
-        return shell;
-    }
+        left.setPrefWidth(150);
+        right.setPrefWidth(150);
 
-    // ── Helpers ──────────────────────────────────────────────────────────
-
-    private ToggleButton buildToggleCard(String text, Object userData, ToggleGroup group) {
-        ToggleButton card = new ToggleButton(text);
-        card.getStyleClass().add("toggle-card");
-        card.setToggleGroup(group);
-        card.setUserData(userData);
-        card.setPrefWidth(300); card.setPrefHeight(38);
-        return card;
-    }
-
-    private ScrollPane buildTransparentScroll(javafx.scene.Node content, double height) {
-        ScrollPane scroll = new ScrollPane(content);
-        scroll.getStyleClass().add("transparent-scroll");
-        scroll.setFitToWidth(true);
-        scroll.setPrefHeight(height);
-        return scroll;
-    }
-
-    private void addSummaryRow(GridPane grid, int row, String label, String value) {
-        Label lbl = new Label(label);
-        lbl.getStyleClass().add("small-label");
-        Label val = new Label(value);
-        val.getStyleClass().add("register-label");
-        grid.add(lbl, 0, row); grid.add(val, 1, row);
+        bar.getChildren().addAll(left, title, right);
+        return bar;
     }
 
     private ListCell<SubjectBean> subjectCell() {

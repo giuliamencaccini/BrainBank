@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
@@ -18,7 +19,7 @@ import java.time.format.DateTimeParseException;
 
 public class SetAvailabilityGUI {
 
-    private final Stage                  stage;
+    private final Stage stage;
     private final AvailabilityController availabilityController = new AvailabilityController();
 
     private DatePicker datePicker;
@@ -32,9 +33,9 @@ public class SetAvailabilityGUI {
         BorderPane root = buildShell();
 
         VBox content = new VBox(14);
-        content.setPadding(new Insets(30, 40, 30, 40));
-        content.setAlignment(Pos.TOP_CENTER);
-        content.setMaxWidth(420);
+        content.setAlignment(Pos.TOP_LEFT);
+        content.setMaxWidth(380);
+        content.setPrefWidth(380);
 
         Label subtitle = new Label("Aggiungi un nuovo slot");
         subtitle.getStyleClass().add("small-label");
@@ -67,18 +68,32 @@ public class SetAvailabilityGUI {
         errorLabel = new Label("");
         errorLabel.getStyleClass().add("error-label");
         errorLabel.setWrapText(true);
+        errorLabel.setMaxWidth(300);
+        errorLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold;");
 
-        Button saveBtn = new Button("Aggiungi slot");
+        Button saveBtn = new Button("Aggiungi");
         saveBtn.getStyleClass().add("button");
-        saveBtn.setPrefWidth(200); saveBtn.setPrefHeight(42);
+        saveBtn.setPrefWidth(160); saveBtn.setPrefHeight(42);
         saveBtn.setOnAction(e -> handleSave());
+
+        HBox btnRow = new HBox(saveBtn);
+        btnRow.setAlignment(Pos.CENTER);
 
         content.getChildren().addAll(subtitle, dateLabel, datePicker,
                 startLabel, startTimeField, endLabel, endTimeField,
-                errorLabel, saveBtn);
+                errorLabel, btnRow);
 
-        BorderPane centerWrapper = new BorderPane(content);
+        VBox card = new VBox();
+        card.getStyleClass().add("summary-card");
+        card.setMaxHeight(420);
+        card.setPrefWidth(420);
+        card.getChildren().add(content);
+
+        HBox centerWrapper = new HBox();
         centerWrapper.getStyleClass().add("brainbank-background");
+        centerWrapper.setAlignment(Pos.TOP_CENTER);
+        centerWrapper.setPadding(new Insets(30, 0, 0, 0));
+        centerWrapper.getChildren().add(card);
         root.setCenter(centerWrapper);
 
         stage.setScene(GUIUtils.createScene(root));
@@ -115,12 +130,15 @@ public class SetAvailabilityGUI {
 
     private HBox buildTopBar(String titleText, Runnable onBack) {
         HBox bar = new HBox();
-        bar.getStyleClass().add("page-topbar");
-        bar.setAlignment(Pos.CENTER);
+        bar.getStyleClass().add("navbar");
+        bar.setAlignment(Pos.CENTER_LEFT);
 
         Button backBtn = new Button("⟪  Indietro");
         backBtn.getStyleClass().add("back-button");
         backBtn.setOnAction(e -> onBack.run());
+        HBox left = new HBox(backBtn);
+        left.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(left, Priority.ALWAYS);
 
         Label title = new Label(titleText);
         title.getStyleClass().add("page-title");
@@ -128,11 +146,21 @@ public class SetAvailabilityGUI {
         title.setAlignment(Pos.CENTER);
         HBox.setHgrow(title, Priority.ALWAYS);
 
-        ImageView logo = new ImageView(new Image(
-                getClass().getResourceAsStream("/images/logo.png"), 60, 60, true, true));
-        logo.setFitHeight(38); logo.setPreserveRatio(true); logo.setSmooth(true);
+        var logoStream = getClass().getResourceAsStream("/images/logo.png");
+        HBox right = new HBox();
+        right.setAlignment(Pos.CENTER_RIGHT);
+        HBox.setHgrow(right, Priority.ALWAYS);
+        if (logoStream != null) {
+            javafx.scene.image.ImageView logo = new javafx.scene.image.ImageView(
+                    new javafx.scene.image.Image(logoStream, 60, 60, true, true));
+            logo.setFitHeight(56); logo.setPreserveRatio(true); logo.setSmooth(true);
+            right.getChildren().add(logo);
+        }
 
-        bar.getChildren().addAll(backBtn, title, logo);
+        left.setPrefWidth(150);
+        right.setPrefWidth(150);
+
+        bar.getChildren().addAll(left, title, right);
         return bar;
     }
 }

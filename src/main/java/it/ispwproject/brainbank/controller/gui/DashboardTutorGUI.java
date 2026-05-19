@@ -27,7 +27,7 @@ public class DashboardTutorGUI {
 
     private static final int HOUR_START  = 8;
     private static final int HOUR_END    = 19;
-    private static final int HOUR_HEIGHT = 32;
+    private static final int HOUR_HEIGHT = 28;
     private static final int LABEL_WIDTH = 42;
     private static final int HEADER_H    = 72;
     private static final int DAYS        = 7;  // LUN → DOM
@@ -169,7 +169,7 @@ public class DashboardTutorGUI {
         int colW = (int) Math.max(48, (availWidth - LABEL_WIDTH - 2) / DAYS);
 
         Pane pane = new Pane();
-        pane.setPrefSize(LABEL_WIDTH + DAYS * colW, gridHeight + HEADER_H);
+        pane.setPrefSize(LABEL_WIDTH + DAYS * colW + 8, gridHeight + HEADER_H);
         pane.getStyleClass().add("calendar-pane");
 
         addMonthRow(pane, monday, colW);
@@ -310,24 +310,27 @@ public class DashboardTutorGUI {
         section.setPadding(new Insets(0));
 
         Region spacer = new Region();
-        spacer.setPrefHeight(42); spacer.setMinHeight(42); spacer.setMaxHeight(42);
+        spacer.setPrefHeight(40); spacer.setMinHeight(40); spacer.setMaxHeight(40);
 
         VBox actionGrid = buildActionGrid();
         VBox.setVgrow(actionGrid, Priority.NEVER);
 
-        section.getChildren().addAll(spacer, actionGrid, buildUserInfoAccordion());
+        VBox accordion = buildUserInfoAccordion();
+        VBox.setVgrow(accordion, Priority.NEVER);
+
+        section.getChildren().addAll(spacer, actionGrid, accordion);
         return section;
     }
 
     private VBox buildActionGrid() {
-        VBox col = new VBox(14);
+        VBox col = new VBox(10);
         col.setAlignment(Pos.TOP_CENTER);
         col.getChildren().addAll(
-                actionTile("master-plan.png", "Disponibilità",
+                actionTile("set-availability.png", "Imposta Disponibilità",
                         e -> new SetAvailabilityGUI(stage).show()),
-                actionTile("time-check.png",  "Visualizza Slot",
+                actionTile("time-check.png",  "I miei slot",
                         e -> new ViewSlotsGUI(stage).show()),
-                actionTile("workshop.png",    "Gestisci Studenti",
+                actionTile("my-students.png","Gestisci Studenti",
                         e -> new ManageStudentsGUI(stage).show())
         );
         return col;
@@ -335,28 +338,25 @@ public class DashboardTutorGUI {
 
     private HBox actionTile(String iconFile, String text,
                             EventHandler<ActionEvent> handler) {
-        HBox tile = new HBox(14);
+        HBox tile = new HBox(12);
         tile.getStyleClass().add("action-tile");
         tile.setAlignment(Pos.CENTER_LEFT);
-        tile.setPrefSize(350, 75);
+        tile.setPrefHeight(58);
         tile.setMaxWidth(Double.MAX_VALUE);
-        tile.setPadding(new Insets(14, 18, 14, 18));
+        tile.setPadding(new Insets(10, 18, 10, 18));
         tile.setOnMouseClicked(e -> handler.handle(new ActionEvent(tile, null)));
 
         var iconStream = getClass().getResourceAsStream("/icons/" + iconFile);
         if (iconStream != null) {
-            // Carica a dimensione nativa e scala via FitHeight — meno sgranatura
             ImageView icon = new ImageView(new Image(iconStream, 0, 0, true, true));
-            icon.setFitHeight(26); icon.setFitWidth(26);
+            icon.setFitHeight(24); icon.setFitWidth(24);
             icon.setPreserveRatio(true); icon.setSmooth(true);
-            // Brightness ridotta — 1.0 schiariva troppo
-            ColorAdjust ca = new ColorAdjust(); ca.setBrightness(0.8);
+            ColorAdjust ca = new ColorAdjust(); ca.setBrightness(1.0);
             icon.setEffect(ca);
             tile.getChildren().add(icon);
         }
         Label lbl = new Label(text);
         lbl.getStyleClass().add("action-tile-label");
-        lbl.setWrapText(false);
         tile.getChildren().add(lbl);
         return tile;
     }
@@ -404,7 +404,6 @@ public class DashboardTutorGUI {
 
     private HBox buildEmailRow(User user) {
         Label emailLbl = new Label(user.getEmail() != null ? user.getEmail() : "—");
-        emailLbl.getStyleClass().add("register-label");
         emailLbl.getStyleClass().add("info-text");
 
         Button editBtn = new Button();
@@ -433,7 +432,9 @@ public class DashboardTutorGUI {
         Button saveBtn   = new Button("✓");
         Button cancelBtn = new Button("✗");
         saveBtn.getStyleClass().add("save-button");
+        saveBtn.setMinWidth(32); saveBtn.setMinHeight(32);
         cancelBtn.getStyleClass().add("cancel-inline-button");
+        cancelBtn.setMinWidth(32); cancelBtn.setMinHeight(32);
 
         HBox editRow = new HBox(6, emailField, saveBtn, cancelBtn);
         editRow.setAlignment(Pos.CENTER_LEFT);
@@ -467,7 +468,6 @@ public class DashboardTutorGUI {
         lbl.getStyleClass().add("small-label");
         lbl.setPrefWidth(70);
         Label val = new Label(value != null ? value : "—");
-        val.getStyleClass().add("register-label");
         val.getStyleClass().add("info-text");
         val.setWrapText(true);
         HBox row = new HBox(8, lbl, val);

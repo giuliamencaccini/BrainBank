@@ -12,8 +12,8 @@ public class MainGUI extends Application {
     public static final String COLOR_ERROR = "#C0392B";
     public static final String COLOR_SUCCESS = "#27AE60";
 
-    public static final int WINDOW_WIDTH  = 1000;
-    public static final int WINDOW_HEIGHT = 600;
+    public static final int WINDOW_WIDTH  = 900;
+    public static final int WINDOW_HEIGHT = 580;
 
     private static Stage primaryStage;
 

@@ -9,6 +9,7 @@
      Success     : #27AE60
    ═══════════════════════════════════════════════════════ */
 
+
 /* ── Base ────────────────────────────────────────────── */
 
 .root {
@@ -17,12 +18,17 @@
 }
 
 .brainbank-background { -fx-background-color: #8EADC2; }
-.light-background     { -fx-background-color: #CFE5F9; }
 
 .navbar {
     -fx-background-color: #CFE5F9;
     -fx-padding: 8 20 8 16;
 }
+
+.page-topbar {
+    -fx-background-color: #CFE5F9;
+    -fx-padding: 10 20 10 16;
+}
+
 
 /* ── Typography ──────────────────────────────────────── */
 
@@ -51,8 +57,16 @@
     -fx-text-fill: #4B4B4B;
 }
 
+/* page-title e field-label sono identiche: 18px bold */
+.page-title,
 .field-label {
     -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4B4B4B;
+}
+
+.calendar-title {
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-text-fill: #4B4B4B;
 }
@@ -63,20 +77,17 @@
     -fx-text-fill: #4B4B4B;
 }
 
-/* Testo normale in form e card */
 .register-label {
     -fx-font-size: 13px;
     -fx-text-fill: #4B4B4B;
 }
 
-/* Etichette bold piccole — usata per label campi, titoletti */
 .small-label {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-text-fill: #4B4B4B;
 }
 
-/* Valori nelle info utente — come small-label ma senza bold */
 .info-text {
     -fx-font-size: 12px;
     -fx-text-fill: #4B4B4B;
@@ -84,6 +95,7 @@
 
 .error-label {
     -fx-font-size: 12px;
+    -fx-font-weight: bold;
     -fx-text-fill: #C0392B;
 }
 
@@ -93,171 +105,6 @@
     -fx-text-fill: #27AE60;
 }
 
-/* ── Calendario ──────────────────────────────────────── */
-
-.calendar-title {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #4B4B4B;
-}
-
-.calendar-hour-label {
-    -fx-font-size: 9px;
-    -fx-text-fill: #bbb;
-}
-
-.calendar-day-label {
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #4B4B4B;
-}
-
-.calendar-today-badge {
-    -fx-background-color: #8EADC2;
-    -fx-background-radius: 12;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 11px;
-}
-
-.calendar-pane {
-    -fx-background-color: white;
-    -fx-background-radius: 12;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
-}
-
-.calendar-month-label {
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #4B4B4B;
-}
-
-.calendar-separator { -fx-background-color: #dde6ee; }
-.calendar-grid-line { -fx-background-color: #eef2f6; }
-
-.calendar-block-title {
-    -fx-font-size: 9px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-}
-
-.calendar-block-time {
-    -fx-font-size: 8px;
-    -fx-text-fill: white;
-}
-
-/* ── Buttons ─────────────────────────────────────────── */
-
-.button {
-    -fx-background-color: #4B4B4B;
-    -fx-text-fill: white;
-    -fx-background-radius: 22;
-    -fx-cursor: hand;
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
-}
-
-.button:hover { -fx-background-color: #3A3A3A; }
-
-/* ← Indietro e → Next wizard */
-.back-button,
-.next-button {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-text-fill: #4B4B4B;
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-    -fx-padding: 0;
-}
-
-.back-button:hover,
-.next-button:hover {
-    -fx-background-color: transparent;
-    -fx-text-fill: #3A3A3A;
-}
-
-/* ‹ › calendario */
-.nav-button {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-text-fill: #4B4B4B;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-    -fx-padding: 0;
-}
-
-.nav-button:hover {
-    -fx-background-color: transparent;
-    -fx-text-fill: #3A3A3A;
-}
-
-.today-button {
-    -fx-background-color: #4B4B4B;
-    -fx-text-fill: white;
-    -fx-background-radius: 12;
-    -fx-font-size: 11px;
-    -fx-cursor: hand;
-    -fx-padding: 3 10;
-}
-
-.today-button:hover { -fx-background-color: #3A3A3A; }
-
-.action-tile {
-    -fx-background-color: #4B4B4B;
-    -fx-background-radius: 18;
-    -fx-cursor: hand;
-}
-
-.action-tile:hover { -fx-background-color: #3A3A3A; }
-
-.action-tile-label {
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-}
-
-.edit-button {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-cursor: hand;
-    -fx-padding: 0 4;
-}
-
-.edit-button:hover { -fx-opacity: 0.7; }
-
-/* Verde — salva / conferma */
-.save-button,
-.success-button {
-    -fx-background-color: #27AE60;
-    -fx-text-fill: white;
-    -fx-background-radius: 10;
-    -fx-cursor: hand;
-    -fx-font-size: 12px;
-}
-
-.save-button:hover,
-.success-button:hover { -fx-background-color: #1e8449; }
-
-/* Rosso — annulla inline / prenotazione */
-.cancel-inline-button,
-.danger-button {
-    -fx-background-color: #E74C3C;
-    -fx-text-fill: white;
-    -fx-background-radius: 10;
-    -fx-cursor: hand;
-    -fx-font-size: 12px;
-}
-
-/* danger-button è leggermente più enfatico */
-.danger-button {
-    -fx-font-weight: bold;
-    -fx-font-size: 13px;
-}
-
-.cancel-inline-button:hover,
-.danger-button:hover { -fx-background-color: #C0392B; }
 
 /* ── Inputs ──────────────────────────────────────────── */
 
@@ -299,6 +146,12 @@
     -fx-border-color: transparent;
 }
 
+.check-box {
+    -fx-font-size: 13px;
+    -fx-text-fill: #4B4B4B;
+}
+
+
 /* ── ComboBox ────────────────────────────────────────── */
 
 .combo-box {
@@ -308,7 +161,6 @@
     -fx-font-size: 14px;
 }
 
-/* Celle lista dropdown condividono sfondo e testo */
 .combo-box .list-cell,
 .combo-box-popup .list-view {
     -fx-background-color: #CFE5F9;
@@ -323,6 +175,7 @@
 
 .combo-box-popup .list-cell:hover    { -fx-background-color: #b8d4ea; }
 .combo-box-popup .list-cell:selected { -fx-background-color: #8EADC2; -fx-text-fill: white; }
+
 
 /* ── ListView ────────────────────────────────────────── */
 
@@ -342,7 +195,76 @@
 .list-cell:hover    { -fx-background-color: #b8d4ea; }
 .list-cell:selected { -fx-background-color: #8EADC2; -fx-text-fill: white; }
 
-/* ── ToggleButton wizard ─────────────────────────────── */
+
+/* ── Buttons ─────────────────────────────────────────── */
+
+.button {
+    -fx-background-color: #4B4B4B;
+    -fx-text-fill: white;
+    -fx-background-radius: 22;
+    -fx-cursor: hand;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.button:hover { -fx-background-color: #3A3A3A; }
+
+.back-button,
+.next-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #4B4B4B;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.back-button:hover,
+.next-button:hover {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3A3A3A;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #4B4B4B;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.nav-button:hover {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3A3A3A;
+}
+
+.today-button {
+    -fx-background-color: #4B4B4B;
+    -fx-text-fill: white;
+    -fx-background-radius: 12;
+    -fx-font-size: 11px;
+    -fx-cursor: hand;
+    -fx-padding: 3 10;
+}
+
+.today-button:hover { -fx-background-color: #3A3A3A; }
+
+.action-tile {
+    -fx-background-color: #4B4B4B;
+    -fx-background-radius: 18;
+    -fx-cursor: hand;
+}
+
+.action-tile:hover { -fx-background-color: #3A3A3A; }
+
+.action-tile-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
 
 .toggle-card {
     -fx-background-color: white;
@@ -358,26 +280,79 @@
 .toggle-card:hover    { -fx-background-color: #e8f0f7; }
 .toggle-card:selected { -fx-background-color: #4B4B4B; -fx-text-fill: white; }
 
+.edit-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 0 4;
+}
+
+.edit-button:hover { -fx-background-color: #b8d4ea; -fx-background-radius: 6; }
+
+.save-button,
+.success-button {
+    -fx-background-color: #27AE60;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-padding: 4 10;
+}
+
+.save-button:hover,
+.success-button:hover { -fx-background-color: #1e8449; }
+
+.cancel-inline-button,
+.danger-button {
+    -fx-background-color: #E74C3C;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-padding: 4 10;
+}
+
+.danger-button {
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.cancel-inline-button:hover,
+.danger-button:hover { -fx-background-color: #C0392B; }
+
+.star-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-font-size: 18px;
+    -fx-padding: 0 4;
+}
+
+.star-button:hover { -fx-opacity: 0.75; }
+
+.hyperlink {
+    -fx-text-fill: #1A5276;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+
 /* ── Cards ───────────────────────────────────────────── */
 
-.stat-card {
-    -fx-background-color: #CFE5F9;
-    -fx-background-radius: 16;
-    -fx-padding: 18;
+.info-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-padding: 12 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 4, 0, 0, 1);
 }
 
-.stat-value {
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #4B4B4B;
+.summary-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-padding: 24 32;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 8, 0, 0, 2);
 }
 
-.stat-label {
-    -fx-font-size: 13px;
-    -fx-text-fill: #4B4B4B;
-}
-
-/* Base condivisa card numeriche colorate */
 .stat-card-green,
 .stat-card-red,
 .stat-card-orange {
@@ -393,7 +368,6 @@
 .stat-card-red    { -fx-border-color: #E07070 transparent transparent transparent; }
 .stat-card-orange { -fx-border-color: #E8A87C transparent transparent transparent; }
 
-/* Base condivisa valori colorati */
 .stat-value-green,
 .stat-value-red,
 .stat-value-orange {
@@ -405,6 +379,11 @@
 .stat-value-red    { -fx-text-fill: #E07070; }
 .stat-value-orange { -fx-text-fill: #E8A87C; }
 
+.stat-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #4B4B4B;
+}
+
 .ranking-card {
     -fx-background-color: white;
     -fx-background-radius: 14;
@@ -412,10 +391,14 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 6, 0, 0, 2);
 }
 
-/* ranking-title ≈ welcome-label (14px bold) */
 .ranking-title {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
+    -fx-text-fill: #4B4B4B;
+}
+
+.ranking-row {
+    -fx-font-size: 13px;
     -fx-text-fill: #4B4B4B;
 }
 
@@ -428,40 +411,56 @@
     -fx-padding: 2 8;
 }
 
-.info-card {
+
+/* ── Calendario ──────────────────────────────────────── */
+
+.calendar-pane {
     -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-padding: 12 16;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 4, 0, 0, 1);
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
 }
 
-.user-info-card {
-    -fx-background-color: #CFE5F9;
-    -fx-background-radius: 16;
-    -fx-padding: 16 20;
-}
-
-.summary-card {
-    -fx-background-color: white;
-    -fx-background-radius: 14;
-    -fx-padding: 24 32;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 8, 0, 0, 2);
-}
-
-/* ── Topbar schermate secondarie ─────────────────────── */
-
-.page-topbar {
-    -fx-background-color: #CFE5F9;
-    -fx-padding: 10 20 10 16;
-}
-
-.page-title {
-    -fx-font-size: 18px;
+.calendar-month-label {
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-text-fill: #4B4B4B;
 }
 
-/* ── Accordion info utente ───────────────────────────── */
+.calendar-day-label{
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4B4B4B;
+}
+
+.calendar-hour-label {
+    -fx-font-size: 9px;
+    -fx-text-fill: #bbb;
+}
+
+.calendar-today-badge {
+    -fx-background-color: #8EADC2;
+    -fx-background-radius: 12;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+}
+
+.calendar-separator { -fx-background-color: #dde6ee; }
+.calendar-grid-line { -fx-background-color: #eef2f6; }
+
+.calendar-block-title {
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.calendar-block-time {
+    -fx-font-size: 8px;
+    -fx-text-fill: white;
+}
+
+
+/* ── Accordion ───────────────────────────────────────── */
 
 .accordion-header,
 .accordion-header-open {
@@ -486,20 +485,8 @@
     -fx-text-fill: #4B4B4B;
 }
 
-/* ── Misc ────────────────────────────────────────────── */
 
-.hyperlink {
-    -fx-text-fill: #CFE5F9;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-}
-
-.check-box {
-    -fx-font-size: 13px;
-    -fx-text-fill: #4B4B4B;
-}
-
-.separator { -fx-background-color: #b8d4ea; }
+/* ── ScrollPane ──────────────────────────────────────── */
 
 .transparent-scroll {
     -fx-background-color: transparent;
@@ -516,10 +503,30 @@
     -fx-padding: 0;
 }
 
-.brainbank-scroll .viewport {
-    -fx-background-color: #8EADC2;
+.brainbank-scroll .viewport { -fx-background-color: #8EADC2; }
+.brainbank-scroll > .corner { -fx-background-color: #8EADC2; }
+
+
+/* ── Misc ────────────────────────────────────────────── */
+
+.separator { -fx-background-color: #b8d4ea; }
+
+.step-dot {
+    -fx-min-width: 14; -fx-min-height: 14;
+    -fx-max-width: 14; -fx-max-height: 14;
+    -fx-background-color: transparent;
+    -fx-border-color: #8EADC2;
+    -fx-border-width: 2;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
 }
 
-.brainbank-scroll > .corner {
-    -fx-background-color: #8EADC2;
+.step-dot-done {
+    -fx-min-width: 14; -fx-min-height: 14;
+    -fx-max-width: 14; -fx-max-height: 14;
+    -fx-background-color: #8FBC8F;
+    -fx-border-color: #6A9E6A;
+    -fx-border-width: 2;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
 }

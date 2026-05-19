@@ -78,6 +78,20 @@ public class BookLessonCLI {
             // Step 5 – creazione
             BookingResponseBean response = bookingController.createBooking(request);
             view.mostraConferma(response);
+            if (!tutor.isFavourite()) {
+                boolean addFavourite = view.chiediConferma(
+                        "Vuoi aggiungere " + tutor.getFullName() + " ai tutor preferiti?"
+                );
+
+                if (addFavourite) {
+                    bookingController.addTutorToFavourites(
+                            studentBean.getId(),
+                            tutor.getId()
+                    );
+
+                    view.mostraMessaggio("⭐ Tutor aggiunto ai preferiti.");
+                }
+            }
 
         } catch (DAOException | BookingException e) {
             view.mostraMessaggio("❌ Errore: " + e.getMessage());

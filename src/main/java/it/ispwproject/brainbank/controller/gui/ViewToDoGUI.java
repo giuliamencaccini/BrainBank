@@ -101,18 +101,22 @@ public class ViewToDoGUI {
     private BorderPane buildShell() {
         BorderPane shell = new BorderPane();
         shell.getStyleClass().add("brainbank-background");
-        shell.setTop(buildTopBar("Le mie attività", () -> MainGUI.showDashboardStudent()));
+        shell.setTop(buildTopBar("To-do", () -> MainGUI.showDashboardStudent()));
         return shell;
     }
 
     private HBox buildTopBar(String titleText, Runnable onBack) {
         HBox bar = new HBox();
-        bar.getStyleClass().add("page-topbar");
-        bar.setAlignment(Pos.CENTER);
+        bar.getStyleClass().add("navbar");
+        bar.setAlignment(Pos.CENTER_LEFT);
 
         Button backBtn = new Button("⟪  Indietro");
         backBtn.getStyleClass().add("back-button");
         backBtn.setOnAction(e -> onBack.run());
+        HBox left = new HBox(backBtn);
+        left.setAlignment(Pos.CENTER_LEFT);
+        left.setPrefWidth(150);
+        HBox.setHgrow(left, Priority.ALWAYS);
 
         Label title = new Label(titleText);
         title.getStyleClass().add("page-title");
@@ -120,11 +124,19 @@ public class ViewToDoGUI {
         title.setAlignment(Pos.CENTER);
         HBox.setHgrow(title, Priority.ALWAYS);
 
-        ImageView logo = new ImageView(new Image(
-                getClass().getResourceAsStream("/images/logo.png"), 60, 60, true, true));
-        logo.setFitHeight(38); logo.setPreserveRatio(true); logo.setSmooth(true);
+        HBox right = new HBox();
+        right.setAlignment(Pos.CENTER_RIGHT);
+        right.setPrefWidth(150);
+        HBox.setHgrow(right, Priority.ALWAYS);
+        var logoStream = getClass().getResourceAsStream("/images/logo.png");
+        if (logoStream != null) {
+            ImageView logo = new ImageView(
+                    new Image(logoStream, 60, 60, true, true));
+            logo.setFitHeight(56); logo.setPreserveRatio(true); logo.setSmooth(true);
+            right.getChildren().add(logo);
+        }
 
-        bar.getChildren().addAll(backBtn, title, logo);
+        bar.getChildren().addAll(left, title, right);
         return bar;
     }
 

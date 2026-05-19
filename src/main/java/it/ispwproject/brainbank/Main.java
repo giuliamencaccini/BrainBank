@@ -3,10 +3,11 @@ package it.ispwproject.brainbank;
 import it.ispwproject.brainbank.controller.cli.MainCLI;
 import it.ispwproject.brainbank.controller.cli.ModeSelectorCLI;
 import it.ispwproject.brainbank.controller.gui.MainGUI;
+import it.ispwproject.brainbank.util.Printer;
 
 import java.util.Scanner;
 
-public class Main {
+public class  Main {
 
     public static void main(String[] args) {
 
@@ -20,13 +21,13 @@ public class Main {
         String scelta = "";
 
         while (!scelta.equals("1") && !scelta.equals("2")) {
-            System.out.println("\n  ── Seleziona interfaccia");
-            System.out.println("  [1] CLI  — interfaccia testuale");
-            System.out.println("  [2] GUI  — interfaccia grafica");
-            System.out.print("\n  Scelta: ");
+            Printer.println("\n  ── Seleziona interfaccia");
+            Printer.println("  [1] CLI  — interfaccia testuale");
+            Printer.println("  [2] GUI  — interfaccia grafica");
+            Printer.print("\n  Scelta: ");
             scelta = scanner.nextLine().trim();
             if (!scelta.equals("1") && !scelta.equals("2")) {
-                System.out.println("  ❌ Scelta non valida.");
+                Printer.printError("Scelta non valida.");
             }
         }
 

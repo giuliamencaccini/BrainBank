@@ -28,7 +28,7 @@ public class DashboardStudentGUI {
 
     private static final int HOUR_START   = 8;
     private static final int HOUR_END     = 19;
-    private static final int HOUR_HEIGHT  = 30;  // altezza pixel per ora
+    private static final int HOUR_HEIGHT  = 28;  // altezza pixel per ora
     private static final int LABEL_WIDTH  = 42;  // larghezza colonna ore
     private static final int HEADER_H     = 72;  // altezza header (mese + giorno)
     private static final int DAYS         = 7;   // LUN → DOM
@@ -64,7 +64,7 @@ public class DashboardStudentGUI {
         logoView.setPreserveRatio(true); logoView.setSmooth(true);
 
         String nome = SessionManager.getInstance().getLoggedUser().getName();
-        Label welcome = new Label("Bentornata\n" + nome + "!");
+        Label welcome = new Label("Bentornato\n" + nome + "!");
         welcome.getStyleClass().add("welcome-label");
 
         HBox left = new HBox(10, logoView, welcome);
@@ -178,7 +178,7 @@ public class DashboardStudentGUI {
         int colW = (int) Math.max(48, (availWidth - LABEL_WIDTH - 2) / DAYS);
 
         Pane pane = new Pane();
-        pane.setPrefSize(LABEL_WIDTH + DAYS * colW, gridHeight + HEADER_H);
+        pane.setPrefSize(LABEL_WIDTH + DAYS * colW + 8, gridHeight + HEADER_H);
         pane.getStyleClass().add("calendar-pane");
 
         addMonthRow(pane, monday, colW);
@@ -205,10 +205,6 @@ public class DashboardStudentGUI {
         lbl.setPrefWidth(DAYS * colW); lbl.setAlignment(Pos.CENTER);
         pane.getChildren().add(lbl);
 
-        Label gmt = new Label("GMT+01");
-        gmt.getStyleClass().add("calendar-gmt-label");
-        gmt.setLayoutX(2); gmt.setLayoutY(HEADER_H - 14);
-        pane.getChildren().add(gmt);
     }
 
     private void addDayHeaders(Pane pane, LocalDate firstDay, LocalDate today, int colW) {
@@ -322,25 +318,31 @@ public class DashboardStudentGUI {
         section.setPadding(new Insets(0));
 
         Region spacer = new Region();
-        spacer.setPrefHeight(42); spacer.setMinHeight(42); spacer.setMaxHeight(42);
+        spacer.setPrefHeight(40); spacer.setMinHeight(40); spacer.setMaxHeight(40);
 
-        section.getChildren().addAll(spacer, buildActionGrid(), buildUserInfoAccordion());
+        VBox actionButtons = buildActionButtons();
+        VBox.setVgrow(actionButtons, Priority.NEVER);
+
+        VBox accordion = buildUserInfoAccordion();
+        VBox.setVgrow(accordion, Priority.NEVER);
+
+        section.getChildren().addAll(spacer, actionButtons, accordion);
         return section;
     }
 
-    private GridPane buildActionGrid() {
-        GridPane grid = new GridPane();
-        grid.setHgap(14); grid.setVgap(14);
-        grid.setAlignment(Pos.CENTER);
-        grid.add(actionTile("booking.png",        "Prenota\nLezione",
-                e -> new BookLessonGUI(stage).show()),   0, 0);
-        grid.add(actionTile("lightbulb-on.png",   "Gestisci\nLezioni",
-                e -> new ViewBookingsGUI(stage).show()), 1, 0);
-        grid.add(actionTile("task-checklist.png", "To-do",
-                e -> new ViewToDoGUI(stage).show()),     0, 1);
-        grid.add(actionTile("star.png",           "Tutor\npreferiti",
-                e -> new ViewBookingsGUI(stage).show()), 1, 1);
-        return grid;
+    private VBox buildActionButtons() {
+        VBox buttons = new VBox(14);
+        buttons.setAlignment(Pos.CENTER);
+
+        buttons.getChildren().addAll(
+                actionTile("booking.png",        "Prenota Lezione",
+                        e -> new BookLessonGUI(stage).show()),
+                actionTile("lightbulb-on.png",   "Le mie prenotazioni",
+                        e -> new ViewBookingsGUI(stage).show()),
+                actionTile("task-checklist.png", "To-do",
+                        e -> new ViewToDoGUI(stage).show())
+        );
+        return buttons;
     }
 
     private HBox actionTile(String iconFile, String text,
@@ -348,20 +350,21 @@ public class DashboardStudentGUI {
         HBox tile = new HBox(14);
         tile.getStyleClass().add("action-tile");
         tile.setAlignment(Pos.CENTER_LEFT);
-        tile.setPrefSize(160, 85);
-        tile.setPadding(new Insets(14, 18, 14, 18));
+        tile.setPrefHeight(58);
+        tile.setMaxWidth(Double.MAX_VALUE);
+        tile.setPadding(new Insets(12, 16, 12, 16));
         tile.setOnMouseClicked(e -> handler.handle(new ActionEvent(tile, null)));
 
         ImageView icon = new ImageView(new Image(
                 getClass().getResourceAsStream("/icons/" + iconFile), 48, 48, true, true));
-        icon.setFitHeight(30); icon.setFitWidth(30);
+        icon.setFitHeight(22); icon.setFitWidth(22);
         icon.setPreserveRatio(true); icon.setSmooth(true);
         ColorAdjust ca = new ColorAdjust(); ca.setBrightness(1.0);
         icon.setEffect(ca);
 
         Label lbl = new Label(text);
         lbl.getStyleClass().add("action-tile-label");
-        lbl.setWrapText(true);
+        lbl.setWrapText(false);
 
         tile.getChildren().addAll(icon, lbl);
         return tile;
@@ -410,7 +413,6 @@ public class DashboardStudentGUI {
 
     private HBox buildEmailRow(User user) {
         Label emailLbl = new Label(user.getEmail() != null ? user.getEmail() : "—");
-        emailLbl.getStyleClass().add("register-label");
         emailLbl.getStyleClass().add("info-text");
 
         // Icona matita da file con fallback emoji
@@ -425,6 +427,7 @@ public class DashboardStudentGUI {
             editBtn.setText("✏");
         }
         editBtn.getStyleClass().add("edit-button");
+        editBtn.setAlignment(Pos.CENTER);
 
         Label emailKey = new Label("Email:");
         emailKey.getStyleClass().add("small-label");
@@ -440,7 +443,9 @@ public class DashboardStudentGUI {
         Button saveBtn   = new Button("✓");
         Button cancelBtn = new Button("✗");
         saveBtn.getStyleClass().add("save-button");
+        saveBtn.setMinWidth(32); saveBtn.setMinHeight(32);
         cancelBtn.getStyleClass().add("cancel-inline-button");
+        cancelBtn.setMinWidth(32); cancelBtn.setMinHeight(32);
 
         HBox editRow = new HBox(6, emailField, saveBtn, cancelBtn);
         editRow.setAlignment(Pos.CENTER_LEFT);
@@ -474,7 +479,6 @@ public class DashboardStudentGUI {
         lbl.getStyleClass().add("small-label");
         lbl.setPrefWidth(70);
         Label val = new Label(value != null ? value : "—");
-        val.getStyleClass().add("register-label");
         val.getStyleClass().add("info-text");
         val.setWrapText(true);
         HBox row = new HBox(8, lbl, val);

@@ -26,32 +26,38 @@ public class ManageStudentsGUI {
     public void show() {
         BorderPane root = buildShell();
 
-        VBox content = new VBox(20);
-        content.setPadding(new Insets(24, 40, 24, 40));
+        VBox content = new VBox(12);
+        content.setPadding(new Insets(28, 48, 28, 48));
         content.setAlignment(Pos.TOP_CENTER);
+
 
         errorLabel = new Label("");
         errorLabel.getStyleClass().add("error-label");
 
-        Label studentLabel = new Label("Studente");
+        // ── Selector con card azzurra ─────────────────────
+        VBox selectorCard = new VBox(10);
+        selectorCard.getStyleClass().add("info-card");
+        selectorCard.setMaxWidth(720);
+        selectorCard.setAlignment(Pos.CENTER_LEFT);
+
+        Label studentLabel = new Label("Seleziona studente");
         studentLabel.getStyleClass().add("small-label");
 
         studentCombo = new ComboBox<>();
         studentCombo.getStyleClass().add("combo-box");
-        studentCombo.setPromptText("Seleziona studente...");
-        studentCombo.setPrefWidth(300);
+        studentCombo.setPromptText("Cerca studente...");
+        studentCombo.setMaxWidth(Double.MAX_VALUE);
         studentCombo.setCellFactory(lv -> studentCell());
         studentCombo.setButtonCell(studentCell());
 
         try { studentCombo.getItems().setAll(activityController.getStudents()); }
         catch (DAOException e) { errorLabel.setText("Errore: " + e.getMessage()); }
 
-        HBox selectorRow = new HBox(12, studentLabel, studentCombo);
-        selectorRow.setAlignment(Pos.CENTER_LEFT);
-        selectorRow.setMaxWidth(700);
+        selectorCard.getChildren().addAll(studentLabel, studentCombo);
 
+        // ── Card studente (appare dopo selezione) ──────────
         VBox studentCard = new VBox(16);
-        studentCard.setMaxWidth(700);
+        studentCard.setMaxWidth(720);
         studentCard.setVisible(false); studentCard.setManaged(false);
 
         studentCombo.setOnAction(e -> {
@@ -62,7 +68,7 @@ public class ManageStudentsGUI {
             buildStudentCard(selected, studentCard);
         });
 
-        content.getChildren().addAll(selectorRow, errorLabel, studentCard);
+        content.getChildren().addAll(selectorCard, errorLabel, studentCard);
 
         ScrollPane scroll = new ScrollPane(content);
         scroll.getStyleClass().add("transparent-scroll");
@@ -78,55 +84,107 @@ public class ManageStudentsGUI {
             ProgressBean       progress   = activityController.getProgress(student.getId());
             List<ActivityBean> activities = activityController.getActivities(student.getId());
 
-            Label nameLabel = new Label("Studente: " + student.getFullName());
-            nameLabel.getStyleClass().add("small-label");
+            // ── Header studente ───────────────────────────
+            HBox studentHeader = new HBox(12);
+            studentHeader.setAlignment(Pos.CENTER_LEFT);
+            studentHeader.getStyleClass().add("info-card");
+            studentHeader.setMaxWidth(720);
+            studentHeader.setPadding(new Insets(12, 16, 12, 16));
 
-            // ── Pannello progressi ──────────────────────────
-            VBox progressBox = new VBox(8);
+            // Avatar iniziali
+            Label avatar = new Label(
+                    String.valueOf(student.getName().charAt(0)).toUpperCase() +
+                            String.valueOf(student.getSurname().charAt(0)).toUpperCase());
+            avatar.setStyle(
+                    "-fx-background-color: #8EADC2; -fx-background-radius: 20; " +
+                            "-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; " +
+                            "-fx-min-width: 40; -fx-min-height: 40; -fx-alignment: center;");
+
+            VBox studentInfo = new VBox(2);
+            Label nameLabel = new Label(student.getFullName());
+            nameLabel.getStyleClass().add("welcome-label");
+            Label emailLabel = new Label(student.getEmail());
+            emailLabel.getStyleClass().add("info-text");
+            studentInfo.getChildren().addAll(nameLabel, emailLabel);
+
+            studentHeader.getChildren().addAll(avatar, studentInfo);
+
+            // ── Pannelli affiancati ───────────────────────
+            VBox progressBox = new VBox(12);
             progressBox.getStyleClass().add("info-card");
-            progressBox.setMaxWidth(340);
+            progressBox.setPrefWidth(340); progressBox.setMinWidth(280);
 
-            Label progressTitle = new Label("Annota progressi");
+            Label progressTitle = new Label("📝  Progressi");
             progressTitle.getStyleClass().add("small-label");
 
             TextArea notesArea = new TextArea();
             notesArea.getStyleClass().add("text-area");
             notesArea.setPrefRowCount(3); notesArea.setWrapText(true);
-            notesArea.setPromptText("Note sui progressi...");
+            notesArea.setPromptText("Note sui progressi dello studente...");
             if (progress != null) notesArea.setText(progress.getNotes());
 
-            Button updateBtn = new Button("Aggiorna");
-            updateBtn.getStyleClass().add("button");
-            updateBtn.setOnAction(e -> handleUpdateProgress(student, notesArea.getText()));
+            HBox progressFooter = new HBox(12);
+            progressFooter.setAlignment(Pos.CENTER_LEFT);
 
             Label lastUpdate = new Label(progress != null
-                    ? "Ultimo aggiornamento " + progress.getUpdatedAt().toLocalDate() : "");
-            lastUpdate.setStyle("-fx-font-size: 11px; -fx-text-fill: #888;");
+                    ? "Aggiornato il " + progress.getUpdatedAt().toLocalDate().format(
+                    java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "Nessun aggiornamento");lastUpdate.getStyleClass().add("info-text");
+            lastUpdate.setStyle("-fx-text-fill: #999;");
+            HBox.setHgrow(lastUpdate, Priority.ALWAYS);
 
-            progressBox.getChildren().addAll(progressTitle, notesArea, updateBtn, lastUpdate);
+            Button updateBtn = new Button("Salva");
+            updateBtn.getStyleClass().add("save-button");
+            updateBtn.setPrefWidth(80);
+            updateBtn.setOnAction(e -> handleUpdateProgress(student, notesArea.getText()));
 
-            // ── Pannello to-do ──────────────────────────────
+            progressFooter.getChildren().addAll(lastUpdate, updateBtn);
+            progressBox.getChildren().addAll(progressTitle, notesArea, progressFooter);
+
+            // ── To-do ────────────────────────────────────
             VBox todoBox = new VBox(8);
             todoBox.getStyleClass().add("info-card");
-            todoBox.setMaxWidth(340);
+            todoBox.setPrefWidth(340); todoBox.setMinWidth(280);
 
-            Label todoTitle = new Label("Assegna to-do list");
+            Label todoTitle = new Label("✅  Attività");
             todoTitle.getStyleClass().add("small-label");
             todoBox.getChildren().add(todoTitle);
 
-            for (ActivityBean a : activities) {
-                Label actLabel = new Label((a.isCompleted() ? "✓ " : "• ") + a.getDescription());
-                actLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: " +
-                        (a.isCompleted() ? "#27AE60" : "#4B4B4B") + ";");
-                todoBox.getChildren().add(actLabel);
+            if (activities.isEmpty()) {
+                Label none = new Label("Nessuna attività assegnata");
+                none.getStyleClass().add("info-text");
+                none.setStyle("-fx-text-fill: #aaa; -fx-font-style: italic;");
+                todoBox.getChildren().add(none);
+            } else {
+                for (ActivityBean a : activities) {
+                    HBox actRow = new HBox(8);
+                    actRow.setAlignment(Pos.CENTER_LEFT);
+                    Label check = new Label(a.isCompleted() ? "✓" : "○");
+                    check.getStyleClass().add(a.isCompleted() ? "success-label" : "info-text");
+                    check.setStyle("-fx-font-size: 14px;");
+                    Label actLabel = new Label(a.getDescription());
+                    actLabel.getStyleClass().add(a.isCompleted() ? "success-label" : "register-label");
+                    actLabel.setWrapText(true);
+                    if (a.isCompleted())
+                        actLabel.setStyle("-fx-strikethrough: true;");
+                    actRow.getChildren().addAll(check, actLabel);
+                    todoBox.getChildren().add(actRow);
+                }
             }
 
+            // Separatore + input nuova attività
+            todoBox.getChildren().add(new Separator());
+
+            HBox addRow = new HBox(8);
+            addRow.setAlignment(Pos.CENTER_LEFT);
             TextField newActivityField = new TextField();
             newActivityField.getStyleClass().add("text-field");
-            newActivityField.setPromptText("Nuova attività..."); newActivityField.setPrefHeight(36);
+            newActivityField.setPromptText("Nuova attività...");
+            newActivityField.setPrefHeight(34);
+            HBox.setHgrow(newActivityField, Priority.ALWAYS);
 
-            Button assignBtn = new Button("Assegna");
-            assignBtn.getStyleClass().add("button");
+            Button assignBtn = new Button("＋");
+            assignBtn.getStyleClass().add("save-button");
+            assignBtn.setPrefWidth(36); assignBtn.setPrefHeight(34);
             assignBtn.setOnAction(e -> {
                 String desc = newActivityField.getText().trim();
                 if (desc.isBlank()) return;
@@ -134,12 +192,15 @@ public class ManageStudentsGUI {
                 newActivityField.clear();
             });
 
-            todoBox.getChildren().addAll(newActivityField, assignBtn);
+            addRow.getChildren().addAll(newActivityField, assignBtn);
+            todoBox.getChildren().add(addRow);
 
-            HBox panels = new HBox(20, progressBox, todoBox);
-            panels.setAlignment(Pos.TOP_LEFT);
+            HBox panels = new HBox(16, progressBox, todoBox);
+            panels.setAlignment(Pos.TOP_CENTER);
+            HBox.setHgrow(progressBox, Priority.ALWAYS);
+            HBox.setHgrow(todoBox, Priority.ALWAYS);
 
-            card.getChildren().addAll(nameLabel, panels);
+            card.getChildren().addAll(studentHeader, panels);
 
         } catch (DAOException e) { errorLabel.setText("Errore: " + e.getMessage()); }
     }
@@ -185,12 +246,15 @@ public class ManageStudentsGUI {
 
     private HBox buildTopBar(String titleText, Runnable onBack) {
         HBox bar = new HBox();
-        bar.getStyleClass().add("page-topbar");
-        bar.setAlignment(Pos.CENTER);
+        bar.getStyleClass().add("navbar");
+        bar.setAlignment(Pos.CENTER_LEFT);
 
         Button backBtn = new Button("⟪  Indietro");
         backBtn.getStyleClass().add("back-button");
         backBtn.setOnAction(e -> onBack.run());
+        HBox left = new HBox(backBtn);
+        left.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(left, Priority.ALWAYS);
 
         Label title = new Label(titleText);
         title.getStyleClass().add("page-title");
@@ -198,11 +262,18 @@ public class ManageStudentsGUI {
         title.setAlignment(Pos.CENTER);
         HBox.setHgrow(title, Priority.ALWAYS);
 
-        javafx.scene.image.ImageView logo = new ImageView(new Image(
-                getClass().getResourceAsStream("/images/logo.png"), 60, 60, true, true));
-        logo.setFitHeight(38); logo.setPreserveRatio(true); logo.setSmooth(true);
+        var logoStream = getClass().getResourceAsStream("/images/logo.png");
+        HBox right = new HBox();
+        right.setAlignment(Pos.CENTER_RIGHT);
+        HBox.setHgrow(right, Priority.ALWAYS);
+        if (logoStream != null) {
+            javafx.scene.image.ImageView logo = new javafx.scene.image.ImageView(
+                    new javafx.scene.image.Image(logoStream, 60, 60, true, true));
+            logo.setFitHeight(56); logo.setPreserveRatio(true); logo.setSmooth(true);
+            right.getChildren().add(logo);
+        }
 
-        bar.getChildren().addAll(backBtn, title, logo);
+        bar.getChildren().addAll(left, title, right);
         return bar;
     }
 }
