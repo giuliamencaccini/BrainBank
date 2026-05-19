@@ -4,7 +4,6 @@ import it.ispwproject.brainbank.bean.BookingResponseBean;
 import it.ispwproject.brainbank.controller.applicativo.BookingController;
 import it.ispwproject.brainbank.controller.demo.DemoFactory;
 import it.ispwproject.brainbank.enumerator.BookingStatus;
-import it.ispwproject.brainbank.exception.BookingException;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.util.singleton.SessionManager;
 import it.ispwproject.brainbank.view.CancelBookingView;
@@ -48,7 +47,7 @@ public class CancelBookingCLI {
             bookingController.cancelBooking(selected.getId(), studentId);
             view.mostraSuccesso();
 
-        } catch (DAOException | BookingException e) {
+        } catch (DAOException e) {
             view.mostraErrore(e.getMessage());
         }
 

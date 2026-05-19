@@ -2,7 +2,6 @@ package it.ispwproject.brainbank.controller.gui;
 
 import it.ispwproject.brainbank.bean.BookingResponseBean;
 import it.ispwproject.brainbank.controller.applicativo.BookingController;
-import it.ispwproject.brainbank.exception.BookingException;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.util.singleton.SessionManager;
 import javafx.geometry.Insets;
@@ -190,7 +189,7 @@ public class ViewBookingsGUI {
                 try {
                     bookingController.cancelBooking(b.getId(), studentId);
                     show();
-                } catch (DAOException | BookingException e) {
+                } catch (DAOException e) {
                     errorLabel.setText("Errore: " + e.getMessage());
                 }
             }

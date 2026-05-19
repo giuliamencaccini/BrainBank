@@ -177,7 +177,7 @@ public class BookingController {
     }
 
     public void cancelBooking(int bookingId, int studentId)
-            throws DAOException, BookingException {
+            throws DAOException {
 
         List<BookingResponseBean> bookings = getStudentBookings(studentId);
         BookingResponseBean toCancel = bookings.stream()
