@@ -8,6 +8,7 @@ import it.ispwproject.brainbank.enumerator.BookingStatus;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Booking;
 import it.ispwproject.brainbank.model.Student;
+import it.ispwproject.brainbank.util.logger.AppLogger;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -118,7 +119,7 @@ public class BookingDAOFile extends AbstractBookingDAO {
         try (Writer writer = new FileWriter(FILE_PATH)) {
             gson.toJson(identityMap, writer);
         } catch (IOException e) {
-            // log silenzioso
+            AppLogger.logError("Errore salvataggio bookings su file: " + e.getMessage());
         }
     }
 }

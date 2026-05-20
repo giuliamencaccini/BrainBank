@@ -230,7 +230,7 @@
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-text-fill: #4B4B4B;
-    -fx-font-size: 14px;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-cursor: hand;
     -fx-padding: 0;
@@ -278,7 +278,8 @@
 }
 
 .toggle-card:hover    { -fx-background-color: #e8f0f7; }
-.toggle-card:selected { -fx-background-color: #4B4B4B; -fx-text-fill: white; }
+.toggle-card:selected { -fx-background-color: #8FBC8F; -fx-text-fill: white; }
+.toggle-card.cancelled:selected { -fx-background-color: #E07070; -fx-text-fill: white; }
 
 .edit-button {
     -fx-background-color: transparent;

@@ -28,8 +28,6 @@ public class MainCLI {
                 case SET_AVAILABILITY -> new SetAvailabilityCLI().start();
                 case VIEW_SLOTS       -> new ViewSlotsCLI().start();
                 case MANAGE_STUDENTS  -> new ManageStudentsCLI().start();
-                case ASSIGN_ACTIVITY  -> new AssignActivityCLI().start();
-                case MONITOR_PROGRESS -> new MonitorProgressCLI().start();
 
                 // ── Admin ────────────────────────────────────────────────
                 case DASHBOARD_ADMIN    -> new DashboardAdminCLI().start();

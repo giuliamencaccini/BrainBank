@@ -56,7 +56,7 @@ public class ManageStudentsGUI {
         selectorCard.getChildren().addAll(studentLabel, studentCombo);
 
         // ── Card studente (appare dopo selezione) ──────────
-        VBox studentCard = new VBox(16);
+        VBox studentCard = new VBox(8);
         studentCard.setMaxWidth(720);
         studentCard.setVisible(false); studentCard.setManaged(false);
 
@@ -68,7 +68,7 @@ public class ManageStudentsGUI {
             buildStudentCard(selected, studentCard);
         });
 
-        content.getChildren().addAll(selectorCard, errorLabel, studentCard);
+        content.getChildren().addAll(selectorCard, studentCard, errorLabel);
 
         ScrollPane scroll = new ScrollPane(content);
         scroll.getStyleClass().add("transparent-scroll");
@@ -112,7 +112,9 @@ public class ManageStudentsGUI {
             // ── Pannelli affiancati ───────────────────────
             VBox progressBox = new VBox(12);
             progressBox.getStyleClass().add("info-card");
-            progressBox.setPrefWidth(340); progressBox.setMinWidth(280);
+            progressBox.setPrefWidth(340);
+            progressBox.setMinWidth(280);
+            progressBox.setMaxHeight(Region.USE_PREF_SIZE);
 
             Label progressTitle = new Label("📝  Progressi");
             progressTitle.getStyleClass().add("small-label");
@@ -127,16 +129,16 @@ public class ManageStudentsGUI {
             progressFooter.setAlignment(Pos.CENTER_LEFT);
 
             Label lastUpdate = new Label(progress != null
-                    ? "Aggiornato il " + progress.getUpdatedAt().toLocalDate().format(
-                    java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "Nessun aggiornamento");lastUpdate.getStyleClass().add("info-text");
+                    ? "Aggiornato il " + progress.getUpdatedAt().format(
+                    java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy 'alle' HH:mm")) : "Nessun aggiornamento");
+            lastUpdate.getStyleClass().add("info-text");
             lastUpdate.setStyle("-fx-text-fill: #999;");
             HBox.setHgrow(lastUpdate, Priority.ALWAYS);
 
             Button updateBtn = new Button("Salva");
             updateBtn.getStyleClass().add("save-button");
             updateBtn.setPrefWidth(80);
-            updateBtn.setOnAction(e -> handleUpdateProgress(student, notesArea.getText()));
-
+            updateBtn.setOnAction(e -> handleUpdateProgress(student, notesArea.getText(), card));
             progressFooter.getChildren().addAll(lastUpdate, updateBtn);
             progressBox.getChildren().addAll(progressTitle, notesArea, progressFooter);
 
@@ -149,27 +151,49 @@ public class ManageStudentsGUI {
             todoTitle.getStyleClass().add("small-label");
             todoBox.getChildren().add(todoTitle);
 
+            VBox activityList = new VBox(6);
+            activityList.setMaxWidth(Double.MAX_VALUE);
+
             if (activities.isEmpty()) {
                 Label none = new Label("Nessuna attività assegnata");
                 none.getStyleClass().add("info-text");
                 none.setStyle("-fx-text-fill: #aaa; -fx-font-style: italic;");
-                todoBox.getChildren().add(none);
+                activityList.getChildren().add(none);
             } else {
                 for (ActivityBean a : activities) {
                     HBox actRow = new HBox(8);
                     actRow.setAlignment(Pos.CENTER_LEFT);
+                    actRow.setMaxWidth(Double.MAX_VALUE);
+                    HBox.setHgrow(actRow, Priority.ALWAYS);
                     Label check = new Label(a.isCompleted() ? "✓" : "○");
                     check.getStyleClass().add(a.isCompleted() ? "success-label" : "info-text");
                     check.setStyle("-fx-font-size: 14px;");
                     Label actLabel = new Label(a.getDescription());
                     actLabel.getStyleClass().add(a.isCompleted() ? "success-label" : "register-label");
-                    actLabel.setWrapText(true);
+                    actLabel.setMaxWidth(200);
+                    actLabel.setEllipsisString("...");
+                    HBox.setHgrow(actLabel, Priority.ALWAYS);
                     if (a.isCompleted())
                         actLabel.setStyle("-fx-strikethrough: true;");
-                    actRow.getChildren().addAll(check, actLabel);
-                    todoBox.getChildren().add(actRow);
+
+                    Button deleteBtn = new Button("✕");
+                    deleteBtn.getStyleClass().add("cancel-inline-button");
+                    deleteBtn.setOnAction(e -> {
+                        try {
+                            activityController.deleteActivity(a.getId());
+                            card.getChildren().clear();
+                            buildStudentCard(student, card);
+                        } catch (DAOException ex) {
+                            errorLabel.setText("Errore: " + ex.getMessage());
+                        }
+                    });
+
+                    actRow.getChildren().addAll(check, actLabel, deleteBtn);
+                    activityList.getChildren().add(actRow);
                 }
             }
+
+            todoBox.getChildren().add(activityList);
 
             // Separatore + input nuova attività
             todoBox.getChildren().add(new Separator());
@@ -205,11 +229,13 @@ public class ManageStudentsGUI {
         } catch (DAOException e) { errorLabel.setText("Errore: " + e.getMessage()); }
     }
 
-    private void handleUpdateProgress(StudentBean student, String notes) {
+    private void handleUpdateProgress(StudentBean student, String notes, VBox card) {
         if (notes.isBlank()) { errorLabel.setText("Le note non possono essere vuote."); return; }
         try {
             activityController.updateProgress(new ProgressBean(student, notes, null));
             showInfo("Progressi aggiornati con successo.");
+            card.getChildren().clear();
+            buildStudentCard(student, card);
         } catch (DAOException e) { errorLabel.setText("Errore: " + e.getMessage()); }
     }
 

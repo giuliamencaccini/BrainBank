@@ -33,6 +33,7 @@ public class NotificationController {
 
     private static final String TEMPLATE_CONFIRMATION = "d-4d49f14c5f734b3cb51e504d56823d0e";
     private static final String TEMPLATE_CANCELLATION = "d-9535f2c985ad4dc5ab7c51980e6069b9";
+    private static final String TEMPLATE_NEW_ACTIVITY = "d-5fc4b82a3df44ae4ac065f94932f1962";
 
     private NotificationController() {}
 
@@ -55,6 +56,20 @@ public class NotificationController {
                                                BookingResponseBean booking) throws NotificationException {
         Personalization p = buildPersonalization(toEmail, studentName, booking);
         sendTemplateEmail(TEMPLATE_CANCELLATION, p);
+    }
+
+    // ================================================================== //
+    //  Nuova attività assegnata
+    // ================================================================== //
+
+    public static void sendNewActivity(String toEmail, String studentName,
+                                       String tutorName, String description) throws NotificationException {
+        Personalization p = new Personalization();
+        p.addTo(new Email(toEmail));
+        p.addDynamicTemplateData("studentName", studentName);
+        p.addDynamicTemplateData("tutorName",   tutorName);
+        p.addDynamicTemplateData("description", description);
+        sendTemplateEmail(TEMPLATE_NEW_ACTIVITY, p);
     }
 
     // ================================================================== //

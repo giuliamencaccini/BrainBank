@@ -77,7 +77,8 @@ public class ManageStudentsView {
             System.out.println("  Nessun progresso annotato.");
         } else {
             System.out.println("  " + progress.getNotes());
-            System.out.println("  Ultimo aggiornamento: " + progress.getUpdatedAt().toLocalDate());
+            System.out.println("  Ultimo aggiornamento: " + progress.getUpdatedAt().format(
+                    java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy 'alle' HH:mm")));
         }
     }
 
@@ -86,7 +87,17 @@ public class ManageStudentsView {
         System.out.println("  [1] Annota progressi");
         System.out.println("  [2] Assegna attività");
         System.out.println("  [3] Visualizza attività assegnate");
+        System.out.println("  [4] Elimina attività");
         System.out.println("  [0] Torna alla lista");
+    }
+
+    public void mostraAttivitaPerEliminazione(List<ActivityBean> activities) {
+        System.out.println("\n  ── Seleziona attività da eliminare");
+        for (int i = 0; i < activities.size(); i++) {
+            ActivityBean a = activities.get(i);
+            String stato = a.isCompleted() ? "✓" : "○";
+            System.out.printf("  [%d] %s %s%n", i + 1, stato, a.getDescription());
+        }
     }
 
     public void mostraAttivita(List<ActivityBean> activities) {

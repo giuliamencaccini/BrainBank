@@ -19,6 +19,22 @@ public class UserDAODB implements UserDAO {
                     "LEFT JOIN tutor_detail td ON u.id = td.user_id " +
                     "WHERE u.email = ?";
 
+    private static final String UPDATE_EMAIL =
+            "UPDATE user SET email = ? WHERE id = ?";
+
+    @Override
+    public void updateEmail(int id, String newEmail) throws DAOException {
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(UPDATE_EMAIL)) {
+            ps.setString(1, newEmail);
+            ps.setInt(2, id);
+            int rows = ps.executeUpdate();
+            if (rows == 0) throw new DAOException("Utente non trovato (ID: " + id + ")");
+        } catch (SQLException e) {
+            throw new DAOException("Errore aggiornamento email: " + e.getMessage(), e);
+        }
+    }
+
     @Override
     public User findByEmail(String email) throws DAOException {
         try (Connection conn = ConnectionFactory.getConnection();

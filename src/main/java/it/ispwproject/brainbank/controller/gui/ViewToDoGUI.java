@@ -78,8 +78,13 @@ public class ViewToDoGUI {
         desc.getStyleClass().add("register-label");
         desc.setWrapText(true);
         info.getChildren().add(desc);
+        if (a.getTutor() != null) {
+            Label tutorLbl = new Label("Assegnata da: " + a.getTutor().getName() + " " + a.getTutor().getSurname());
+            tutorLbl.getStyleClass().add("info-text");
+            info.getChildren().add(tutorLbl);
+        }
         if (a.getCreatedAt() != null) {
-            Label date = new Label("Assegnata il: " + a.getCreatedAt().toLocalDate());
+            Label date = new Label("📅 " + a.getCreatedAt().toLocalDate().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
             date.setStyle("-fx-font-size: 11px; -fx-text-fill: #888;");
             info.getChildren().add(date);
         }

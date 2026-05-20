@@ -4,6 +4,7 @@ import it.ispwproject.brainbank.bean.*;
 import it.ispwproject.brainbank.dao.*;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.*;
+import it.ispwproject.brainbank.util.logger.AppLogger;
 import it.ispwproject.brainbank.util.singleton.SessionManager;
 
 import java.util.ArrayList;
@@ -69,16 +70,28 @@ public class ActivityController {
         Activity activity = new Activity(tutor, student, bean.getDescription());
         activityDAO.save(activity);
         bean.setId(activity.getId());
+        try {
+            NotificationController.sendNewActivity(
+                    student.getEmail(),
+                    student.getFullName(),
+                    tutor.getFullName(),
+                    activity.getDescription()
+            );
+        } catch (it.ispwproject.brainbank.exception.NotificationException e) {
+            AppLogger.logWarning("Notifica attività non inviata: " + e.getMessage());
+        }
     }
 
     public List<ActivityBean> getActivities(int studentId) throws DAOException {
         Tutor tutor = (Tutor) SessionManager.getInstance().getLoggedUser();
         List<ActivityBean> result = new ArrayList<>();
+        TutorBean tutorBean = new TutorBean(tutor.getId(), tutor.getName(),
+                tutor.getSurname(), null, false);
         for (Activity a : activityDAO.getByStudentAndTutor(tutor.getId(), studentId)) {
             StudentBean studentBean = new StudentBean(
                     a.getStudent().getId(), a.getStudent().getName(),
                     a.getStudent().getSurname(), a.getStudent().getEmail());
-            result.add(new ActivityBean(a.getId(), studentBean,
+            result.add(new ActivityBean(a.getId(), studentBean, tutorBean,
                     a.getDescription(), a.isCompleted(), a.getCreatedAt()));
         }
         return result;
@@ -100,6 +113,11 @@ public class ActivityController {
     public void markActivityCompleted(int activityId) throws DAOException {
         Student student = (Student) SessionManager.getInstance().getLoggedUser();
         activityDAO.markAsCompleted(activityId, student.getId());
+    }
+
+    public void deleteActivity(int activityId) throws DAOException {
+        Tutor tutor = (Tutor) SessionManager.getInstance().getLoggedUser();
+        activityDAO.delete(activityId, tutor.getId());
     }
 
     public void updateProgress(ProgressBean bean) throws DAOException {

@@ -8,6 +8,7 @@ import it.ispwproject.brainbank.dao.TimeSlotDAO;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.TimeSlot;
 import it.ispwproject.brainbank.model.Tutor;
+import it.ispwproject.brainbank.util.logger.AppLogger;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -89,7 +90,7 @@ public class TimeSlotDAOFile implements TimeSlotDAO {
         try (Writer writer = new FileWriter(FILE_PATH)) {
             gson.toJson(cache, writer);
         } catch (IOException e) {
-            // log silenzioso
+            AppLogger.logError("Errore salvataggio timeslots su file: " + e.getMessage());
         }
     }
 }

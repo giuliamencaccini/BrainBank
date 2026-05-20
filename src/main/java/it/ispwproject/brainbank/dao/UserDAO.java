@@ -5,4 +5,5 @@ import it.ispwproject.brainbank.model.User;
 
 public interface UserDAO {
     User findByEmail(String email) throws DAOException;
+    void updateEmail(int id, String newEmail) throws DAOException;
 }

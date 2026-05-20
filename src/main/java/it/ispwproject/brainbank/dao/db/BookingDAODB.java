@@ -169,6 +169,8 @@ public class BookingDAODB extends AbstractBookingDAO {
             conn.commit();
             conn.setAutoCommit(true);
             updateInCache(bookingId);
+            identityMap.removeIf(b ->
+                    b.getStudent() != null && b.getStudent().getId() == studentId);
         } catch (SQLException e) {
             throw new DAOException("Errore durante l'annullamento: " + e.getMessage(), e);
         }

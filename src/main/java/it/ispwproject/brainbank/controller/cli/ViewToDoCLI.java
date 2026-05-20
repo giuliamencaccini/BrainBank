@@ -28,10 +28,12 @@ public class ViewToDoCLI {
                 return CLIState.DASHBOARD_STUDENT;
             }
 
+            if (!view.chiediConferma("Vuoi segnare un'attività come completata?"))
+                return CLIState.DASHBOARD_STUDENT;
+
             view.mostraPendingPerSelezione(pending);
 
-            int choice = view.chiediScelta("Seleziona attività completata (0 = torna indietro)",
-                    0, pending.size());
+            int choice = view.chiediScelta("Seleziona attività", 0, pending.size());
             if (choice == 0) return CLIState.DASHBOARD_STUDENT;
 
             ActivityBean selected = pending.get(choice - 1);

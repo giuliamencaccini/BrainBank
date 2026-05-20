@@ -20,8 +20,6 @@ public enum CLIState {
     SET_AVAILABILITY,
     VIEW_SLOTS,
     MANAGE_STUDENTS,
-    ASSIGN_ACTIVITY,
-    MONITOR_PROGRESS,
 
     // ── Admin ────────────────────────────────────────────────────────────
     DASHBOARD_ADMIN,

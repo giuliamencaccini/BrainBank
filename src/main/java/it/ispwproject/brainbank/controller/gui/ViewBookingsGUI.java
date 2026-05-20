@@ -50,7 +50,7 @@ public class ViewBookingsGUI {
             ToggleButton btnConfirmed = new ToggleButton("Confermate (" + confirmed.size() + ")");
             ToggleButton btnCancelled = new ToggleButton("Cancellate (" + cancelled.size() + ")");
             btnConfirmed.getStyleClass().add("toggle-card");
-            btnCancelled.getStyleClass().add("toggle-card");
+            btnCancelled.getStyleClass().addAll("toggle-card", "cancelled");
             btnConfirmed.setPrefWidth(200); btnConfirmed.setPrefHeight(36);
             btnCancelled.setPrefWidth(200); btnCancelled.setPrefHeight(36);
 

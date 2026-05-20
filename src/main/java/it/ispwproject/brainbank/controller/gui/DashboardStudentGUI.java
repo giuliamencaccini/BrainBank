@@ -99,7 +99,7 @@ public class DashboardStudentGUI {
         HBox body = new HBox(20);
         body.getStyleClass().add("brainbank-background");
         body.setPadding(new Insets(20, 24, 20, 24));
-        body.setAlignment(Pos.TOP_LEFT);
+        body.setAlignment(Pos.CENTER);
 
         VBox calendarSection = buildCalendarSection();
         VBox rightSection    = buildRightSection();
@@ -313,7 +313,8 @@ public class DashboardStudentGUI {
     private VBox buildRightSection() {
         VBox section = new VBox(14);
         section.setAlignment(Pos.TOP_CENTER);
-        section.setPrefWidth(360);
+        section.setPrefWidth(320);
+        section.setMinWidth(320);
         section.setPadding(new Insets(0));
 
         Region spacer = new Region();
@@ -464,11 +465,18 @@ public class DashboardStudentGUI {
         });
         saveBtn.setOnAction(e -> {
             String newEmail = emailField.getText().trim();
-            if (!newEmail.isEmpty() && newEmail.contains("@"))
+            if (newEmail.isEmpty()) return;
+            try {
+                new it.ispwproject.brainbank.controller.applicativo.UserController()
+                        .updateEmail(newEmail);
                 emailLbl.setText(newEmail);
+            } catch (it.ispwproject.brainbank.exception.DAOException ex) {
+                emailLbl.setText("❌ " + ex.getMessage());
+            }
             editRow.setVisible(false);  editRow.setManaged(false);
             viewRow.setVisible(true);   viewRow.setManaged(true);
         });
+
 
         return new HBox(emailContainer);
     }
@@ -490,6 +498,8 @@ public class DashboardStudentGUI {
     private Button makeNavBtn(String text, EventHandler<ActionEvent> h) {
         Button btn = new Button(text);
         btn.getStyleClass().add("nav-button");
+        btn.setPrefSize(36, 36);
+        btn.setMinSize(36, 36);
         btn.setOnAction(h);
         return btn;
     }

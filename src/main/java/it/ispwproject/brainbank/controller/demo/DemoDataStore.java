@@ -5,7 +5,9 @@ import it.ispwproject.brainbank.model.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Fonte dati condivisa per la modalità demo (in-memory).
@@ -22,6 +24,7 @@ public class DemoDataStore {
     private final List<Booking>  bookings   = new ArrayList<>();
     private final List<Activity> activities = new ArrayList<>();
     private final List<Progress> progresses = new ArrayList<>();
+    private final Map<Integer, List<Integer>> favouritesByStudent = new HashMap<>();
 
     private int nextUserId     = 10;
     private int nextBookingId  = 1;
@@ -88,6 +91,7 @@ public class DemoDataStore {
     public List<Booking>  getBookings()   { return bookings; }
     public List<Activity> getActivities() { return activities; }
     public List<Progress> getProgresses() { return progresses; }
+    public Map<Integer, List<Integer>> getFavouritesByStudent() { return favouritesByStudent; }
 
     public int nextUserId()     { return nextUserId++; }
     public int nextBookingId()  { return nextBookingId++; }

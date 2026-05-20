@@ -12,7 +12,8 @@ import java.util.List;
 public class StudentDAOMemory implements StudentDAO {
 
     private final DemoDataStore store = DemoDataStore.getInstance();
-    private final Map<Integer, List<Integer>> favouritesByStudent = new java.util.HashMap<>();
+    private final Map<Integer, List<Integer>> favouritesByStudent =
+            DemoDataStore.getInstance().getFavouritesByStudent();
 
     @Override
     public Student findById(int id) throws DAOException {

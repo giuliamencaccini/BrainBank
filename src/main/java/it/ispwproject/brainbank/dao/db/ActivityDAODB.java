@@ -37,6 +37,22 @@ public class ActivityDAODB implements ActivityDAO {
     private static final String MARK_AS_COMPLETED =
             "UPDATE activity SET completed = TRUE WHERE id = ? AND student_id = ?";
 
+    private static final String DELETE =
+            "DELETE FROM activity WHERE id = ? AND tutor_id = ?";
+
+    @Override
+    public void delete(int activityId, int tutorId) throws DAOException {
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(DELETE)) {
+            ps.setInt(1, activityId);
+            ps.setInt(2, tutorId);
+            int rows = ps.executeUpdate();
+            if (rows == 0) throw new DAOException("Attività non trovata o non autorizzata.");
+        } catch (SQLException e) {
+            throw new DAOException("Errore eliminazione attività: " + e.getMessage(), e);
+        }
+    }
+
     @Override
     public void save(Activity activity) throws DAOException {
         try (Connection conn = ConnectionFactory.getConnection();

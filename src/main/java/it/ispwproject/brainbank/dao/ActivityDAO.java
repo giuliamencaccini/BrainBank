@@ -10,4 +10,5 @@ public interface ActivityDAO {
     List<Activity> getByStudentAndTutor(int tutorId, int studentId) throws DAOException;
     List<Activity> getByStudent(int studentId) throws DAOException;
     void markAsCompleted(int activityId, int studentId) throws DAOException;
+    void delete(int activityId, int tutorId) throws DAOException;
 }

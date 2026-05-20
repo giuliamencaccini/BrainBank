@@ -71,9 +71,9 @@ public class BookLessonGUI {
         lifeline.add(step3Dot, 0, 4);
         lifeline.add(lbl3,     1, 4);
 
-        VBox form = new VBox(20);
+        VBox form = new VBox(4);
         form.setAlignment(Pos.TOP_CENTER);
-        form.setPadding(new Insets(20, 0, 20, 0));
+        form.setPadding(new Insets(20, 0, 0, 0));
         form.setPrefWidth(540);
 
         Label errorLabel = new Label("");
@@ -244,7 +244,7 @@ public class BookLessonGUI {
         HBox formWrapper = new HBox(lifeline, form, rightSpacer);
         formWrapper.setAlignment(Pos.TOP_CENTER);
         formWrapper.getStyleClass().add("brainbank-background");
-        formWrapper.setPadding(new Insets(20, 0, 20, 0));
+        formWrapper.setPadding(new Insets(20, 0, 0, 0));
         HBox.setHgrow(form, Priority.ALWAYS);
 
         ScrollPane scroll = new ScrollPane(formWrapper);
@@ -280,7 +280,7 @@ public class BookLessonGUI {
     private Region stepLine() {
         Region line = new Region();
         line.setPrefWidth(2); line.setMaxWidth(2);
-        line.setPrefHeight(50);
+        line.setPrefHeight(20);
         line.setStyle("-fx-background-color: #b8d4ea;");
         return line;
     }

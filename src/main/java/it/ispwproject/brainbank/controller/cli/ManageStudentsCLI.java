@@ -41,12 +41,13 @@ public class ManageStudentsCLI {
             view.mostraSchedaStudente(student, completed, upcoming, progress);
             view.mostraMenuStudente();
 
-            int choice = view.chiediScelta("Scelta", 0, 3);
+            int choice = view.chiediScelta("Scelta", 0, 4);
 
             switch (choice) {
                 case 1 -> annotaProgressi(student);
                 case 2 -> assegnaAttivita(student);
                 case 3 -> visualizzaAttivita(student);
+                case 4 -> eliminaAttivita(student);
                 case 0 -> { return CLIState.DASHBOARD_TUTOR; }
                 default -> view.mostraMessaggio("❌ Scelta non valida.");
             }
@@ -77,5 +78,18 @@ public class ManageStudentsCLI {
     private void visualizzaAttivita(StudentBean student) throws DAOException {
         List<ActivityBean> activities = activityController.getActivities(student.getId());
         view.mostraAttivita(activities);
+    }
+
+    private void eliminaAttivita(StudentBean student) throws DAOException {
+        List<ActivityBean> activities = activityController.getActivities(student.getId());
+        if (activities.isEmpty()) {
+            view.mostraMessaggio("Nessuna attività da eliminare.");
+            return;
+        }
+        view.mostraAttivitaPerEliminazione(activities);
+        int choice = view.chiediScelta("Seleziona attività da eliminare", 0, activities.size());
+        if (choice == 0) return;
+        activityController.deleteActivity(activities.get(choice - 1).getId());
+        view.mostraSuccesso("Attività eliminata.");
     }
 }

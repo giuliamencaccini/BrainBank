@@ -42,4 +42,10 @@ public class ActivityDAOMemory implements ActivityDAO {
                 .findFirst()
                 .ifPresent(a -> a.setCompleted(true));
     }
+
+    @Override
+    public void delete(int activityId, int tutorId) throws DAOException {
+        store.getActivities().removeIf(a -> a.getId() == activityId
+                && a.getTutor() != null && a.getTutor().getId() == tutorId);
+    }
 }

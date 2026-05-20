@@ -28,7 +28,9 @@ public class ViewToDoView {
         for (int i = 0; i < activities.size(); i++) {
             ActivityBean a = activities.get(i);
             if (!a.isCompleted()) {
-                System.out.printf("  [%d] ✗ %s%n", i + 1, a.getDescription());
+                String tutorInfo = a.getTutor() != null
+                        ? " (da: " + a.getTutor().getName() + " " + a.getTutor().getSurname() + ")" : "";
+                System.out.printf("  [%d] ✗ %s%s%n", i + 1, a.getDescription(), tutorInfo);
                 hasPending = true;
             }
         }
@@ -38,7 +40,9 @@ public class ViewToDoView {
         boolean hasCompleted = false;
         for (ActivityBean a : activities) {
             if (a.isCompleted()) {
-                System.out.printf("  ✓ %s%n", a.getDescription());
+                String tutorInfo = a.getTutor() != null
+                        ? " (da: " + a.getTutor().getName() + " " + a.getTutor().getSurname() + ")" : "";
+                System.out.printf("  ✓ %s%s%n", a.getDescription(), tutorInfo);
                 hasCompleted = true;
             }
         }
@@ -63,6 +67,16 @@ public class ViewToDoView {
 
     public void mostraMessaggio(String messaggio) {
         System.out.println("  " + messaggio);
+    }
+
+    public boolean chiediConferma(String prompt) {
+        while (true) {
+            System.out.printf("  %s [s/n]: ", prompt);
+            String input = scanner.nextLine().trim().toLowerCase();
+            if (input.equals("s") || input.equals("si") || input.equals("sì")) return true;
+            if (input.equals("n") || input.equals("no")) return false;
+            System.out.println("  Rispondi con 's' oppure 'n'.");
+        }
     }
 
     public int chiediScelta(String prompt, int min, int max) {
