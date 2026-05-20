@@ -6,11 +6,15 @@ import it.ispwproject.brainbank.exception.BookingException;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Student;
 import it.ispwproject.brainbank.util.singleton.SessionManager;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -220,19 +224,24 @@ public class BookLessonGUI {
                 errorLabel.setText("Completa tutte le selezioni.");
                 return;
             }
-            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Conferma prenotazione");
-            confirm.setHeaderText(null);
-            confirm.setContentText(
-                    "Confermi la prenotazione?\n\n" +
-                            "Materia:  " + selectedSubject.getName() + "\n" +
-                            "Tutor:    " + selectedTutor.getName() + " " + selectedTutor.getSurname() + "\n" +
-                            "Giorno:   " + selectedSlot.getDate().format(fmt) + "\n" +
-                            "Orario:   " + selectedSlot.getStartTime() + " – " + selectedSlot.getEndTime());
-            confirm.showAndWait().ifPresent(r -> {
-                if (r == ButtonType.OK) confirmBooking(errorLabel);
-            });
+            try {
+                BookingRequestBean request = new BookingRequestBean(
+                        new StudentBean(
+                                ((Student) SessionManager.getInstance().getLoggedUser()).getId(),
+                                ((Student) SessionManager.getInstance().getLoggedUser()).getName(),
+                                ((Student) SessionManager.getInstance().getLoggedUser()).getSurname(),
+                                ((Student) SessionManager.getInstance().getLoggedUser()).getEmail()),
+                        selectedTutor, selectedSubject, selectedSlot);
+
+                // Riserva lo slot — lancia BookingException se già occupato
+                bookingController.prepareBookingSummary(request);
+
+                // Mostra dialog con countdown
+                showCountdownDialog(request, errorLabel);
+
+            } catch (DAOException | BookingException ex) {
+                errorLabel.setText("Errore: " + ex.getMessage());
+            }
         });
 
         form.getChildren().addAll(subjectSection, tutorSection, slotSection, errorLabel, btnRow);
@@ -350,6 +359,53 @@ public class BookLessonGUI {
         btn.setMaxWidth(Double.MAX_VALUE);
         btn.setPrefHeight(38);
         return btn;
+    }
+
+    private void showCountdownDialog(BookingRequestBean request, Label errorLabel) {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        int[] secondsLeft = {180}; // 3 minuti
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Conferma prenotazione");
+        confirm.setHeaderText("⏱ Slot riservato per 3 minuti");
+
+        Label contentLabel = new Label(
+                "Materia:  " + selectedSubject.getName() + "\n" +
+                        "Tutor:    " + selectedTutor.getName() + " " + selectedTutor.getSurname() + "\n" +
+                        "Giorno:   " + selectedSlot.getDate().format(fmt) + "\n" +
+                        "Orario:   " + selectedSlot.getStartTime() + " – " + selectedSlot.getEndTime() + "\n\n" +
+                        "Tempo rimasto: 3:00");
+        confirm.getDialogPane().setContent(contentLabel);
+
+        Timeline countdown = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
+            secondsLeft[0]--;
+            int min = secondsLeft[0] / 60;
+            int sec = secondsLeft[0] % 60;
+            contentLabel.setText(
+                    "Materia:  " + selectedSubject.getName() + "\n" +
+                            "Tutor:    " + selectedTutor.getName() + " " + selectedTutor.getSurname() + "\n" +
+                            "Giorno:   " + selectedSlot.getDate().format(fmt) + "\n" +
+                            "Orario:   " + selectedSlot.getStartTime() + " – " + selectedSlot.getEndTime() + "\n\n" +
+                            String.format("Tempo rimasto: %d:%02d", min, sec));
+            if (secondsLeft[0] <= 0) {
+                confirm.close();
+                try { bookingController.releaseSlot(selectedSlot.getId()); }
+                catch (DAOException ex) { /* ignora */ }
+                Platform.runLater(() -> errorLabel.setText("Tempo scaduto. Lo slot è stato rilasciato."));
+            }
+        }));
+        countdown.setCycleCount(180);
+        countdown.play();
+
+        confirm.showAndWait().ifPresent(r -> {
+            countdown.stop();
+            if (r == ButtonType.OK) {
+                confirmBooking(errorLabel);
+            } else {
+                try { bookingController.releaseSlot(selectedSlot.getId()); }
+                catch (DAOException ex) { errorLabel.setText("Errore: " + ex.getMessage()); }
+            }
+        });
     }
 
     private void confirmBooking(Label errorLabel) {

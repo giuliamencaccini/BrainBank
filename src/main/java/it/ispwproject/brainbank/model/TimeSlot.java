@@ -1,6 +1,7 @@
 package it.ispwproject.brainbank.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class TimeSlot {
@@ -21,6 +22,14 @@ public class TimeSlot {
     private LocalTime startTime;
     private LocalTime endTime;
     private boolean available;
+    private LocalDateTime reservedUntil;
+
+    public boolean isReserved() {
+        return reservedUntil != null && reservedUntil.isAfter(LocalDateTime.now());
+    }
+
+    public LocalDateTime getReservedUntil() { return reservedUntil; }
+    public void setReservedUntil(LocalDateTime reservedUntil) { this.reservedUntil = reservedUntil; }
 
     public TimeSlot() {}
 

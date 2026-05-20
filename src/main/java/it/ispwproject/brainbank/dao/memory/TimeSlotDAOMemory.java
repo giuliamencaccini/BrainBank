@@ -63,4 +63,23 @@ public class TimeSlotDAOMemory implements TimeSlotDAO {
                 .ifPresent(slot::setTutor);
         store.getTimeSlots().add(slot);
     }
+
+    @Override
+    public boolean reserveSlot(int slotId, int minutes) throws DAOException {
+        TimeSlot slot = store.getTimeSlots().stream()
+                .filter(s -> s.getId() == slotId && s.isAvailable())
+                .findFirst()
+                .orElse(null);
+        if (slot == null) return false;
+        slot.setReservedUntil(java.time.LocalDateTime.now().plusMinutes(minutes));
+        return true;
+    }
+
+    @Override
+    public void releaseSlot(int slotId) throws DAOException {
+        store.getTimeSlots().stream()
+                .filter(s -> s.getId() == slotId)
+                .findFirst()
+                .ifPresent(s -> s.setReservedUntil(null));
+    }
 }

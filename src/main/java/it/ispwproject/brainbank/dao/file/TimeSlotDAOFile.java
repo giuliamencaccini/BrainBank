@@ -93,4 +93,27 @@ public class TimeSlotDAOFile implements TimeSlotDAO {
             AppLogger.logError("Errore salvataggio timeslots su file: " + e.getMessage());
         }
     }
+
+    @Override
+    public boolean reserveSlot(int slotId, int minutes) throws DAOException {
+        TimeSlot slot = cache.stream()
+                .filter(s -> s.getId() == slotId && s.isAvailable())
+                .findFirst()
+                .orElse(null);
+        if (slot == null) return false;
+        slot.setReservedUntil(java.time.LocalDateTime.now().plusMinutes(minutes));
+        saveToFile();
+        return true;
+    }
+
+    @Override
+    public void releaseSlot(int slotId) throws DAOException {
+        cache.stream()
+                .filter(s -> s.getId() == slotId)
+                .findFirst()
+                .ifPresent(s -> {
+                    s.setReservedUntil(null);
+                    saveToFile();
+                });
+    }
 }

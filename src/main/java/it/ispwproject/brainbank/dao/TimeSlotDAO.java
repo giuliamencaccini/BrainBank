@@ -12,4 +12,6 @@ public interface TimeSlotDAO {
     List<TimeSlotBean> getAllByTutorWithStudent(int tutorId) throws DAOException;
     TimeSlot findById(int id) throws DAOException;
     void save(TimeSlot slot, int tutorId) throws DAOException;
+    boolean reserveSlot(int slotId, int minutes) throws DAOException;
+    void releaseSlot(int slotId) throws DAOException;
 }

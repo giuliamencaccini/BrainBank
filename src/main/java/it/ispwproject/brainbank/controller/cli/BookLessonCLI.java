@@ -70,7 +70,8 @@ public class BookLessonCLI {
             BookingResponseBean summary = bookingController.prepareBookingSummary(request);
             view.mostraRiepilogo(summary);
 
-            if (!view.chiediConferma("Confermare?")) {
+            if (!view.chiediConferma("Confermare? (hai 3 minuti per decidere)")) {
+                bookingController.releaseSlot(slot.getId());
                 view.mostraMessaggio("Prenotazione annullata.");
                 return CLIState.DASHBOARD_STUDENT;
             }

@@ -71,7 +71,10 @@ public class BookingController {
         return result;
     }
 
-    public BookingResponseBean prepareBookingSummary(BookingRequestBean request) throws DAOException {
+    private static final int RESERVATION_MINUTES = 3;
+
+    public BookingResponseBean prepareBookingSummary(BookingRequestBean request)
+            throws DAOException, BookingException {
         Tutor    tutor   = tutorDAO.findById(request.getTutor().getId());
         Subject  subject = subjectDAO.findById(request.getSubject().getId());
         TimeSlot slot    = timeSlotDAO.findById(request.getTimeSlot().getId());
@@ -80,11 +83,19 @@ public class BookingController {
         if (subject == null) throw new DAOException("Materia non trovata.");
         if (slot    == null) throw new DAOException("Slot non trovato.");
 
+        boolean reserved = timeSlotDAO.reserveSlot(slot.getId(), RESERVATION_MINUTES);
+        if (!reserved) throw new BookingException(
+                "Lo slot è stato appena prenotato da un altro studente. Seleziona un altro slot.");
+
         return new BookingResponseBean(0, "PENDING", null,
                 new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
                 new SubjectBean(subject.getId(), subject.getName()),
                 new TimeSlotBean(slot.getId(), slot.getDate(),
                         slot.getStartTime(), slot.getEndTime(), slot.isAvailable()));
+    }
+
+    public void releaseSlot(int slotId) throws DAOException {
+        timeSlotDAO.releaseSlot(slotId);
     }
 
     public BookingResponseBean createBooking(BookingRequestBean request)

@@ -1,7 +1,5 @@
 package it.ispwproject.brainbank.bean;
 
-import it.ispwproject.brainbank.bean.TutorBean;
-
 import java.time.LocalDateTime;
 
 public class ActivityBean {

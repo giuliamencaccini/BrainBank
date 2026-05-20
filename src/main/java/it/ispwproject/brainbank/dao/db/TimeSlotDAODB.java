@@ -32,6 +32,34 @@ public class TimeSlotDAODB implements TimeSlotDAO {
     private static final String SAVE =
             "INSERT INTO time_slot (tutor_id, date, start_time, end_time, available) VALUES (?, ?, ?, ?, TRUE)";
 
+    private static final String RESERVE_SLOT = "{call reserve_slot(?, ?, ?)}";
+    private static final String RELEASE_SLOT = "{call release_slot(?)}";
+
+    @Override
+    public boolean reserveSlot(int slotId, int minutes) throws DAOException {
+        try (Connection conn = ConnectionFactory.getConnection();
+             CallableStatement cs = conn.prepareCall(RESERVE_SLOT)) {
+            cs.setInt(1, slotId);
+            cs.setInt(2, minutes);
+            cs.registerOutParameter(3, java.sql.Types.BOOLEAN);
+            cs.execute();
+            return cs.getBoolean(3);
+        } catch (SQLException e) {
+            throw new DAOException("Errore durante la prenotazione temporanea: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void releaseSlot(int slotId) throws DAOException {
+        try (Connection conn = ConnectionFactory.getConnection();
+             CallableStatement cs = conn.prepareCall(RELEASE_SLOT)) {
+            cs.setInt(1, slotId);
+            cs.execute();
+        } catch (SQLException e) {
+            throw new DAOException("Errore durante il rilascio dello slot: " + e.getMessage(), e);
+        }
+    }
+
     @Override
     public List<TimeSlot> getAvailableByTutor(Tutor tutor) throws DAOException {
         List<TimeSlot> result = new ArrayList<>();

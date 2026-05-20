@@ -49,4 +49,12 @@ public class AvailabilityController {
         Tutor tutor = (Tutor) SessionManager.getInstance().getLoggedUser();
         return timeSlotDAO.getAllByTutorWithStudent(tutor.getId());
     }
+
+    public boolean reserveSlot(int slotId, int minutes) throws DAOException {
+        return timeSlotDAO.reserveSlot(slotId, minutes);
+    }
+
+    public void releaseSlot(int slotId) throws DAOException {
+        timeSlotDAO.releaseSlot(slotId);
+    }
 }
