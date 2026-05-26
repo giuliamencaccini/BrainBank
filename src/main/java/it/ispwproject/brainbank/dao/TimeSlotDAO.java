@@ -1,6 +1,5 @@
 package it.ispwproject.brainbank.dao;
 
-import it.ispwproject.brainbank.bean.TimeSlotBean;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.TimeSlot;
 import it.ispwproject.brainbank.model.Tutor;

@@ -1,6 +1,5 @@
 package it.ispwproject.brainbank.dao.db;
 
-import it.ispwproject.brainbank.bean.TimeSlotBean;
 import it.ispwproject.brainbank.dao.ConnectionFactory;
 import it.ispwproject.brainbank.dao.TimeSlotDAO;
 import it.ispwproject.brainbank.exception.DAOException;

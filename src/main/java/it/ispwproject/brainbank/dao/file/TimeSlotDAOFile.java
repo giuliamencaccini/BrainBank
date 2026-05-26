@@ -3,7 +3,6 @@ package it.ispwproject.brainbank.dao.file;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import it.ispwproject.brainbank.bean.TimeSlotBean;
 import it.ispwproject.brainbank.dao.TimeSlotDAO;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.TimeSlot;
