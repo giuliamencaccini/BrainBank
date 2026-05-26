@@ -1,4 +1,4 @@
-package it.ispwproject.brainbank.controller.demo;
+package it.ispwproject.brainbank.demo;
 
 import it.ispwproject.brainbank.model.*;
 
@@ -25,6 +25,7 @@ public class DemoDataStore {
     private final List<Activity> activities = new ArrayList<>();
     private final List<Progress> progresses = new ArrayList<>();
     private final Map<Integer, List<Integer>> favouritesByStudent = new HashMap<>();
+    private final Map<Integer, List<Integer>> subjectsByTutor     = new HashMap<>(); // ← aggiunto
 
     private int nextUserId     = 10;
     private int nextBookingId  = 1;
@@ -67,6 +68,11 @@ public class DemoDataStore {
         subjects.add(new Subject(4, "Chimica"));
         subjects.add(new Subject(5, "Programmazione"));
 
+        // t1 insegna Analisi 1, Fisica 1, Algebra
+        subjectsByTutor.put(3, new ArrayList<>(List.of(1, 2, 3)));
+        // t2 insegna Fisica 1, Chimica
+        subjectsByTutor.put(4, new ArrayList<>(List.of(2, 4)));
+
         timeSlots.add(new TimeSlot(1, t1, LocalDate.now().plusDays(1),
                 LocalTime.of(9, 0), LocalTime.of(11, 0)));
         timeSlots.add(new TimeSlot(2, t1, LocalDate.now().plusDays(1),
@@ -92,6 +98,7 @@ public class DemoDataStore {
     public List<Activity> getActivities() { return activities; }
     public List<Progress> getProgresses() { return progresses; }
     public Map<Integer, List<Integer>> getFavouritesByStudent() { return favouritesByStudent; }
+    public Map<Integer, List<Integer>> getSubjectsByTutor()     { return subjectsByTutor; }  // ← aggiunto
 
     public int nextUserId()     { return nextUserId++; }
     public int nextBookingId()  { return nextBookingId++; }

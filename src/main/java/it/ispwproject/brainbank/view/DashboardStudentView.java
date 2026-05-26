@@ -19,6 +19,7 @@ public class DashboardStudentView {
         System.out.println("  [2] Le mie prenotazioni");
         System.out.println("  [3] Annulla una prenotazione");
         System.out.println("  [4] To-do");
+        System.out.println("  [5] Profilo");
         System.out.println("  [0] Logout");
     }
 

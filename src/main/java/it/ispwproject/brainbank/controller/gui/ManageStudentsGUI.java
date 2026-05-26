@@ -83,6 +83,8 @@ public class ManageStudentsGUI {
         try {
             ProgressBean       progress   = activityController.getProgress(student.getId());
             List<ActivityBean> activities = activityController.getActivities(student.getId());
+            List<BookingResponseBean> upcoming  = activityController.getUpcomingLessons(student.getId());
+            List<BookingResponseBean> completed = activityController.getCompletedLessons(student.getId());
 
             // ── Header studente ───────────────────────────
             HBox studentHeader = new HBox(12);
@@ -100,12 +102,57 @@ public class ManageStudentsGUI {
                             "-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; " +
                             "-fx-min-width: 40; -fx-min-height: 40; -fx-alignment: center;");
 
-            VBox studentInfo = new VBox(2);
+            VBox studentInfo = new VBox(4);
             Label nameLabel = new Label(student.getFullName());
             nameLabel.getStyleClass().add("welcome-label");
             Label emailLabel = new Label(student.getEmail());
             emailLabel.getStyleClass().add("info-text");
             studentInfo.getChildren().addAll(nameLabel, emailLabel);
+
+            // Prossima lezione
+            java.time.format.DateTimeFormatter fmt =
+                    java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            if (!upcoming.isEmpty()) {
+                BookingResponseBean next = upcoming.get(0);
+                Label nextLesson = new Label("📅  Prossima: " +
+                        next.getTimeSlot().getDate().format(fmt) + " — " +
+                        next.getSubject().getName() + "  " +
+                        next.getTimeSlot().getStartTime() + "–" +
+                        next.getTimeSlot().getEndTime());
+                nextLesson.getStyleClass().add("info-text");
+                nextLesson.setStyle("-fx-text-fill: #5a8a6a; -fx-font-weight: bold;");
+                studentInfo.getChildren().add(nextLesson);
+            }
+
+            // Storico lezioni — toggle
+            if (!completed.isEmpty()) {
+                Label storicoBtn = new Label("📖  Lezioni effettuate (" + completed.size() + ")  ▼");
+                storicoBtn.getStyleClass().add("info-text");
+                storicoBtn.setStyle("-fx-text-fill: #888; -fx-cursor: hand;");
+
+                VBox storicoContent = new VBox(4);
+                storicoContent.setVisible(false);
+                storicoContent.setManaged(false);
+                storicoContent.setPadding(new Insets(4, 0, 0, 8));
+
+                for (BookingResponseBean b : completed) {
+                    Label l = new Label("• " + b.getTimeSlot().getDate().format(fmt) +
+                            " — " + b.getSubject().getName() + "  " +
+                            b.getTimeSlot().getStartTime() + "–" + b.getTimeSlot().getEndTime());
+                    l.getStyleClass().add("info-text");
+                    l.setStyle("-fx-text-fill: #888;");
+                    storicoContent.getChildren().add(l);
+                }
+
+                storicoBtn.setOnMouseClicked(e -> {
+                    boolean show = !storicoContent.isVisible();
+                    storicoContent.setVisible(show);
+                    storicoContent.setManaged(show);
+                    storicoBtn.setText("📖  Lezioni effettuate (" + completed.size() + ")  " + (show ? "▲" : "▼"));
+                });
+
+                studentInfo.getChildren().addAll(storicoBtn, storicoContent);
+            }
 
             studentHeader.getChildren().addAll(avatar, studentInfo);
 
@@ -179,13 +226,21 @@ public class ManageStudentsGUI {
                     Button deleteBtn = new Button("✕");
                     deleteBtn.getStyleClass().add("cancel-inline-button");
                     deleteBtn.setOnAction(e -> {
-                        try {
-                            activityController.deleteActivity(a.getId());
-                            card.getChildren().clear();
-                            buildStudentCard(student, card);
-                        } catch (DAOException ex) {
-                            errorLabel.setText("Errore: " + ex.getMessage());
-                        }
+                        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                        confirm.setTitle("Conferma eliminazione");
+                        confirm.setHeaderText(null);
+                        confirm.setContentText("Sei sicuro di voler eliminare questa attività?\n\"" + a.getDescription() + "\"\n\nL'operazione è irreversibile.");
+                        confirm.showAndWait().ifPresent(r -> {
+                            if (r == ButtonType.OK) {
+                                try {
+                                    activityController.deleteActivity(a.getId());
+                                    card.getChildren().clear();
+                                    buildStudentCard(student, card);
+                                } catch (DAOException ex) {
+                                    errorLabel.setText("Errore: " + ex.getMessage());
+                                }
+                            }
+                        });
                     });
 
                     actRow.getChildren().addAll(check, actLabel, deleteBtn);

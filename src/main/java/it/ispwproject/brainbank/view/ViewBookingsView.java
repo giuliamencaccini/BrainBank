@@ -27,6 +27,12 @@ public class ViewBookingsView {
                         b.getTimeSlot().getDate(),
                         b.getTimeSlot().getStartTime(),
                         b.getTimeSlot().getEndTime());
+                if (b.getTutor().getEmail() != null) {
+                    System.out.printf("         Email tutor: %s%n", b.getTutor().getEmail());
+                }
+                if (b.getMeetLink() != null) {
+                    System.out.printf("         Meet: %s%n", b.getMeetLink());
+                }
                 System.out.println();
             }
         }

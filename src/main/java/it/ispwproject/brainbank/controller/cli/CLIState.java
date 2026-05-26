@@ -7,6 +7,7 @@ public enum CLIState {
     LOGIN,
     REGISTRAZIONE,
     USCITA,
+    EDIT_PROFILE,
 
     // ── Student ─────────────────────────────────────────────────────────
     DASHBOARD_STUDENT,
@@ -15,11 +16,13 @@ public enum CLIState {
     CANCEL_BOOKING,
     VIEW_TODO,
 
+
     // ── Tutor ────────────────────────────────────────────────────────────
     DASHBOARD_TUTOR,
     SET_AVAILABILITY,
     VIEW_SLOTS,
     MANAGE_STUDENTS,
+
 
     // ── Admin ────────────────────────────────────────────────────────────
     DASHBOARD_ADMIN,

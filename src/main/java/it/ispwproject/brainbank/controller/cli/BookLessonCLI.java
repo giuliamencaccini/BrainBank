@@ -2,7 +2,6 @@ package it.ispwproject.brainbank.controller.cli;
 
 import it.ispwproject.brainbank.bean.*;
 import it.ispwproject.brainbank.controller.applicativo.BookingController;
-import it.ispwproject.brainbank.controller.demo.DemoFactory;
 import it.ispwproject.brainbank.exception.BookingException;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Student;
@@ -14,17 +13,18 @@ import java.util.List;
 
 public class BookLessonCLI {
 
-    private final BookingController bookingController = DemoFactory.getBookingController();
+    private final BookingController bookingController = new BookingController();
     private final BookLessonView view = new BookLessonView();
 
     public CLIState start() {
         view.mostraIntestazione();
 
-        // Costruisce StudentBean dallo studente loggato
         Student loggedStudent = (Student) SessionManager.getInstance().getLoggedUser();
         StudentBean studentBean = new StudentBean(
                 loggedStudent.getId(), loggedStudent.getName(),
                 loggedStudent.getSurname(), loggedStudent.getEmail());
+
+        TimeSlotBean slot = null;
 
         try {
             // Step 1 – materia
@@ -63,7 +63,7 @@ public class BookLessonCLI {
             view.mostraSlot(available);
             int slc = view.chiediScelta("Seleziona uno slot", 0, available.size());
             if (slc == 0) return CLIState.DASHBOARD_STUDENT;
-            TimeSlotBean slot = available.get(slc - 1);
+            slot = available.get(slc - 1);
 
             // Step 4 – riepilogo
             BookingRequestBean request = new BookingRequestBean(studentBean, tutor, subject, slot);
@@ -83,18 +83,22 @@ public class BookLessonCLI {
                 boolean addFavourite = view.chiediConferma(
                         "Vuoi aggiungere " + tutor.getFullName() + " ai tutor preferiti?"
                 );
-
                 if (addFavourite) {
                     bookingController.addTutorToFavourites(
                             studentBean.getId(),
                             tutor.getId()
                     );
-
                     view.mostraMessaggio("⭐ Tutor aggiunto ai preferiti.");
                 }
             }
 
-        } catch (DAOException | BookingException e) {
+        } catch (BookingException e) {
+            if (slot != null) {
+                try { bookingController.releaseSlot(slot.getId()); }
+                catch (DAOException ex) { /* ignora */ }
+            }
+            view.mostraMessaggio("❌ Errore: " + e.getMessage());
+        } catch (DAOException e) {
             view.mostraMessaggio("❌ Errore: " + e.getMessage());
         }
 

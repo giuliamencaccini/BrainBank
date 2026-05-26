@@ -114,10 +114,7 @@ public class BookingController {
         for (Booking b : bookingDAO.findByStudent(student.getId())) {
             if (b.getStatus().name().equals("CANCELLED")) continue;
             TimeSlot existing = b.getTimeSlot();
-            if (existing != null &&
-                    existing.getDate().equals(slot.getDate()) &&
-                    existing.getStartTime().isBefore(slot.getEndTime()) &&
-                    slot.getStartTime().isBefore(existing.getEndTime())) {
+            if (existing != null && slot.overlaps(existing)) {
                 throw new BookingException(
                         "Hai già una prenotazione sovrapposta: " +
                                 existing.getDate() + " " +

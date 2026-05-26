@@ -16,15 +16,20 @@ public class TimeSlotDAODB implements TimeSlotDAO {
     private static final String GET_AVAILABLE_BY_TUTOR =
             "SELECT id, date, start_time, end_time, available " +
                     "FROM time_slot WHERE tutor_id = ? AND available = TRUE " +
+                    "AND (reserved_until IS NULL OR reserved_until < NOW()) " +
                     "ORDER BY date, start_time";
 
-    private static final String GET_ALL_BY_TUTOR_WITH_STUDENT =
-            "SELECT ts.id, ts.date, ts.start_time, ts.end_time, ts.available, " +
-                    "       u.name AS booked_by_name, u.surname AS booked_by_surname, b.meet_link " +
-                    "FROM time_slot ts " +
-                    "LEFT JOIN booking b ON ts.id = b.slot_id AND b.status = 'CONFIRMED' " +
-                    "LEFT JOIN user u    ON b.student_id = u.id " +
-                    "WHERE ts.tutor_id = ? ORDER BY ts.date, ts.start_time";
+    private static final String GET_ALL_BY_TUTOR =
+            "SELECT id, date, start_time, end_time, available " +
+                    "FROM time_slot " +
+                    "WHERE tutor_id = ? AND date >= CURDATE() " +
+                    "ORDER BY date, start_time";
+
+    private static final String GET_PAST_BY_TUTOR =
+            "SELECT id, date, start_time, end_time, available " +
+                    "FROM time_slot " +
+                    "WHERE tutor_id = ? AND date < CURDATE() " +
+                    "ORDER BY date DESC, start_time";
 
     private static final String FIND_BY_ID =
             "SELECT id, date, start_time, end_time, available FROM time_slot WHERE id = ?";
@@ -34,6 +39,8 @@ public class TimeSlotDAODB implements TimeSlotDAO {
 
     private static final String RESERVE_SLOT = "{call reserve_slot(?, ?, ?)}";
     private static final String RELEASE_SLOT = "{call release_slot(?)}";
+    private static final String DELETE_SLOT =
+            "DELETE FROM time_slot WHERE id = ? AND tutor_id = ? AND available = TRUE";
 
     @Override
     public boolean reserveSlot(int slotId, int minutes) throws DAOException {
@@ -76,27 +83,39 @@ public class TimeSlotDAODB implements TimeSlotDAO {
     }
 
     @Override
-    public List<TimeSlotBean> getAllByTutorWithStudent(int tutorId) throws DAOException {
-        List<TimeSlotBean> result = new ArrayList<>();
+    public List<TimeSlot> getAllByTutor(int tutorId) throws DAOException {
+        List<TimeSlot> result = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement(GET_ALL_BY_TUTOR_WITH_STUDENT)) {
+             PreparedStatement ps = conn.prepareStatement(GET_ALL_BY_TUTOR)) {
             ps.setInt(1, tutorId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    TimeSlotBean bean = new TimeSlotBean(
-                            rs.getInt("id"), rs.getDate("date").toLocalDate(),
+                    TimeSlot slot = new TimeSlot(
+                            rs.getInt("id"),
+                            rs.getDate("date").toLocalDate(),
                             rs.getTime("start_time").toLocalTime(),
-                            rs.getTime("end_time").toLocalTime(),
-                            rs.getBoolean("available"));
-                    String name    = rs.getString("booked_by_name");
-                    String surname = rs.getString("booked_by_surname");
-                    if (name != null) bean.setBookedByName(name + " " + surname);
-                    bean.setMeetLink(rs.getString("meet_link"));
-                    result.add(bean);
+                            rs.getTime("end_time").toLocalTime());
+                    slot.setAvailable(rs.getBoolean("available"));
+                    result.add(slot);
                 }
             }
         } catch (SQLException e) {
             throw new DAOException("Errore nel caricamento degli slot: " + e.getMessage(), e);
+        }
+        return result;
+    }
+
+    @Override
+    public List<TimeSlot> getPastByTutor(int tutorId) throws DAOException {
+        List<TimeSlot> result = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(GET_PAST_BY_TUTOR)) {
+            ps.setInt(1, tutorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) result.add(mapToTimeSlot(rs));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Errore nel caricamento degli slot passati: " + e.getMessage(), e);
         }
         return result;
     }
@@ -129,6 +148,19 @@ public class TimeSlotDAODB implements TimeSlotDAO {
             }
         } catch (SQLException e) {
             throw new DAOException("Errore durante il salvataggio dello slot: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void delete(int slotId, int tutorId) throws DAOException {
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(DELETE_SLOT)) {
+            ps.setInt(1, slotId);
+            ps.setInt(2, tutorId);
+            int rows = ps.executeUpdate();
+            if (rows == 0) throw new DAOException("Slot non trovato o già prenotato.");
+        } catch (SQLException e) {
+            throw new DAOException("Errore eliminazione slot: " + e.getMessage(), e);
         }
     }
 

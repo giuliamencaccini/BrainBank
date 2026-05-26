@@ -1,9 +1,7 @@
 package it.ispwproject.brainbank.controller.gui;
 
 import it.ispwproject.brainbank.bean.TimeSlotBean;
-import it.ispwproject.brainbank.bean.BookingResponseBean;
 import it.ispwproject.brainbank.controller.applicativo.AvailabilityController;
-import it.ispwproject.brainbank.controller.applicativo.BookingController;
 import it.ispwproject.brainbank.exception.DAOException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,12 +10,12 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.util.List;
+import java.util.Map;
 
 public class ViewSlotsGUI {
 
     private final Stage                  stage;
     private final AvailabilityController availabilityController = new AvailabilityController();
-    private final BookingController      bookingController      = new BookingController();
 
     public ViewSlotsGUI(Stage stage) { this.stage = stage; }
 
@@ -31,58 +29,76 @@ public class ViewSlotsGUI {
         errorLabel.getStyleClass().add("error-label");
 
         try {
-            List<TimeSlotBean> slots = availabilityController.getSlots();
-            int tutorId = it.ispwproject.brainbank.util.singleton.SessionManager
-                    .getInstance().getLoggedUser().getId();
+            List<TimeSlotBean> futuri  = availabilityController.getSlots();
+            List<TimeSlotBean> passati = availabilityController.getPastSlots();
 
-            java.util.Map<Integer, String> subjectBySlot = new java.util.HashMap<>();
-            for (BookingResponseBean b : bookingController.getTutorBookings(tutorId)) {
-                subjectBySlot.put(b.getTimeSlot().getId(), b.getSubject().getName());
-            }
+            Map<Integer, String> subjectBySlot = availabilityController.getSubjectBySlot();
 
-            List<TimeSlotBean> prenotati   = slots.stream().filter(s -> !s.isAvailable()).toList();
-            List<TimeSlotBean> disponibili = slots.stream().filter(TimeSlotBean::isAvailable).toList();
+            List<TimeSlotBean> prenotati   = futuri.stream().filter(s -> !s.isAvailable()).toList();
+            List<TimeSlotBean> disponibili = futuri.stream().filter(TimeSlotBean::isAvailable).toList();
 
-            // ── Toggle bar ──────────────────────────────────
-            ToggleButton btnPrenotati   = new ToggleButton("Prenotati (" + prenotati.size() + ")");
             ToggleButton btnDisponibili = new ToggleButton("Disponibili (" + disponibili.size() + ")");
-            btnPrenotati.getStyleClass().add("toggle-card");
+            ToggleButton btnPrenotati   = new ToggleButton("Prenotati (" + prenotati.size() + ")");
+            ToggleButton btnPassati     = new ToggleButton("Passati (" + passati.size() + ")");
+
             btnDisponibili.getStyleClass().add("toggle-card");
-            btnPrenotati.setPrefWidth(200); btnPrenotati.setPrefHeight(36);
-            btnDisponibili.setPrefWidth(200); btnDisponibili.setPrefHeight(36);
+            btnPrenotati.getStyleClass().addAll("toggle-card","cancelled");
+            btnPassati.getStyleClass().addAll("toggle-card","pending");
+
+
+            btnDisponibili.setPrefWidth(180); btnDisponibili.setPrefHeight(36);
+            btnPrenotati.setPrefWidth(180);   btnPrenotati.setPrefHeight(36);
+            btnPassati.setPrefWidth(180);     btnPassati.setPrefHeight(36);
 
             ToggleGroup group = new ToggleGroup();
-            btnPrenotati.setToggleGroup(group);
             btnDisponibili.setToggleGroup(group);
-            btnPrenotati.setSelected(true);
+            btnPrenotati.setToggleGroup(group);
+            btnPassati.setToggleGroup(group);
+            btnDisponibili.setSelected(true);
 
-            HBox toggleBar = new HBox(8, btnPrenotati, btnDisponibili);
+            HBox toggleBar = new HBox(8, btnDisponibili, btnPrenotati, btnPassati);
             toggleBar.setAlignment(Pos.CENTER);
             toggleBar.setMaxWidth(640);
 
-            // ── Lista aggiornabile ───────────────────────────
             VBox listBox = new VBox(12);
             listBox.setAlignment(Pos.TOP_CENTER);
 
+
             Runnable refreshList = () -> {
                 listBox.getChildren().clear();
-                List<TimeSlotBean> current = btnPrenotati.isSelected() ? prenotati : disponibili;
+                List<TimeSlotBean> current;
+                String emptyMsg;
+                boolean isPast;
+                if (btnDisponibili.isSelected()) {
+                    current = disponibili;
+                    emptyMsg = "Nessuno slot disponibile.";
+                    isPast = false;
+                } else if (btnPrenotati.isSelected()) {
+                    current = prenotati;
+                    emptyMsg = "Nessuno slot prenotato.";
+                    isPast = false;
+                } else {
+                    current = passati;
+                    emptyMsg = "Nessuno slot passato.";
+                    isPast = true;
+                }
                 if (current.isEmpty()) {
-                    Label empty = new Label(btnPrenotati.isSelected()
-                            ? "Nessuno slot prenotato." : "Nessuno slot disponibile.");
+                    Label empty = new Label(emptyMsg);
                     empty.getStyleClass().add("register-label");
                     listBox.getChildren().add(empty);
                 } else {
                     for (TimeSlotBean s : current)
-                        listBox.getChildren().add(buildSlotCard(s, subjectBySlot.get(s.getId())));
+                        listBox.getChildren().add(
+                                buildSlotCard(s, subjectBySlot.get(s.getId()), isPast));
                 }
             };
+
             refreshList.run();
-
-            btnPrenotati.setOnAction(e -> refreshList.run());
             btnDisponibili.setOnAction(e -> refreshList.run());
+            btnPrenotati.setOnAction(e -> refreshList.run());
+            btnPassati.setOnAction(e -> refreshList.run());
 
-            if (slots.isEmpty()) {
+            if (futuri.isEmpty() && passati.isEmpty()) {
                 Label empty = new Label("Non hai ancora slot.");
                 empty.getStyleClass().add("register-label");
                 content.getChildren().addAll(toggleBar, empty);
@@ -98,7 +114,7 @@ public class ViewSlotsGUI {
         stage.show();
     }
 
-    private HBox buildSlotCard(TimeSlotBean s, String subjectName) {
+    private HBox buildSlotCard(TimeSlotBean s, String subjectName, boolean isPast) {
         HBox card = new HBox(16);
         card.getStyleClass().add("info-card");
         card.setAlignment(Pos.CENTER_LEFT);
@@ -107,9 +123,7 @@ public class ViewSlotsGUI {
         VBox info = new VBox(4);
         HBox.setHgrow(info, Priority.ALWAYS);
 
-        // Riga data + pallino allineati
         Label dot = new Label("●");
-        dot.getStyleClass().add(s.isAvailable() ? "success-label" : "error-label");
         dot.setStyle("-fx-font-size: 14px;");
 
         String dateStr = s.getDate().format(
@@ -120,13 +134,24 @@ public class ViewSlotsGUI {
         HBox dateRow = new HBox(8, dot, dateTime);
         dateRow.setAlignment(Pos.CENTER_LEFT);
 
-        Label status = new Label(s.isAvailable() ? "Disponibile" : "Prenotato");
-        status.getStyleClass().add(s.isAvailable() ? "success-label" : "error-label");
-        status.setStyle("-fx-font-weight: bold;");
+        Label status = new Label();
 
         info.getChildren().addAll(dateRow, status);
 
-        if (!s.isAvailable()) {
+        if (isPast) {
+            if (!s.isAvailable()) {
+                dot.getStyleClass().add("error-label");
+                status.setText("Utilizzato");
+                status.getStyleClass().add("error-label");
+            } else {
+                dot.getStyleClass().add("past-label");
+                status.setText("Non utilizzato");
+                status.getStyleClass().add("past-label");
+            }
+        } else if (!s.isAvailable()) {
+            dot.getStyleClass().add("error-label");
+            status.setText("Prenotato");
+            status.getStyleClass().add("error-label");
             if (subjectName != null) {
                 Label subject = new Label("Materia: " + subjectName);
                 subject.getStyleClass().add("small-label");
@@ -143,6 +168,32 @@ public class ViewSlotsGUI {
                 meet.setStyle("-fx-text-fill: #3498DB;");
                 info.getChildren().add(meet);
             }
+        } else {
+            dot.getStyleClass().add("success-label");
+            status.setText("Disponibile");
+            status.getStyleClass().add("success-label");
+            Button deleteBtn = new Button("Elimina");
+            deleteBtn.getStyleClass().add("danger-button");
+            deleteBtn.setOnAction(e -> {
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                confirm.setTitle("Conferma eliminazione");
+                confirm.setHeaderText(null);
+                confirm.setContentText("Vuoi eliminare questo slot?\n" +
+                        s.getDate() + "  " + s.getStartTime() + " – " + s.getEndTime());
+                confirm.showAndWait().ifPresent(r -> {
+                    if (r == ButtonType.OK) {
+                        try {
+                            availabilityController.deleteSlot(s.getId());
+                            show();
+                        } catch (DAOException ex) {
+                            // errore eliminazione
+                        }
+                    }
+                });
+            });
+            HBox btnRow = new HBox(deleteBtn);
+            btnRow.setAlignment(Pos.CENTER_RIGHT);
+            info.getChildren().add(btnRow);
         }
 
         card.getChildren().add(info);

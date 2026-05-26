@@ -1,6 +1,5 @@
 package it.ispwproject.brainbank.controller.cli;
 
-import it.ispwproject.brainbank.controller.demo.DemoFactory;
 import it.ispwproject.brainbank.dao.DAOFactory;
 import it.ispwproject.brainbank.view.ModeSelectorView;
 
@@ -15,7 +14,7 @@ public class ModeSelectorCLI {
 
             switch (scelta) {
                 case "1" -> {
-                    DemoFactory.enableDemoMode();
+                    DAOFactory.setPersistence(DAOFactory.MEMORY);
                     view.mostraModalitaSelezionata("Demo (in-memory)");
                     return true;
                 }

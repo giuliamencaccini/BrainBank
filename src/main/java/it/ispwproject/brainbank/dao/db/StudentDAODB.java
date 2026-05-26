@@ -18,7 +18,7 @@ public class StudentDAODB implements StudentDAO {
             "SELECT DISTINCT u.id, u.name, u.surname, u.email " +
                     "FROM user u " +
                     "JOIN booking b ON u.id = b.student_id " +
-                    "WHERE b.tutor_id = ? AND b.status = 'CONFIRMED' " +
+                    "WHERE b.tutor_id = ? " +
                     "ORDER BY u.name";
 
     private static final String ADD_FAVOURITE_TUTOR =

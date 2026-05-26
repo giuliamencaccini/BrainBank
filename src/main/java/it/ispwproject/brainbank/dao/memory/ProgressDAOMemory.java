@@ -1,6 +1,6 @@
 package it.ispwproject.brainbank.dao.memory;
 
-import it.ispwproject.brainbank.controller.demo.DemoDataStore;
+import it.ispwproject.brainbank.demo.DemoDataStore;
 import it.ispwproject.brainbank.dao.ProgressDAO;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Progress;

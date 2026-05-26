@@ -44,11 +44,20 @@ public class TimeSlotDAOFile implements TimeSlotDAO {
     }
 
     @Override
-    public List<TimeSlotBean> getAllByTutorWithStudent(int tutorId) throws DAOException {
+    public List<TimeSlot> getAllByTutor(int tutorId) throws DAOException {
         return cache.stream()
-                .filter(s -> s.getTutor() != null && s.getTutor().getId() == tutorId)
-                .map(s -> new TimeSlotBean(s.getId(), s.getDate(),
-                        s.getStartTime(), s.getEndTime(), s.isAvailable()))
+                .filter(s -> s.getTutor() != null
+                        && s.getTutor().getId() == tutorId
+                        && !s.getDate().isBefore(LocalDate.now()))
+                .toList();
+    }
+
+    @Override
+    public List<TimeSlot> getPastByTutor(int tutorId) throws DAOException {
+        return cache.stream()
+                .filter(s -> s.getTutor() != null
+                        && s.getTutor().getId() == tutorId
+                        && s.getDate().isBefore(LocalDate.now()))
                 .toList();
     }
 
@@ -96,14 +105,18 @@ public class TimeSlotDAOFile implements TimeSlotDAO {
 
     @Override
     public boolean reserveSlot(int slotId, int minutes) throws DAOException {
-        TimeSlot slot = cache.stream()
-                .filter(s -> s.getId() == slotId && s.isAvailable())
-                .findFirst()
-                .orElse(null);
-        if (slot == null) return false;
-        slot.setReservedUntil(java.time.LocalDateTime.now().plusMinutes(minutes));
-        saveToFile();
-        return true;
+        synchronized (cache) {
+            TimeSlot slot = cache.stream()
+                    .filter(s -> s.getId() == slotId && s.isAvailable()
+                            && (s.getReservedUntil() == null ||
+                            s.getReservedUntil().isBefore(java.time.LocalDateTime.now())))
+                    .findFirst()
+                    .orElse(null);
+            if (slot == null) return false;
+            slot.setReservedUntil(java.time.LocalDateTime.now().plusMinutes(minutes));
+            saveToFile();
+            return true;
+        }
     }
 
     @Override
@@ -115,5 +128,16 @@ public class TimeSlotDAOFile implements TimeSlotDAO {
                     s.setReservedUntil(null);
                     saveToFile();
                 });
+    }
+
+    @Override
+    public void delete(int slotId, int tutorId) throws DAOException {
+        boolean removed = cache.removeIf(s ->
+                s.getId() == slotId
+                        && s.getTutor() != null
+                        && s.getTutor().getId() == tutorId
+                        && s.isAvailable());
+        if (!removed) throw new DAOException("Slot non trovato o già prenotato.");
+        saveToFile();
     }
 }

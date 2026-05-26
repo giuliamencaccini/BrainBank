@@ -1,6 +1,6 @@
 package it.ispwproject.brainbank.dao.memory;
 
-import it.ispwproject.brainbank.controller.demo.DemoDataStore;
+import it.ispwproject.brainbank.demo.DemoDataStore;
 import it.ispwproject.brainbank.dao.SubjectDAO;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Subject;
@@ -13,7 +13,7 @@ public class SubjectDAOMemory implements SubjectDAO {
 
     @Override
     public List<Subject> getAll() throws DAOException {
-        return store.getSubjects();
+        return List.copyOf(store.getSubjects());
     }
 
     @Override

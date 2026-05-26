@@ -68,7 +68,8 @@ public class BookingDAOFile extends AbstractBookingDAO {
         return identityMap.stream()
                 .filter(b -> b.getStudent() != null && b.getStudent().getId() == studentId
                         && b.getTutor() != null && b.getTutor().getId() == tutorId
-                        && b.getStatus() == BookingStatus.CONFIRMED)
+                        && b.getStatus() == BookingStatus.CONFIRMED
+                        && !b.getTimeSlot().getDate().isAfter(LocalDate.now()))
                 .toList();
     }
 
@@ -77,7 +78,8 @@ public class BookingDAOFile extends AbstractBookingDAO {
         return identityMap.stream()
                 .filter(b -> b.getStudent() != null && b.getStudent().getId() == studentId
                         && b.getTutor() != null && b.getTutor().getId() == tutorId
-                        && b.getStatus() == BookingStatus.CONFIRMED)
+                        && b.getStatus() == BookingStatus.CONFIRMED
+                        && b.getTimeSlot().getDate().isAfter(LocalDate.now()))
                 .toList();
     }
 

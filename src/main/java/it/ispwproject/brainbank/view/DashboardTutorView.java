@@ -18,6 +18,7 @@ public class DashboardTutorView {
         System.out.println("  [1] Disponibilità");
         System.out.println("  [2] I miei slot");
         System.out.println("  [3] Gestisci studenti");
+        System.out.println("  [4] Profilo");
         System.out.println("  [0] Logout");
     }
 

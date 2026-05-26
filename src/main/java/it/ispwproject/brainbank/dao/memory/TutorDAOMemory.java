@@ -1,12 +1,13 @@
 package it.ispwproject.brainbank.dao.memory;
 
-import it.ispwproject.brainbank.controller.demo.DemoDataStore;
+import it.ispwproject.brainbank.demo.DemoDataStore;
 import it.ispwproject.brainbank.dao.TutorDAO;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Subject;
 import it.ispwproject.brainbank.model.Tutor;
 
 import java.util.List;
+import java.util.Map;
 
 public class TutorDAOMemory implements TutorDAO {
 
@@ -14,10 +15,15 @@ public class TutorDAOMemory implements TutorDAO {
 
     @Override
     public List<Tutor> getBySubject(Subject subject) throws DAOException {
-        // In demo tutti i tutor insegnano tutte le materie
+        List<Integer> tutorIds = store.getSubjectsByTutor().entrySet().stream()
+                .filter(e -> e.getValue().contains(subject.getId()))
+                .map(Map.Entry::getKey)
+                .toList();
+
         return store.getUsers().stream()
                 .filter(Tutor.class::isInstance)
                 .map(Tutor.class::cast)
+                .filter(t -> tutorIds.contains(t.getId()))
                 .toList();
     }
 

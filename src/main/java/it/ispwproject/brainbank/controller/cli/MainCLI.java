@@ -15,6 +15,7 @@ public class MainCLI {
                 case INIZIALE      -> new InitialCLI().start();
                 case LOGIN         -> new LoginCLI().start();
                 case REGISTRAZIONE -> new RegistrationCLI().start();
+                case EDIT_PROFILE  -> new EditProfileCLI().start();
 
                 // ── Student ──────────────────────────────────────────────
                 case DASHBOARD_STUDENT -> new DashboardStudentCLI().start();

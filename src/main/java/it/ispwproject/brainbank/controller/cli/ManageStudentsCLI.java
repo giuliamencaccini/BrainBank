@@ -41,13 +41,14 @@ public class ManageStudentsCLI {
             view.mostraSchedaStudente(student, completed, upcoming, progress);
             view.mostraMenuStudente();
 
-            int choice = view.chiediScelta("Scelta", 0, 4);
+            int choice = view.chiediScelta("Scelta", 0, 5);
 
             switch (choice) {
                 case 1 -> annotaProgressi(student);
                 case 2 -> assegnaAttivita(student);
                 case 3 -> visualizzaAttivita(student);
                 case 4 -> eliminaAttivita(student);
+                case 5 -> visualizzaStorico(student);
                 case 0 -> { return CLIState.DASHBOARD_TUTOR; }
                 default -> view.mostraMessaggio("❌ Scelta non valida.");
             }
@@ -55,7 +56,14 @@ public class ManageStudentsCLI {
     }
 
     private void annotaProgressi(StudentBean student) throws DAOException {
-        String notes = view.chiediTesto("Inserisci note sui progressi");
+        ProgressBean existing = activityController.getProgress(student.getId());
+        if (existing != null) {
+            view.mostraMessaggio("Progressi attuali:");
+            view.mostraMessaggio(existing.getNotes());
+            view.mostraMessaggio("─".repeat(30));
+            view.mostraMessaggio("Riscrivi il testo modificato:");
+        }
+        String notes = view.chiediTesto("Note");
         if (notes.isBlank()) {
             view.mostraMessaggio("Note non valide.");
             return;
@@ -80,6 +88,11 @@ public class ManageStudentsCLI {
         view.mostraAttivita(activities);
     }
 
+    private void visualizzaStorico(StudentBean student) throws DAOException {
+        List<BookingResponseBean> completed = activityController.getCompletedLessons(student.getId());
+        view.mostraStoricoLezioni(completed);
+    }
+
     private void eliminaAttivita(StudentBean student) throws DAOException {
         List<ActivityBean> activities = activityController.getActivities(student.getId());
         if (activities.isEmpty()) {
@@ -89,6 +102,10 @@ public class ManageStudentsCLI {
         view.mostraAttivitaPerEliminazione(activities);
         int choice = view.chiediScelta("Seleziona attività da eliminare", 0, activities.size());
         if (choice == 0) return;
+        if (!view.chiediConferma("Sei sicuro di voler eliminare questa attività? L'operazione è irreversibile.")) {
+            view.mostraMessaggio("Operazione annullata.");
+            return;
+        }
         activityController.deleteActivity(activities.get(choice - 1).getId());
         view.mostraSuccesso("Attività eliminata.");
     }

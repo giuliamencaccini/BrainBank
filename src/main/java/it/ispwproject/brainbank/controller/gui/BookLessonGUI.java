@@ -95,7 +95,6 @@ public class BookLessonGUI {
         ListView<SubjectBean> subjectList = new ListView<>();
         subjectList.getStyleClass().add("list-view");
         subjectList.setPrefHeight(-1);
-        subjectList.setMaxHeight(120);
         subjectList.setVisible(false); subjectList.setManaged(false);
         subjectList.setCellFactory(lv -> subjectCell());
 
@@ -154,9 +153,10 @@ public class BookLessonGUI {
                 subjectList.setVisible(false); subjectList.setManaged(false);
             } else {
                 List<SubjectBean> filtered = subjects.stream()
-                        .filter(s -> s.getName().toLowerCase().contains(newVal.toLowerCase()))
+                        .filter(s -> s.getName().toLowerCase().startsWith(newVal.toLowerCase()))
                         .toList();
                 subjectList.getItems().setAll(filtered);
+                subjectList.setPrefHeight(Math.min(filtered.size() * 36 + 2, 150));
                 subjectList.setVisible(!filtered.isEmpty());
                 subjectList.setManaged(!filtered.isEmpty());
             }
@@ -421,7 +421,11 @@ public class BookLessonGUI {
             alert.setContentText("✓ Prenotazione effettuata con successo!");
             alert.showAndWait();
             MainGUI.showDashboardStudent();
-        } catch (DAOException | BookingException e) {
+        } catch (BookingException e) {
+            try { bookingController.releaseSlot(selectedSlot.getId()); }
+            catch (DAOException ex) { /* ignora */ }
+            errorLabel.setText("Errore: " + e.getMessage());
+        } catch (DAOException e) {
             errorLabel.setText("Errore: " + e.getMessage());
         }
     }

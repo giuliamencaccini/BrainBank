@@ -19,13 +19,12 @@ public class ViewBookingsGUI {
 
     private final Stage stage;
     private final BookingController bookingController = new BookingController();
-    private final int studentId = SessionManager.getInstance().getLoggedUser().getId();
-
     private Label errorLabel;
 
     public ViewBookingsGUI(Stage stage) { this.stage = stage; }
 
     public void show() {
+        int studentId = SessionManager.getInstance().getLoggedUser().getId();
         BorderPane root = buildShell();
 
         VBox content = new VBox(12);
@@ -77,7 +76,7 @@ public class ViewBookingsGUI {
                     listBox.getChildren().add(empty);
                 } else {
                     for (BookingResponseBean b : current)
-                        listBox.getChildren().add(buildBookingCard(b, btnConfirmed.isSelected()));
+                        listBox.getChildren().add(buildBookingCard(b, btnConfirmed.isSelected(), studentId)); // ← AGGIUNTO studentId
                 }
             };
 
@@ -97,7 +96,7 @@ public class ViewBookingsGUI {
         stage.show();
     }
 
-    private VBox buildBookingCard(BookingResponseBean b, boolean cancellable) {
+    private VBox buildBookingCard(BookingResponseBean b, boolean cancellable, int studentId) { // ← AGGIUNTO studentId
         VBox card = new VBox(8);
         card.getStyleClass().add("info-card");
         card.setMaxWidth(640);
@@ -105,7 +104,6 @@ public class ViewBookingsGUI {
         VBox info = new VBox(4);
         HBox.setHgrow(info, Priority.ALWAYS);
 
-        // Data + pallino
         Label dot = new Label("●");
         dot.getStyleClass().add(cancellable ? "success-label" : "error-label");
         dot.setStyle("-fx-font-size: 14px;");
@@ -130,14 +128,12 @@ public class ViewBookingsGUI {
 
         info.getChildren().addAll(dateRow, status, subject, tutor);
 
-        // Email tutor — contatto diretto
         if (b.getTutor().getEmail() != null) {
             Label tutorEmail = new Label("Email  " + b.getTutor().getEmail());
             tutorEmail.getStyleClass().add("info-text");
             info.getChildren().add(tutorEmail);
         }
 
-        // Meet link + Annulla sulla stessa riga
         if (cancellable || (b.getMeetLink() != null && !b.getMeetLink().isBlank())) {
             HBox bottomRow = new HBox();
             bottomRow.setAlignment(Pos.CENTER_LEFT);
@@ -163,7 +159,7 @@ public class ViewBookingsGUI {
             if (cancellable) {
                 Button cancelBtn = new Button("Annulla");
                 cancelBtn.getStyleClass().add("danger-button");
-                cancelBtn.setOnAction(e -> confirmCancel(b));
+                cancelBtn.setOnAction(e -> confirmCancel(b, studentId)); // ← AGGIUNTO studentId
                 bottomRow.getChildren().add(cancelBtn);
             }
 
@@ -171,11 +167,10 @@ public class ViewBookingsGUI {
         }
 
         card.getChildren().add(info);
-
         return card;
     }
 
-    private void confirmCancel(BookingResponseBean b) {
+    private void confirmCancel(BookingResponseBean b, int studentId) { // ← AGGIUNTO studentId
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Conferma annullamento");
         alert.setHeaderText(null);

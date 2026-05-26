@@ -10,14 +10,6 @@ public class TutorBean {
 
     public TutorBean() {}
 
-    public TutorBean(int id, String name, String surname, String bio, boolean favourite) {
-        this.id       = id;
-        this.name     = name;
-        this.surname  = surname;
-        this.bio      = bio;
-        this.favourite = favourite;
-    }
-
     public TutorBean(int id, String name, String surname, String bio, String email, boolean favourite) {
         this.id       = id;
         this.name     = name;

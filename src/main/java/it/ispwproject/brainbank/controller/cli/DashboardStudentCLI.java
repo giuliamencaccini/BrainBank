@@ -1,5 +1,6 @@
 package it.ispwproject.brainbank.controller.cli;
 
+import it.ispwproject.brainbank.dao.ConnectionFactory;
 import it.ispwproject.brainbank.util.singleton.SessionManager;
 import it.ispwproject.brainbank.view.DashboardStudentView;
 
@@ -17,6 +18,7 @@ public class DashboardStudentCLI {
             case "2" -> CLIState.VIEW_BOOKINGS;
             case "3" -> CLIState.CANCEL_BOOKING;
             case "4" -> CLIState.VIEW_TODO;
+            case "5" -> CLIState.EDIT_PROFILE;
             case "0" -> onLogout();
             default  -> {
                 view.mostraMessaggio("❌ Scelta non valida.");
@@ -26,6 +28,7 @@ public class DashboardStudentCLI {
     }
 
     private CLIState onLogout() {
+        try { ConnectionFactory.clearRole(); } catch (java.sql.SQLException ex) { /* ignora */ }
         SessionManager.getInstance().clearSession();
         view.mostraMessaggio("✓ Logout effettuato.");
         return CLIState.INIZIALE;

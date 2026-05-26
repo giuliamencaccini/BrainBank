@@ -57,9 +57,12 @@ public class DashboardAdminGUI {
         logoutBtn.getStyleClass().add("button");
         logoutBtn.setPadding(new Insets(6, 18, 6, 18));
         logoutBtn.setOnAction(e -> {
+            try { it.ispwproject.brainbank.dao.ConnectionFactory.clearRole(); }
+            catch (java.sql.SQLException ex) { /* ignora */ }
             SessionManager.getInstance().clearSession();
             MainGUI.showLogin();
         });
+
         HBox right = new HBox(logoutBtn);
         right.setAlignment(Pos.CENTER_RIGHT);
         HBox.setHgrow(right, Priority.ALWAYS);

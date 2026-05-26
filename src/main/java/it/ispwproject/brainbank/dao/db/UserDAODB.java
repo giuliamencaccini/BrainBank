@@ -55,12 +55,12 @@ public class UserDAODB implements UserDAO {
     }
 
     private User buildUser(int id, String name, String surname,
-                           String email, Role role, String bio) throws DAOException {
+                           String email, Role role, String bio) {
         return switch (role) {
             case STUDENT -> new Student(id, name, surname, email, null);
             case TUTOR   -> new Tutor(id, name, surname, email, null, bio);
             case ADMIN -> new Admin(id, name, surname, email, null);
-            default      -> throw new DAOException("Ruolo non riconosciuto: " + role);
+            default -> throw new IllegalStateException("Ruolo non riconosciuto: " + role);
         };
     }
 }

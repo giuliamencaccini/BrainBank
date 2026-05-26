@@ -1,6 +1,6 @@
 package it.ispwproject.brainbank.dao.memory;
 
-import it.ispwproject.brainbank.controller.demo.DemoDataStore;
+import it.ispwproject.brainbank.demo.DemoDataStore;
 import it.ispwproject.brainbank.dao.ActivityDAO;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Activity;
@@ -41,6 +41,16 @@ public class ActivityDAOMemory implements ActivityDAO {
                         && a.getStudent() != null && a.getStudent().getId() == studentId)
                 .findFirst()
                 .ifPresent(a -> a.setCompleted(true));
+    }
+
+    @Override
+    public Activity findById(int activityId, int studentId) throws DAOException {
+        return store.getActivities().stream()
+                .filter(a -> a.getId() == activityId
+                        && a.getStudent() != null
+                        && a.getStudent().getId() == studentId)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

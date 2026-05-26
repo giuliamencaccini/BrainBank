@@ -55,7 +55,7 @@ public class ActivityController {
             if (tutor == null || subject == null || slot == null) continue;
             result.add(new BookingResponseBean(
                     booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
-                    new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), null, false),
+                    new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), null, null, false),
                     new SubjectBean(subject.getId(), subject.getName()),
                     new TimeSlotBean(slot.getId(), slot.getDate(),
                             slot.getStartTime(), slot.getEndTime(), slot.isAvailable())));
@@ -86,7 +86,7 @@ public class ActivityController {
         Tutor tutor = (Tutor) SessionManager.getInstance().getLoggedUser();
         List<ActivityBean> result = new ArrayList<>();
         TutorBean tutorBean = new TutorBean(tutor.getId(), tutor.getName(),
-                tutor.getSurname(), null, false);
+                tutor.getSurname(), null,null, false);
         for (Activity a : activityDAO.getByStudentAndTutor(tutor.getId(), studentId)) {
             StudentBean studentBean = new StudentBean(
                     a.getStudent().getId(), a.getStudent().getName(),
@@ -104,7 +104,11 @@ public class ActivityController {
             StudentBean studentBean = new StudentBean(
                     a.getStudent().getId(), a.getStudent().getName(),
                     a.getStudent().getSurname(), a.getStudent().getEmail());
-            result.add(new ActivityBean(a.getId(), studentBean,
+            TutorBean tutorBean = null;
+            if (a.getTutor() != null) {
+                tutorBean = new TutorBean(a.getTutor().getId(), a.getTutor().getName(), a.getTutor().getSurname(), null, null, false);
+            }
+            result.add(new ActivityBean(a.getId(), studentBean, tutorBean,
                     a.getDescription(), a.isCompleted(), a.getCreatedAt()));
         }
         return result;
@@ -112,6 +116,9 @@ public class ActivityController {
 
     public void markActivityCompleted(int activityId) throws DAOException {
         Student student = (Student) SessionManager.getInstance().getLoggedUser();
+        Activity activity = activityDAO.findById(activityId, student.getId());
+        if (activity == null) throw new DAOException("Attività non trovata o non autorizzata.");
+        activity.complete();
         activityDAO.markAsCompleted(activityId, student.getId());
     }
 
@@ -124,7 +131,12 @@ public class ActivityController {
         Tutor   tutor   = (Tutor) SessionManager.getInstance().getLoggedUser();
         Student student = studentDAO.findById(bean.getStudent().getId());
         if (student == null) throw new DAOException("Studente non trovato.");
-        Progress progress = new Progress(tutor, student, bean.getNotes());
+        Progress progress = progressDAO.findByStudentAndTutor(tutor.getId(), student.getId());
+        if (progress == null) {
+            progress = new Progress(tutor, student, bean.getNotes());
+        } else {
+            progress.updateNotes(bean.getNotes());
+        }
         progressDAO.saveOrUpdate(progress);
     }
 

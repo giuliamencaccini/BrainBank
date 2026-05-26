@@ -5,13 +5,6 @@ import javafx.stage.Stage;
 
 public class MainGUI extends Application {
 
-    public static final String COLOR_PRIMARY = "#8EADC2";
-    public static final String COLOR_LIGHT = "#CFE5F9";
-    public static final String COLOR_DARK = "#4B4B4B";
-    public static final String COLOR_WHITE = "#FFFFFF";
-    public static final String COLOR_ERROR = "#C0392B";
-    public static final String COLOR_SUCCESS = "#27AE60";
-
     public static final int WINDOW_WIDTH  = 900;
     public static final int WINDOW_HEIGHT = 580;
 

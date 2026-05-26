@@ -1,5 +1,6 @@
 package it.ispwproject.brainbank.controller.cli;
 
+import it.ispwproject.brainbank.dao.ConnectionFactory;
 import it.ispwproject.brainbank.util.singleton.SessionManager;
 import it.ispwproject.brainbank.view.DashboardAdminView;
 
@@ -23,6 +24,7 @@ public class DashboardAdminCLI {
     }
 
     private CLIState onLogout() {
+        try { ConnectionFactory.clearRole(); } catch (java.sql.SQLException ex) { /* ignora */ }
         SessionManager.getInstance().clearSession();
         view.mostraMessaggio("✓ Logout effettuato.");
         return CLIState.INIZIALE;

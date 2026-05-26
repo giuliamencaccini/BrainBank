@@ -35,6 +35,10 @@ public class Progress {
     public Student getStudent() { return student; }
     public void setStudent(Student student) { this.student = student; }
     public String getNotes() { return notes; }
+    public void updateNotes(String newNotes) {
+        this.notes = newNotes;
+        this.updatedAt = LocalDateTime.now();
+    }
     public void setNotes(String notes) { this.notes = notes; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }

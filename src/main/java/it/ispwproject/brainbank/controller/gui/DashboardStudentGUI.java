@@ -2,6 +2,7 @@ package it.ispwproject.brainbank.controller.gui;
 
 import it.ispwproject.brainbank.bean.BookingResponseBean;
 import it.ispwproject.brainbank.controller.applicativo.BookingController;
+import it.ispwproject.brainbank.controller.applicativo.UserController;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.User;
 import it.ispwproject.brainbank.util.singleton.SessionManager;
@@ -36,6 +37,7 @@ public class DashboardStudentGUI {
 
     private final Stage             stage;
     private final BookingController bookingController = new BookingController();
+    private final UserController userController = new UserController();
     private int weekOffset = 0;
 
     public DashboardStudentGUI(Stage stage) { this.stage = stage; }
@@ -78,6 +80,8 @@ public class DashboardStudentGUI {
         logoutBtn.getStyleClass().add("button");
         logoutBtn.setPadding(new Insets(6, 18, 6, 18));
         logoutBtn.setOnAction(e -> {
+            try { it.ispwproject.brainbank.dao.ConnectionFactory.clearRole(); }
+            catch (java.sql.SQLException ex) { /* ignora */ }
             SessionManager.getInstance().clearSession();
             MainGUI.showLogin();
         });
@@ -466,15 +470,24 @@ public class DashboardStudentGUI {
         saveBtn.setOnAction(e -> {
             String newEmail = emailField.getText().trim();
             if (newEmail.isEmpty()) return;
-            try {
-                new it.ispwproject.brainbank.controller.applicativo.UserController()
-                        .updateEmail(newEmail);
-                emailLbl.setText(newEmail);
-            } catch (it.ispwproject.brainbank.exception.DAOException ex) {
-                emailLbl.setText("❌ " + ex.getMessage());
-            }
-            editRow.setVisible(false);  editRow.setManaged(false);
-            viewRow.setVisible(true);   viewRow.setManaged(true);
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Conferma cambio email");
+            confirm.setHeaderText(null);
+            confirm.setContentText("Vuoi cambiare l'email a:\n" + newEmail + "?");
+            confirm.showAndWait().ifPresent(r -> {
+                if (r == ButtonType.OK) {
+                    try {
+                        userController.updateEmail(newEmail);
+                        emailLbl.setText(newEmail);
+                        editRow.setVisible(false);
+                        editRow.setManaged(false);
+                        viewRow.setVisible(true);
+                        viewRow.setManaged(true);
+                    } catch (DAOException ex) {
+                        emailLbl.setText("❌ " + ex.getMessage());
+                    }
+                }
+            });
         });
 
 

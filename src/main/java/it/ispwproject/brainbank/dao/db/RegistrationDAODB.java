@@ -6,6 +6,8 @@ import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Tutor;
 import it.ispwproject.brainbank.model.User;
 
+import it.ispwproject.brainbank.util.logger.AppLogger;
+
 import java.sql.*;
 import java.util.List;
 
@@ -25,6 +27,8 @@ public class RegistrationDAODB implements RegistrationDAO {
 
     @Override
     public boolean emailExists(String email) throws DAOException {
+        try { ConnectionFactory.clearRole(); }
+        catch (SQLException e) { AppLogger.logWarning("clearRole fallito: " + e.getMessage()); }
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(CHECK_EMAIL)) {
@@ -48,9 +52,9 @@ public class RegistrationDAODB implements RegistrationDAO {
     }
 
     @Override
-    public void save(User user,
-                     String bio,
-                     List<Integer> subjectIds) throws DAOException {
+    public void save(User user, String bio, List<Integer> subjectIds) throws DAOException {
+        try { ConnectionFactory.clearRole(); }
+        catch (SQLException e) { AppLogger.logWarning("clearRole fallito: " + e.getMessage()); }
 
         try (Connection conn = ConnectionFactory.getConnection()) {
 

@@ -1,6 +1,6 @@
 package it.ispwproject.brainbank.dao.memory;
 
-import it.ispwproject.brainbank.controller.demo.DemoDataStore;
+import it.ispwproject.brainbank.demo.DemoDataStore;
 import it.ispwproject.brainbank.dao.LoginDAO;
 import it.ispwproject.brainbank.exception.LoginException;
 import it.ispwproject.brainbank.model.Credentials;

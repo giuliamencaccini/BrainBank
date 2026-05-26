@@ -34,6 +34,15 @@ public class ActivityDAODB implements ActivityDAO {
                     "JOIN user u_s ON a.student_id = u_s.id " +
                     "WHERE a.student_id = ? ORDER BY a.completed ASC, a.created_at DESC";
 
+    private static final String FIND_BY_ID =
+            "SELECT a.id, a.description, a.completed, a.created_at, " +
+                    "       u_t.id t_id, u_t.name t_name, u_t.surname t_surname, " +
+                    "       u_s.id s_id, u_s.name s_name, u_s.surname s_surname, u_s.email s_email " +
+                    "FROM activity a " +
+                    "JOIN user u_t ON a.tutor_id   = u_t.id " +
+                    "JOIN user u_s ON a.student_id = u_s.id " +
+                    "WHERE a.id = ? AND a.student_id = ?";
+
     private static final String MARK_AS_COMPLETED =
             "UPDATE activity SET completed = TRUE WHERE id = ? AND student_id = ?";
 
@@ -111,6 +120,21 @@ public class ActivityDAODB implements ActivityDAO {
         } catch (SQLException e) {
             throw new DAOException("Errore aggiornamento: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public Activity findById(int activityId, int studentId) throws DAOException {
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(FIND_BY_ID)) {
+            ps.setInt(1, activityId);
+            ps.setInt(2, studentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return mapToActivity(rs);
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Errore nel caricamento attività: " + e.getMessage(), e);
+        }
+        return null;
     }
 
     private Activity mapToActivity(ResultSet rs) throws SQLException {

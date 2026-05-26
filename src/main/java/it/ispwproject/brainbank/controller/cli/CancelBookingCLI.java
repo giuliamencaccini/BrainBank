@@ -2,7 +2,6 @@ package it.ispwproject.brainbank.controller.cli;
 
 import it.ispwproject.brainbank.bean.BookingResponseBean;
 import it.ispwproject.brainbank.controller.applicativo.BookingController;
-import it.ispwproject.brainbank.controller.demo.DemoFactory;
 import it.ispwproject.brainbank.enumerator.BookingStatus;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.util.singleton.SessionManager;
@@ -12,11 +11,11 @@ import java.util.List;
 
 public class CancelBookingCLI {
 
-    private final BookingController bookingController = DemoFactory.getBookingController();
+    private final BookingController bookingController = new BookingController();
     private final CancelBookingView view = new CancelBookingView();
-    private final int studentId = SessionManager.getInstance().getLoggedUser().getId();
 
     public CLIState start() {
+        int studentId = SessionManager.getInstance().getLoggedUser().getId();
         view.mostraIntestazione();
 
         try {

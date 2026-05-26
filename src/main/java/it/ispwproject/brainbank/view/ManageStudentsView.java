@@ -38,45 +38,26 @@ public class ManageStudentsView {
                                      ProgressBean progress) {
         System.out.println("\n" + SEPARATOR);
         System.out.printf("  Studente: %s%n", student.getFullName());
+
+        // Prossima lezione in evidenza
+        if (!upcomingLessons.isEmpty()) {
+            BookingResponseBean next = upcomingLessons.get(0);
+            System.out.printf("  📅 Prossima lezione: %s — %s  %s–%s%n",
+                    next.getTimeSlot().getDate(),
+                    next.getSubject().getName(),
+                    next.getTimeSlot().getStartTime(),
+                    next.getTimeSlot().getEndTime());
+        }
+
         System.out.println(SEPARATOR);
-
-        // Lezioni effettuate
-        System.out.println("\n  ── Lezioni effettuate");
-        if (completedLessons.isEmpty()) {
-            System.out.println("  Nessuna lezione ancora effettuata.");
-        } else {
-            for (BookingResponseBean b : completedLessons) {
-                System.out.printf("  • %s  %s  %s – %s%n",
-                        b.getTimeSlot().getDate(),
-                        b.getSubject().getName(),
-                        b.getTimeSlot().getStartTime(),
-                        b.getTimeSlot().getEndTime());
-            }
-        }
-
-        // Lezioni programmate
-        System.out.println("\n  ── Lezioni programmate");
-        if (upcomingLessons.isEmpty()) {
-            System.out.println("  Nessuna lezione programmata.");
-        } else {
-            for (BookingResponseBean b : upcomingLessons) {
-                System.out.printf("  • %s  %s  %s – %s%n",
-                        b.getTimeSlot().getDate(),
-                        b.getSubject().getName(),
-                        b.getTimeSlot().getStartTime(),
-                        b.getTimeSlot().getEndTime());
-                if (b.getMeetLink() != null) {
-                    System.out.println("    Link: " + b.getMeetLink());
-                }
-            }
-        }
 
         // Progressi
         System.out.println("\n  ── Progressi");
         if (progress == null) {
             System.out.println("  Nessun progresso annotato.");
         } else {
-            System.out.println("  " + progress.getNotes());
+            String notesFormatted = progress.getNotes().replace("\n", "\n  ");
+            System.out.println("  " + notesFormatted);
             System.out.println("  Ultimo aggiornamento: " + progress.getUpdatedAt().format(
                     java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy 'alle' HH:mm")));
         }
@@ -88,7 +69,23 @@ public class ManageStudentsView {
         System.out.println("  [2] Assegna attività");
         System.out.println("  [3] Visualizza attività assegnate");
         System.out.println("  [4] Elimina attività");
+        System.out.println("  [5] Visualizza storico lezioni");
         System.out.println("  [0] Torna alla lista");
+    }
+
+    public void mostraStoricoLezioni(List<BookingResponseBean> completed) {
+        System.out.println("\n  ── Storico lezioni effettuate");
+        if (completed.isEmpty()) {
+            System.out.println("  Nessuna lezione ancora effettuata.");
+            return;
+        }
+        for (BookingResponseBean b : completed) {
+            System.out.printf("  • %s  %s  %s – %s%n",
+                    b.getTimeSlot().getDate(),
+                    b.getSubject().getName(),
+                    b.getTimeSlot().getStartTime(),
+                    b.getTimeSlot().getEndTime());
+        }
     }
 
     public void mostraAttivitaPerEliminazione(List<ActivityBean> activities) {
@@ -143,5 +140,15 @@ public class ManageStudentsView {
     public String chiediTesto(String prompt) {
         System.out.printf("  %s: ", prompt);
         return scanner.nextLine().trim();
+    }
+
+    public boolean chiediConferma(String prompt) {
+        while (true) {
+            System.out.printf("  %s [s/n]: ", prompt);
+            String input = scanner.nextLine().trim().toLowerCase();
+            if (input.equals("s") || input.equals("si") || input.equals("sì")) return true;
+            if (input.equals("n") || input.equals("no")) return false;
+            System.out.println("  Rispondi con 's' oppure 'n'.");
+        }
     }
 }

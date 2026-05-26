@@ -30,7 +30,7 @@ public class Activity {
         this.completed   = false;
     }
 
-    public int getId() { return id; }
+    public int getId() {return id; }
     public void setId(int id) { this.id = id; }
     public Tutor getTutor() { return tutor; }
     public void setTutor(Tutor tutor) { this.tutor = tutor; }
@@ -38,6 +38,9 @@ public class Activity {
     public void setStudent(Student student) { this.student = student; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    public void complete() {
+        this.completed = true;
+    }
     public boolean isCompleted() { return completed; }
     public void setCompleted(boolean completed) { this.completed = completed; }
     public LocalDateTime getCreatedAt() { return createdAt; }

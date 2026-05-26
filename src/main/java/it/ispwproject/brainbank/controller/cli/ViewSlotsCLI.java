@@ -1,33 +1,44 @@
 package it.ispwproject.brainbank.controller.cli;
 
-import it.ispwproject.brainbank.bean.BookingResponseBean;
+import it.ispwproject.brainbank.bean.TimeSlotBean;
 import it.ispwproject.brainbank.controller.applicativo.AvailabilityController;
-import it.ispwproject.brainbank.controller.applicativo.BookingController;
 import it.ispwproject.brainbank.exception.DAOException;
-import it.ispwproject.brainbank.util.singleton.SessionManager;
 import it.ispwproject.brainbank.view.ViewSlotsView;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ViewSlotsCLI {
 
     private final AvailabilityController availabilityController = new AvailabilityController();
-    private final BookingController      bookingController      = new BookingController();
     private final ViewSlotsView view = new ViewSlotsView();
 
     public CLIState start() {
         view.mostraIntestazione();
 
         try {
-            int tutorId = SessionManager.getInstance().getLoggedUser().getId();
+            Map<Integer, String> subjectBySlot = availabilityController.getSubjectBySlot();
+            List<TimeSlotBean> futuri  = availabilityController.getSlots();
+            List<TimeSlotBean> passati = availabilityController.getPastSlots();
 
-            // Mappa slotId → materia
-            Map<Integer, String> subjectBySlot = new HashMap<>();
-            for (BookingResponseBean b : bookingController.getTutorBookings(tutorId)) {
-                subjectBySlot.put(b.getTimeSlot().getId(), b.getSubject().getName());
+            view.mostraSlots(futuri, subjectBySlot);
+            view.mostraPassati(passati, subjectBySlot);
+
+            List<TimeSlotBean> disponibili = futuri.stream()
+                    .filter(TimeSlotBean::isAvailable).toList();
+
+            if (!disponibili.isEmpty() && view.chiediEliminazioneSlot()) {
+                view.mostraSlotDisponibili(disponibili);
+                int choice = view.chiediScelta("Seleziona slot da eliminare", 0, disponibili.size());
+                if (choice != 0) {
+                    if (view.chiediConferma("Sei sicuro di voler eliminare questo slot?")) {
+                        availabilityController.deleteSlot(disponibili.get(choice - 1).getId());
+                        view.mostraSuccessoEliminazione();
+                    } else {
+                        view.mostraMessaggio("Operazione annullata.");
+                    }
+                }
             }
-            view.mostraSlots(availabilityController.getSlots(), subjectBySlot);
 
         } catch (DAOException e) {
             view.mostraErrore(e.getMessage());
