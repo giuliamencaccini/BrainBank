@@ -1,6 +1,6 @@
 package it.ispwproject.brainbank.controller.applicativo;
 
-import it.ispwproject.brainbank.controller.demo.DemoFactory;
+import it.ispwproject.brainbank.dao.DAOFactory;
 import it.ispwproject.brainbank.exception.LoginException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ class LoginControllerTest {
 
     @BeforeEach
     void setup() {
-        DemoFactory.enableDemoMode();
+        DAOFactory.setPersistence(DAOFactory.MEMORY);
         loginController = new LoginController();
     }
 

@@ -1,8 +1,8 @@
 package it.ispwproject.brainbank.controller.applicativo;
 
 import it.ispwproject.brainbank.bean.RegistrationBean;
-import it.ispwproject.brainbank.controller.demo.DemoFactory;
-import it.ispwproject.brainbank.controller.demo.DemoDataStore;
+import it.ispwproject.brainbank.dao.DAOFactory;
+import it.ispwproject.brainbank.demo.DemoDataStore;
 import it.ispwproject.brainbank.enumerator.Role;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.exception.RegistrationException;
@@ -21,7 +21,7 @@ class RegistrationControllerTest {
     @BeforeEach
     void setup() {
         DemoDataStore.reset();
-        DemoFactory.enableDemoMode();
+        DAOFactory.setPersistence(DAOFactory.MEMORY);
         registrationController = new RegistrationController();
     }
 
