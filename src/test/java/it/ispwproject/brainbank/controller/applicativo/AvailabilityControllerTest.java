@@ -1,8 +1,8 @@
 package it.ispwproject.brainbank.controller.applicativo;
 
 import it.ispwproject.brainbank.bean.TimeSlotBean;
-import it.ispwproject.brainbank.controller.demo.DemoFactory;
-import it.ispwproject.brainbank.controller.demo.DemoDataStore;
+import it.ispwproject.brainbank.dao.DAOFactory;
+import it.ispwproject.brainbank.demo.DemoDataStore;
 import it.ispwproject.brainbank.exception.AvailabilityException;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Tutor;
@@ -25,7 +25,7 @@ class AvailabilityControllerTest {
     @BeforeEach
     void setup() {
         DemoDataStore.reset();
-        DemoFactory.enableDemoMode();
+        DAOFactory.setPersistence(DAOFactory.MEMORY);
 
         // Simula tutor loggato
         Tutor tutor = new Tutor(3, "Demo", "Tutor", "tutor@demo", null, "Tutor demo");
