@@ -6,7 +6,7 @@ import it.ispwproject.brainbank.demo.DemoDataStore;
 import it.ispwproject.brainbank.exception.AvailabilityException;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Tutor;
-import it.ispwproject.brainbank.util.singleton.SessionManager;
+import it.ispwproject.brainbank.pattern.singleton.SessionManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
