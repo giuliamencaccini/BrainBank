@@ -28,6 +28,7 @@ public class AvailabilityController {
     }
 
     public void addSlot(TimeSlotBean slotBean) throws DAOException, AvailabilityException {
+
         if (slotBean.getDate().isBefore(LocalDate.now())) {
             throw new AvailabilityException("Non puoi aggiungere slot nel passato.");
         }
