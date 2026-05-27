@@ -7,6 +7,7 @@ import it.ispwproject.brainbank.model.TimeSlot;
 import it.ispwproject.brainbank.model.Tutor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class TimeSlotDAOMemory implements TimeSlotDAO {
@@ -60,18 +61,18 @@ public class TimeSlotDAOMemory implements TimeSlotDAO {
     }
 
     @Override
-    public boolean reserveSlot(int slotId, int minutes) throws DAOException {
-        synchronized (store.getTimeSlots()) {
-            TimeSlot slot = store.getTimeSlots().stream()
-                    .filter(s -> s.getId() == slotId && s.isAvailable()
-                            && (s.getReservedUntil() == null ||
-                            s.getReservedUntil().isBefore(java.time.LocalDateTime.now())))
-                    .findFirst()
-                    .orElse(null);
-            if (slot == null) return false;
-            slot.setReservedUntil(java.time.LocalDateTime.now().plusMinutes(minutes));
-            return true;
+    public synchronized boolean reserveSlot(int slotId, int minutes) throws DAOException {
+        for (TimeSlot slot : store.getTimeSlots()) {
+            if (slot.getId() == slotId && slot.isAvailable()) {
+                LocalDateTime now = LocalDateTime.now();
+                if (slot.getReservedUntil() == null || slot.getReservedUntil().isBefore(now)) {
+                    slot.setReservedUntil(now.plusMinutes(minutes));
+                    return true;
+                }
+                return false;
+            }
         }
+        return false;
     }
 
     @Override
