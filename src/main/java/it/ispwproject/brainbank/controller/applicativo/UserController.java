@@ -4,7 +4,7 @@ import it.ispwproject.brainbank.dao.DAOFactory;
 import it.ispwproject.brainbank.dao.UserDAO;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.util.ValidationUtils;
-import it.ispwproject.brainbank.util.singleton.SessionManager;
+import it.ispwproject.brainbank.pattern.singleton.SessionManager;
 
 public class UserController {
 

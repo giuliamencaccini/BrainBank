@@ -9,7 +9,7 @@ import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.TimeSlot;
 import it.ispwproject.brainbank.model.Tutor;
 import it.ispwproject.brainbank.model.Booking;
-import it.ispwproject.brainbank.util.singleton.SessionManager;
+import it.ispwproject.brainbank.pattern.singleton.SessionManager;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -5,7 +5,7 @@ import it.ispwproject.brainbank.controller.applicativo.AvailabilityController;
 import it.ispwproject.brainbank.controller.applicativo.UserController;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.User;
-import it.ispwproject.brainbank.util.singleton.SessionManager;
+import it.ispwproject.brainbank.pattern.singleton.SessionManager;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;

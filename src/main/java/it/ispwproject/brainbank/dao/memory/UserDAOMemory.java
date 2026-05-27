@@ -5,6 +5,8 @@ import it.ispwproject.brainbank.dao.UserDAO;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.User;
 
+import java.util.List;
+
 public class UserDAOMemory implements UserDAO {
 
     private final DemoDataStore store = DemoDataStore.getInstance();
@@ -24,5 +26,10 @@ public class UserDAOMemory implements UserDAO {
                 .findFirst()
                 .orElseThrow(() -> new DAOException("Utente non trovato (ID: " + id + ")"))
                 .setEmail(newEmail);
+    }
+
+    @Override
+    public List<User> getAll() throws DAOException {
+        return List.copyOf(store.getUsers());
     }
 }

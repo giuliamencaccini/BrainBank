@@ -1,4 +1,4 @@
-package it.ispwproject.brainbank.util.singleton;
+package it.ispwproject.brainbank.pattern.singleton;
 
 import it.ispwproject.brainbank.bean.SessionBean;
 import it.ispwproject.brainbank.enumerator.Role;

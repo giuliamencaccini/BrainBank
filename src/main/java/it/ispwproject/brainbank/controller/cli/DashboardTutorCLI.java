@@ -1,7 +1,7 @@
 package it.ispwproject.brainbank.controller.cli;
 
 import it.ispwproject.brainbank.dao.ConnectionFactory;
-import it.ispwproject.brainbank.util.singleton.SessionManager;
+import it.ispwproject.brainbank.pattern.singleton.SessionManager;
 import it.ispwproject.brainbank.view.DashboardTutorView;
 
 public class DashboardTutorCLI {

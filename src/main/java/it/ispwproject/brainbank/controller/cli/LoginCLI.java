@@ -3,7 +3,7 @@ package it.ispwproject.brainbank.controller.cli;
 import it.ispwproject.brainbank.controller.applicativo.LoginController;
 import it.ispwproject.brainbank.controller.applicativo.LoginController.LoginResult;
 import it.ispwproject.brainbank.exception.LoginException;
-import it.ispwproject.brainbank.util.singleton.SessionManager;
+import it.ispwproject.brainbank.pattern.singleton.SessionManager;
 import it.ispwproject.brainbank.view.LoginView;
 
 public class LoginCLI {

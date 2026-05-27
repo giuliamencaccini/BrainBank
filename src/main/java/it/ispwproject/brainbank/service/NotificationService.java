@@ -1,4 +1,4 @@
-package it.ispwproject.brainbank.controller.applicativo;
+package it.ispwproject.brainbank.service;
 
 import com.sendgrid.Method;
 import com.sendgrid.Request;
@@ -15,7 +15,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class NotificationController {
+/**
+ * Servizio per l'invio di notifiche email tramite SendGrid.
+ * Gestisce la comunicazione con il servizio email esterno,
+ * mantenendo separata la logica applicativa dall'invio delle email.
+ * In futuro può essere esteso per supportare altri canali
+ * di notifica come SMS o notifiche push.
+ */
+
+public class NotificationService {
 
     private static final String PROPERTIES_FILE = "src/main/resources/db.properties";
     private static final Properties properties = new Properties();
@@ -34,8 +42,9 @@ public class NotificationController {
     private static final String TEMPLATE_CONFIRMATION = "d-4d49f14c5f734b3cb51e504d56823d0e";
     private static final String TEMPLATE_CANCELLATION = "d-9535f2c985ad4dc5ab7c51980e6069b9";
     private static final String TEMPLATE_NEW_ACTIVITY = "d-5fc4b82a3df44ae4ac065f94932f1962";
+    private static final String TEMPLATE_GLOBAL_NOTIFICATION = "d-b7355e709e7e4f9c91ed5a86e6a76931";
 
-    private NotificationController() {}
+    private NotificationService() {}
 
     // ================================================================== //
     //  Prenotazione confermata

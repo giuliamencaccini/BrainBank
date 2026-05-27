@@ -10,6 +10,8 @@ import it.ispwproject.brainbank.model.Tutor;
 import it.ispwproject.brainbank.model.User;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAODB implements UserDAO {
 
@@ -21,6 +23,12 @@ public class UserDAODB implements UserDAO {
 
     private static final String UPDATE_EMAIL =
             "UPDATE user SET email = ? WHERE id = ?";
+
+    private static final String GET_ALL =
+            "SELECT u.id, u.name, u.surname, u.email, u.role, td.bio " +
+                    "FROM user u " +
+                    "LEFT JOIN tutor_detail td ON u.id = td.user_id";
+
 
     @Override
     public void updateEmail(int id, String newEmail) throws DAOException {
@@ -62,5 +70,26 @@ public class UserDAODB implements UserDAO {
             case ADMIN -> new Admin(id, name, surname, email, null);
             default -> throw new IllegalStateException("Ruolo non riconosciuto: " + role);
         };
+    }
+
+    @Override
+    public List<User> getAll() throws DAOException {
+        List<User> result = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(GET_ALL);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int    id      = rs.getInt("id");
+                String name    = rs.getString("name");
+                String surname = rs.getString("surname");
+                String email   = rs.getString("email");
+                Role   role    = Role.valueOf(rs.getString("role").toUpperCase());
+                String bio     = rs.getString("bio");
+                result.add(buildUser(id, name, surname, email, role, bio));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Errore caricamento utenti: " + e.getMessage(), e);
+        }
+        return result;
     }
 }

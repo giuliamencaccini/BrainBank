@@ -5,7 +5,8 @@ import it.ispwproject.brainbank.dao.*;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.*;
 import it.ispwproject.brainbank.util.logger.AppLogger;
-import it.ispwproject.brainbank.util.singleton.SessionManager;
+import it.ispwproject.brainbank.service.NotificationService;
+import it.ispwproject.brainbank.pattern.singleton.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,7 @@ public class ActivityController {
         activityDAO.save(activity);
         bean.setId(activity.getId());
         try {
-            NotificationController.sendNewActivity(
+            NotificationService.sendNewActivity(
                     student.getEmail(),
                     student.getFullName(),
                     tutor.getFullName(),

@@ -9,7 +9,7 @@ import it.ispwproject.brainbank.exception.LoginException;
 import it.ispwproject.brainbank.model.Credentials;
 import it.ispwproject.brainbank.model.User;
 import it.ispwproject.brainbank.util.PasswordUtils;
-import it.ispwproject.brainbank.util.singleton.SessionManager;
+import it.ispwproject.brainbank.pattern.singleton.SessionManager;
 
 import java.sql.SQLException;
 

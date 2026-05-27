@@ -1,10 +1,11 @@
 package it.ispwproject.brainbank.model;
 
 import it.ispwproject.brainbank.enumerator.BookingStatus;
+import it.ispwproject.brainbank.pattern.observer.Observable;
 
 import java.time.LocalDateTime;
 
-public class Booking {
+public class Booking extends Observable {
 
     /**
      * id — IDENTIFICATORE PROPRIO di questa prenotazione.
@@ -37,8 +38,15 @@ public class Booking {
         this.createdAt = LocalDateTime.now();
     }
 
-    public void confirm() { this.status = BookingStatus.CONFIRMED; }
-    public void cancel()  { this.status = BookingStatus.CANCELLED; }
+    public void confirm() {
+        this.status = BookingStatus.CONFIRMED;
+        notifyObservers();
+    }
+
+    public void cancel() {
+        this.status = BookingStatus.CANCELLED;
+        notifyObservers();
+    }
 
     public boolean isExpired() {
         return this.status == BookingStatus.EXPIRED;
