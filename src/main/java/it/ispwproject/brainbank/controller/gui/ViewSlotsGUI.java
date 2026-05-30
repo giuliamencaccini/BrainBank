@@ -39,7 +39,7 @@ public class ViewSlotsGUI {
 
             ToggleButton btnDisponibili = new ToggleButton("Disponibili (" + disponibili.size() + ")");
             ToggleButton btnPrenotati   = new ToggleButton("Prenotati (" + prenotati.size() + ")");
-            ToggleButton btnPassati     = new ToggleButton("Passati (" + passati.size() + ")");
+            ToggleButton btnPassati     = new ToggleButton("Scaduti (" + passati.size() + ")");
 
             btnDisponibili.getStyleClass().add("toggle-card");
             btnPrenotati.getStyleClass().addAll("toggle-card","cancelled");

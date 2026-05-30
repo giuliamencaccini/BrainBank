@@ -44,6 +44,7 @@ public class BookLessonCLI {
                 view.mostraMessaggio("Nessun tutor disponibile per questa materia.");
                 return CLIState.DASHBOARD_STUDENT;
             }
+
             List<TutorBean> favourites = allTutors.stream().filter(TutorBean::isFavourite).toList();
             List<TutorBean> others     = allTutors.stream().filter(t -> !t.isFavourite()).toList();
             view.mostraTutor(favourites, others);

@@ -11,7 +11,10 @@ import java.util.List;
 
 public class SubjectDAODB implements SubjectDAO {
 
-    private static final String GET_ALL  = "SELECT id, name FROM subject";
+    private static final String GET_ALL  =
+            "SELECT DISTINCT s.id, " +
+            "s.name FROM subject s " +
+            "JOIN tutor_subject ts ON s.id = ts.subject_id";
     private static final String FIND_BY_ID = "SELECT id, name FROM subject WHERE id = ?";
 
     @Override

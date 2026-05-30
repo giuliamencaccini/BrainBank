@@ -12,6 +12,8 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -320,6 +322,36 @@ public class BookLessonGUI {
         toggle.setPrefHeight(38);
         HBox.setHgrow(toggle, Priority.ALWAYS);
 
+        //Info tutor
+        ImageView infoIcon = new ImageView(
+                new Image(getClass().getResourceAsStream("/icons/info.png"))
+        );
+
+        infoIcon.setFitWidth(16);
+        infoIcon.setFitHeight(16);
+
+        Label info = new Label();
+        info.setGraphic(infoIcon);
+
+        info.getStyleClass().add("icon-label");
+
+        info.setOnMouseClicked(e -> {
+            Alert bioAlert = new Alert(Alert.AlertType.INFORMATION);
+
+            bioAlert.setTitle("Bio tutor");
+            bioAlert.setHeaderText(
+                    t.getName() + " " + t.getSurname()
+            );
+
+            bioAlert.setContentText(
+                    t.getBio() == null || t.getBio().isBlank()
+                            ? "Bio non disponibile."
+                            : t.getBio()
+            );
+
+            bioAlert.showAndWait();
+        });
+
         // Stella cliccabile
         boolean[] fav = {t.isFavourite()};
         Button star = new Button("★");
@@ -345,7 +377,7 @@ public class BookLessonGUI {
             }
         });
 
-        HBox row = new HBox(4, toggle, star);
+        HBox row = new HBox(4, toggle,info, star);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setMaxWidth(Double.MAX_VALUE);
         return row;

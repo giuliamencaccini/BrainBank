@@ -61,18 +61,18 @@ public class TimeSlotDAOMemory implements TimeSlotDAO {
     }
 
     @Override
-    public synchronized boolean reserveSlot(int slotId, int minutes) throws DAOException {
-        for (TimeSlot slot : store.getTimeSlots()) {
-            if (slot.getId() == slotId && slot.isAvailable()) {
-                LocalDateTime now = LocalDateTime.now();
-                if (slot.getReservedUntil() == null || slot.getReservedUntil().isBefore(now)) {
-                    slot.setReservedUntil(now.plusMinutes(minutes));
-                    return true;
-                }
-                return false;
-            }
+    public boolean reserveSlot(int slotId, int minutes) throws DAOException {
+        synchronized (store.getTimeSlots()) {
+            TimeSlot slot = store.getTimeSlots().stream()
+                    .filter(s -> s.getId() == slotId && s.isAvailable()
+                            && (s.getReservedUntil() == null ||
+                            s.getReservedUntil().isBefore(LocalDateTime.now())))
+                    .findFirst()
+                    .orElse(null);
+            if (slot == null) return false;
+            slot.setReservedUntil(LocalDateTime.now().plusMinutes(minutes));
+            return true;
         }
-        return false;
     }
 
     @Override

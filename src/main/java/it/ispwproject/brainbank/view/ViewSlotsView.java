@@ -53,7 +53,7 @@ public class ViewSlotsView {
     public void mostraPassati(List<TimeSlotBean> passati, Map<Integer, String> subjectBySlot) {
         if (passati.isEmpty()) return;
 
-        System.out.println("\n  ── Slot passati (" + passati.size() + ")");
+        System.out.println("\n  ── Slot scaduti (" + passati.size() + ")");
         for (TimeSlotBean s : passati) {
             String stato = s.isAvailable() ? "[○ Non utilizzato]" : "[● Utilizzato]";
             System.out.printf("  %s  %s – %s  %s%n",
