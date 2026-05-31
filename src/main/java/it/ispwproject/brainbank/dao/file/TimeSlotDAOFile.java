@@ -38,7 +38,9 @@ public class TimeSlotDAOFile implements TimeSlotDAO {
         return cache.stream()
                 .filter(s -> s.getTutor() != null
                         && s.getTutor().getId() == tutor.getId()
-                        && s.isAvailable())
+                        && s.isAvailable()
+                        && (s.getDate().isAfter(LocalDate.now()) ||
+                        (s.getDate().isEqual(LocalDate.now()) && s.getStartTime().isAfter(LocalTime.now()))))
                 .toList();
     }
 
@@ -47,7 +49,8 @@ public class TimeSlotDAOFile implements TimeSlotDAO {
         return cache.stream()
                 .filter(s -> s.getTutor() != null
                         && s.getTutor().getId() == tutorId
-                        && !s.getDate().isBefore(LocalDate.now()))
+                        && (s.getDate().isAfter(LocalDate.now()) ||
+                        (s.getDate().isEqual(LocalDate.now()) && s.getStartTime().isAfter(LocalTime.now()))))
                 .toList();
     }
 
@@ -56,7 +59,8 @@ public class TimeSlotDAOFile implements TimeSlotDAO {
         return cache.stream()
                 .filter(s -> s.getTutor() != null
                         && s.getTutor().getId() == tutorId
-                        && s.getDate().isBefore(LocalDate.now()))
+                        && (s.getDate().isBefore(LocalDate.now()) ||
+                        (s.getDate().isEqual(LocalDate.now()) && s.getEndTime().isBefore(LocalTime.now()))))
                 .toList();
     }
 

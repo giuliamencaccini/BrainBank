@@ -6,7 +6,7 @@ import it.ispwproject.brainbank.controller.applicativo.RegistrationController;
 import it.ispwproject.brainbank.enumerator.Role;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.exception.RegistrationException;
-import it.ispwproject.brainbank.view.RegistrationView;
+import it.ispwproject.brainbank.view.cli.RegistrationView;
 
 import java.util.List;
 

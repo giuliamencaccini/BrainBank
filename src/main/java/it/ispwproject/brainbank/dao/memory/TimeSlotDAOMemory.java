@@ -8,6 +8,7 @@ import it.ispwproject.brainbank.model.Tutor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public class TimeSlotDAOMemory implements TimeSlotDAO {
@@ -19,7 +20,8 @@ public class TimeSlotDAOMemory implements TimeSlotDAO {
         return store.getTimeSlots().stream()
                 .filter(s -> s.getTutor() != null
                         && s.getTutor().getId() == tutor.getId()
-                        && s.isAvailable())
+                        && s.isAvailable()
+                        && !s.getDate().isBefore(LocalDate.now()))
                 .toList();
     }
 
@@ -28,7 +30,8 @@ public class TimeSlotDAOMemory implements TimeSlotDAO {
         return store.getTimeSlots().stream()
                 .filter(s -> s.getTutor() != null
                         && s.getTutor().getId() == tutorId
-                        && !s.getDate().isBefore(LocalDate.now()))
+                        && (s.getDate().isAfter(LocalDate.now()) ||
+                        (s.getDate().isEqual(LocalDate.now()) && s.getStartTime().isAfter(LocalTime.now()))))
                 .toList();
     }
 
@@ -37,7 +40,8 @@ public class TimeSlotDAOMemory implements TimeSlotDAO {
         return store.getTimeSlots().stream()
                 .filter(s -> s.getTutor() != null
                         && s.getTutor().getId() == tutorId
-                        && s.getDate().isBefore(LocalDate.now()))
+                        && (s.getDate().isBefore(LocalDate.now()) ||
+                        (s.getDate().isEqual(LocalDate.now()) && s.getEndTime().isBefore(LocalTime.now()))))
                 .toList();
     }
 

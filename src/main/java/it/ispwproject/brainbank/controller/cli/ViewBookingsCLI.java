@@ -3,7 +3,7 @@ package it.ispwproject.brainbank.controller.cli;
 import it.ispwproject.brainbank.controller.applicativo.BookingController;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.pattern.singleton.SessionManager;
-import it.ispwproject.brainbank.view.ViewBookingsView;
+import it.ispwproject.brainbank.view.cli.ViewBookingsView;
 
 public class ViewBookingsCLI {
 

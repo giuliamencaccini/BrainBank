@@ -3,7 +3,7 @@ package it.ispwproject.brainbank.controller.cli;
 import it.ispwproject.brainbank.bean.ActivityBean;
 import it.ispwproject.brainbank.controller.applicativo.ActivityController;
 import it.ispwproject.brainbank.exception.DAOException;
-import it.ispwproject.brainbank.view.ViewToDoView;
+import it.ispwproject.brainbank.view.cli.ViewToDoView;
 
 import java.util.List;
 

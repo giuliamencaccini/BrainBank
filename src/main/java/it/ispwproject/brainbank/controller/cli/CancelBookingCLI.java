@@ -5,7 +5,7 @@ import it.ispwproject.brainbank.controller.applicativo.BookingController;
 import it.ispwproject.brainbank.enumerator.BookingStatus;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.pattern.singleton.SessionManager;
-import it.ispwproject.brainbank.view.CancelBookingView;
+import it.ispwproject.brainbank.view.cli.CancelBookingView;
 
 import java.util.List;
 

@@ -9,6 +9,7 @@ import it.ispwproject.brainbank.model.Student;
 import it.ispwproject.brainbank.model.TimeSlot;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -68,6 +69,18 @@ public class BookingDAOMemory implements BookingDAO {
                         && b.getStatus() == BookingStatus.CONFIRMED
                         && b.getTimeSlot() != null
                         && b.getTimeSlot().getDate().isAfter(LocalDate.now()))
+                .toList();
+    }
+
+    @Override
+    public List<Booking> findPastByStudent(int studentId) throws DAOException {
+        return store.getBookings().stream()
+                .filter(b -> b.getStudent() != null && b.getStudent().getId() == studentId
+                        && b.getStatus() == BookingStatus.CONFIRMED
+                        && b.getTimeSlot() != null
+                        && (b.getTimeSlot().getDate().isBefore(LocalDate.now()) ||
+                        (b.getTimeSlot().getDate().isEqual(LocalDate.now()) &&
+                                b.getTimeSlot().getEndTime().isBefore(LocalTime.now()))))
                 .toList();
     }
 

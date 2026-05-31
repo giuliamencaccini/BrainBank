@@ -6,7 +6,7 @@ import it.ispwproject.brainbank.exception.BookingException;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Student;
 import it.ispwproject.brainbank.pattern.singleton.SessionManager;
-import it.ispwproject.brainbank.view.BookLessonView;
+import it.ispwproject.brainbank.view.cli.BookLessonView;
 
 import java.util.ArrayList;
 import java.util.List;

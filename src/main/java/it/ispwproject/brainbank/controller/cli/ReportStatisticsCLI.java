@@ -3,7 +3,7 @@ package it.ispwproject.brainbank.controller.cli;
 import it.ispwproject.brainbank.bean.StatisticsBean;
 import it.ispwproject.brainbank.controller.applicativo.ReportStatisticsController;
 import it.ispwproject.brainbank.exception.DAOException;
-import it.ispwproject.brainbank.view.ReportStatisticsView;
+import it.ispwproject.brainbank.view.cli.ReportStatisticsView;
 
 public class ReportStatisticsCLI {
 

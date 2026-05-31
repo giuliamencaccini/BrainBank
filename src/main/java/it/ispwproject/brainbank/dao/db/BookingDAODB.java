@@ -58,6 +58,13 @@ public class BookingDAODB extends AbstractBookingDAO {
             "  AND b.status = 'CONFIRMED' AND ts.date > CURDATE() " +
             "ORDER BY ts.date ASC";
 
+
+    private static final String FIND_PAST_BY_STUDENT = SELECT_BOOKINGS +
+            "WHERE b.student_id = ? AND b.status = 'CONFIRMED' " +
+            "AND (ts.date < CURDATE() OR (ts.date = CURDATE() AND ts.end_time < CURTIME())) " +
+            "ORDER BY ts.date DESC";
+
+
     @Override
     public void save(Booking booking) throws DAOException {
         try (Connection conn = ConnectionFactory.getConnection();
@@ -141,6 +148,21 @@ public class BookingDAODB extends AbstractBookingDAO {
             }
         } catch (SQLException e) {
             throw new DAOException("Errore nel caricamento lezioni effettuate: " + e.getMessage(), e);
+        }
+        return result;
+    }
+
+    @Override
+    public List<Booking> findPastByStudent(int studentId) throws DAOException {
+        List<Booking> result = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(FIND_PAST_BY_STUDENT)) {
+            ps.setInt(1, studentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) result.add(mapToBooking(rs));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Errore nel caricamento lezioni passate: " + e.getMessage(), e);
         }
         return result;
     }

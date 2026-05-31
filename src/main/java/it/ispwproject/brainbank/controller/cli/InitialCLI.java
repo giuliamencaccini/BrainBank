@@ -1,6 +1,6 @@
 package it.ispwproject.brainbank.controller.cli;
 
-import it.ispwproject.brainbank.view.InitialView;
+import it.ispwproject.brainbank.view.cli.InitialView;
 
 public class InitialCLI {
 

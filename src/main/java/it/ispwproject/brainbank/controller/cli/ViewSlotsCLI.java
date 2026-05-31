@@ -3,7 +3,7 @@ package it.ispwproject.brainbank.controller.cli;
 import it.ispwproject.brainbank.bean.TimeSlotBean;
 import it.ispwproject.brainbank.controller.applicativo.AvailabilityController;
 import it.ispwproject.brainbank.exception.DAOException;
-import it.ispwproject.brainbank.view.ViewSlotsView;
+import it.ispwproject.brainbank.view.cli.ViewSlotsView;
 
 import java.util.List;
 import java.util.Map;

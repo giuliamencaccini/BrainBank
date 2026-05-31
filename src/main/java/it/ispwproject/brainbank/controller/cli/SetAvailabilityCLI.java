@@ -4,7 +4,7 @@ import it.ispwproject.brainbank.bean.TimeSlotBean;
 import it.ispwproject.brainbank.controller.applicativo.AvailabilityController;
 import it.ispwproject.brainbank.exception.AvailabilityException;
 import it.ispwproject.brainbank.exception.DAOException;
-import it.ispwproject.brainbank.view.SetAvailabilityView;
+import it.ispwproject.brainbank.view.cli.SetAvailabilityView;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

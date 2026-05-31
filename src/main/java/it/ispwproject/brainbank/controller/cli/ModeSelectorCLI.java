@@ -1,7 +1,7 @@
 package it.ispwproject.brainbank.controller.cli;
 
 import it.ispwproject.brainbank.dao.DAOFactory;
-import it.ispwproject.brainbank.view.ModeSelectorView;
+import it.ispwproject.brainbank.view.cli.ModeSelectorView;
 
 public class ModeSelectorCLI {
 

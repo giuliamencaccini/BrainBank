@@ -15,19 +15,21 @@ public class TimeSlotDAODB implements TimeSlotDAO {
     private static final String GET_AVAILABLE_BY_TUTOR =
             "SELECT id, date, start_time, end_time, available " +
                     "FROM time_slot WHERE tutor_id = ? AND available = TRUE " +
+                    "AND (date > CURDATE() OR (date = CURDATE() AND start_time > CURTIME())) " +
                     "AND (reserved_until IS NULL OR reserved_until < NOW()) " +
                     "ORDER BY date, start_time";
 
     private static final String GET_ALL_BY_TUTOR =
             "SELECT id, date, start_time, end_time, available " +
                     "FROM time_slot " +
-                    "WHERE tutor_id = ? AND date >= CURDATE() " +
+                    "WHERE tutor_id = ? " +
+                    "AND (date > CURDATE() OR (date = CURDATE() AND start_time > CURTIME())) " +
                     "ORDER BY date, start_time";
 
     private static final String GET_PAST_BY_TUTOR =
             "SELECT id, date, start_time, end_time, available " +
                     "FROM time_slot " +
-                    "WHERE tutor_id = ? AND date < CURDATE() " +
+                    "WHERE tutor_id = ? AND (date < CURDATE() OR (date = CURDATE() AND end_time < CURTIME())) " +
                     "ORDER BY date DESC, start_time";
 
     private static final String FIND_BY_ID =

@@ -83,6 +83,17 @@ public class BookingDAOFile extends AbstractBookingDAO {
                 .toList();
     }
 
+    public List<Booking> findPastByStudent(int studentId) throws DAOException {
+        return identityMap.stream() // o store.getBookings()
+                .filter(b -> b.getStudent() != null && b.getStudent().getId() == studentId
+                        && b.getStatus() == BookingStatus.CONFIRMED
+                        && b.getTimeSlot() != null
+                        && (b.getTimeSlot().getDate().isBefore(LocalDate.now()) ||
+                        (b.getTimeSlot().getDate().isEqual(LocalDate.now()) &&
+                                b.getTimeSlot().getEndTime().isBefore(LocalTime.now()))))
+                .toList();
+    }
+
     @Override
     public void cancel(int bookingId, int studentId) throws DAOException {
         Booking booking = findInCache(bookingId);

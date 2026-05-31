@@ -1,4 +1,4 @@
-package it.ispwproject.brainbank.view;
+package it.ispwproject.brainbank.view.cli;
 
 import it.ispwproject.brainbank.bean.SubjectBean;
 import it.ispwproject.brainbank.enumerator.Role;

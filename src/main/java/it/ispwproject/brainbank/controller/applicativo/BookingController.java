@@ -155,6 +155,23 @@ public class BookingController {
         return result;
     }
 
+    public List<BookingResponseBean> getStudentPastBookings(int studentId) throws DAOException {
+        List<BookingResponseBean> result = new ArrayList<>();
+        for (Booking booking : bookingDAO.findPastByStudent(studentId)) {
+            Tutor    tutor   = booking.getTutor();
+            Subject  subject = booking.getSubject();
+            TimeSlot slot    = booking.getTimeSlot();
+            if (tutor == null || subject == null || slot == null) continue;
+            result.add(new BookingResponseBean(
+                    booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
+                    new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
+                    new SubjectBean(subject.getId(), subject.getName()),
+                    new TimeSlotBean(slot.getId(), slot.getDate(),
+                            slot.getStartTime(), slot.getEndTime(), slot.isAvailable())));
+        }
+        return result;
+    }
+
     public void cancelBooking(int bookingId, int studentId) throws DAOException {
 
         List<Booking> bookings = bookingDAO.findByStudent(studentId);

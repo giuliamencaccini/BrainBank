@@ -1,8 +1,8 @@
-package it.ispwproject.brainbank.view;
+package it.ispwproject.brainbank.view.cli;
 
 import java.util.Scanner;
 
-public class DashboardTutorView {
+public class DashboardAdminView {
 
     private static final String SEPARATOR = "─".repeat(50);
     private final Scanner scanner = new Scanner(System.in);
@@ -10,15 +10,12 @@ public class DashboardTutorView {
     public void mostraBenvenuto(String nome) {
         System.out.println();
         System.out.println(SEPARATOR);
-        System.out.printf("  Bentornato %s!  –  Tutor%n", nome);
+        System.out.printf("  Bentornato %s!  –  Admin%n", nome);
         System.out.println(SEPARATOR);
     }
 
     public void mostraMenu() {
-        System.out.println("  [1] Disponibilità");
-        System.out.println("  [2] I miei slot");
-        System.out.println("  [3] Gestisci studenti");
-        System.out.println("  [4] Profilo");
+        System.out.println("  [1] Statistiche");
         System.out.println("  [0] Logout");
     }
 
