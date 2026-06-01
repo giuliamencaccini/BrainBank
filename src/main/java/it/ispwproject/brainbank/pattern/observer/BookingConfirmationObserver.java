@@ -1,6 +1,5 @@
 package it.ispwproject.brainbank.pattern.observer;
 
-
 import it.ispwproject.brainbank.bean.BookingResponseBean;
 import it.ispwproject.brainbank.bean.SubjectBean;
 import it.ispwproject.brainbank.bean.TimeSlotBean;
@@ -23,16 +22,13 @@ public class BookingConfirmationObserver implements Observer {
         try {
             BookingResponseBean response = buildResponse();
 
-            // Notifica studente
             NotificationService.sendBookingConfirmation(
                     booking.getStudent().getEmail(),
                     booking.getStudent().getFullName(),
                     response);
 
-            // Notifica tutor
             NotificationService.sendBookingConfirmationToTutor(
                     booking.getTutor().getEmail(),
-                    booking.getTutor().getFullName(),
                     response);
 
         } catch (it.ispwproject.brainbank.exception.NotificationException e) {

@@ -18,16 +18,13 @@ public class BookingCancellationObserver implements Observer {
         try {
             BookingResponseBean response = buildResponse();
 
-            // Notifica studente
             NotificationService.sendBookingCancellation(
                     booking.getStudent().getEmail(),
                     booking.getStudent().getFullName(),
                     response);
 
-            // Notifica tutor
             NotificationService.sendBookingCancellationToTutor(
                     booking.getTutor().getEmail(),
-                    booking.getTutor().getFullName(),
                     response);
 
         } catch (it.ispwproject.brainbank.exception.NotificationException e) {
