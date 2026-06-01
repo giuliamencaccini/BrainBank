@@ -85,7 +85,7 @@ public class BookingController {
         if (!reserved) throw new BookingException(
                 "Lo slot è stato appena prenotato da un altro studente. Seleziona un altro slot.");
 
-        return new BookingResponseBean(0, "PENDING", null,
+        return new BookingResponseBean(0, "PENDING", null, null,
                 new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
                 new SubjectBean(subject.getId(), subject.getName()),
                 new TimeSlotBean(slot.getId(), slot.getDate(),
@@ -127,6 +127,7 @@ public class BookingController {
 
         return new BookingResponseBean(
                 booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
+                new StudentBean(student.getId(), student.getName(), student.getSurname(), student.getEmail()),
                 new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
                 new SubjectBean(subject.getId(), subject.getName()),
                 new TimeSlotBean(slot.getId(), slot.getDate(),
@@ -146,6 +147,7 @@ public class BookingController {
 
             result.add(new BookingResponseBean(
                     booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
+                    new StudentBean(booking.getStudent().getId(), booking.getStudent().getName(), booking.getStudent().getSurname(), booking.getStudent().getEmail()),
                     new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
                     new SubjectBean(subject.getId(), subject.getName()),
                     new TimeSlotBean(slot.getId(), slot.getDate(),
@@ -164,6 +166,7 @@ public class BookingController {
             if (tutor == null || subject == null || slot == null) continue;
             result.add(new BookingResponseBean(
                     booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
+                    new StudentBean(booking.getStudent().getId(), booking.getStudent().getName(), booking.getStudent().getSurname(), booking.getStudent().getEmail()),
                     new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
                     new SubjectBean(subject.getId(), subject.getName()),
                     new TimeSlotBean(slot.getId(), slot.getDate(),
@@ -187,15 +190,19 @@ public class BookingController {
         bookingDAO.cancel(bookingId, studentId);
     }
 
-    public void addTutorToFavourites(int studentId, int tutorId)
-            throws DAOException {
-
-        studentDAO.addFavouriteTutor(studentId, tutorId);
+    public void addTutorToFavourites(int tutorId) throws DAOException {
+        Student student = (Student) SessionManager.getInstance().getLoggedUser();
+        Tutor tutor = tutorDAO.findById(tutorId);
+        if (tutor == null) throw new DAOException("Tutor non trovato.");
+        student.addFavourite(tutor);
+        studentDAO.addFavouriteTutor(student.getId(), tutorId);
     }
 
-    public void removeTutorFromFavourites(int studentId, int tutorId)
-            throws DAOException {
-
-        studentDAO.removeFavouriteTutor(studentId, tutorId);
+    public void removeTutorFromFavourites(int tutorId) throws DAOException {
+        Student student = (Student) SessionManager.getInstance().getLoggedUser();
+        Tutor tutor = tutorDAO.findById(tutorId);
+        if (tutor == null) throw new DAOException("Tutor non trovato.");
+        student.removeFavourite(tutorId);
+        studentDAO.removeFavouriteTutor(student.getId(), tutorId);
     }
 }

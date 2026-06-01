@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 
 import java.time.DayOfWeek;
@@ -97,6 +98,26 @@ public class DashboardTutorGUIView extends DashboardGUIView {
                 stud.setWrapText(true);
                 block.getChildren().add(stud);
             }
+
+            String details = (s.isAvailable() ? "Disponibile" : "Prenotato") + "\n" +
+                    "Orario: " + bStart + " – " + bEnd +
+                    (!s.isAvailable() && s.getBookedByName() != null
+                            ? "\nStudente: " + s.getBookedByName() : "") +
+                    (s.getMeetLink() != null ? "\nMeet: " + s.getMeetLink() : "");
+
+            Tooltip tooltip = new Tooltip(details);
+            Tooltip.install(block, tooltip);
+
+            block.setOnMouseClicked(e -> {
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                        javafx.scene.control.Alert.AlertType.INFORMATION);
+                alert.setTitle("Dettagli slot");
+                alert.setHeaderText(s.isAvailable() ? "Slot disponibile" : "Slot prenotato");
+                alert.setContentText(details);
+                alert.showAndWait();
+            });
+            block.setStyle(block.getStyle() + " -fx-cursor: hand;");
+
             pane.getChildren().add(block);
         }
     }

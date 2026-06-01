@@ -39,9 +39,11 @@ public class NotificationService {
     private static final String API_KEY    = properties.getProperty("SENDGRID_API_KEY");
     private static final String FROM_EMAIL = properties.getProperty("SENDGRID_FROM_EMAIL");
 
-    private static final String TEMPLATE_CONFIRMATION = "d-4d49f14c5f734b3cb51e504d56823d0e";
-    private static final String TEMPLATE_CANCELLATION = "d-9535f2c985ad4dc5ab7c51980e6069b9";
-    private static final String TEMPLATE_NEW_ACTIVITY = "d-5fc4b82a3df44ae4ac065f94932f1962";
+    private static final String TEMPLATE_CONFIRMATION         = "d-4d49f14c5f734b3cb51e504d56823d0e";
+    private static final String TEMPLATE_CANCELLATION         = "d-9535f2c985ad4dc5ab7c51980e6069b9";
+    private static final String TEMPLATE_NEW_ACTIVITY         = "d-5fc4b82a3df44ae4ac065f94932f1962";
+    private static final String TEMPLATE_CONFIRMATION_TUTOR   = "d-a56071917983440a8473eb642cac5d88";
+    private static final String TEMPLATE_CANCELLATION_TUTOR   = "d-5187d5081a2a4baeb955d1665654296";
 
     private NotificationService() {}
 
@@ -64,6 +66,27 @@ public class NotificationService {
                                                BookingResponseBean booking) throws NotificationException {
         Personalization p = buildPersonalization(toEmail, studentName, booking);
         sendTemplateEmail(TEMPLATE_CANCELLATION, p);
+    }
+
+    // ================================================================== //
+    //  Prenotazione confermata – tutor
+    // ================================================================== //
+
+    public static void sendBookingConfirmationToTutor(String toEmail, String tutorName,
+                                                      BookingResponseBean booking) throws NotificationException {
+        Personalization p = buildPersonalizationForTutor(toEmail, tutorName, booking);
+        p.addDynamicTemplateData("meetLink", booking.getMeetLink());
+        sendTemplateEmail(TEMPLATE_CONFIRMATION_TUTOR, p);
+    }
+
+    // ================================================================== //
+    //  Prenotazione annullata – tutor
+    // ================================================================== //
+
+    public static void sendBookingCancellationToTutor(String toEmail, String tutorName,
+                                                      BookingResponseBean booking) throws NotificationException {
+        Personalization p = buildPersonalizationForTutor(toEmail, tutorName, booking);
+        sendTemplateEmail(TEMPLATE_CANCELLATION_TUTOR, p);
     }
 
     // ================================================================== //
@@ -91,6 +114,20 @@ public class NotificationService {
         p.addDynamicTemplateData("studentName", studentName);
         p.addDynamicTemplateData("subjectName", booking.getSubject().getName());
         p.addDynamicTemplateData("tutorName",   booking.getTutor().getName());
+        p.addDynamicTemplateData("date",        booking.getTimeSlot().getDate().toString());
+        p.addDynamicTemplateData("startTime",   booking.getTimeSlot().getStartTime().toString());
+        p.addDynamicTemplateData("endTime",     booking.getTimeSlot().getEndTime().toString());
+        return p;
+    }
+
+    private static Personalization buildPersonalizationForTutor(String toEmail, String tutorName,
+                                                                BookingResponseBean booking) {
+        Personalization p = new Personalization();
+        p.addTo(new Email(toEmail));
+        p.addDynamicTemplateData("tutorName", booking.getTutor().getName() + " " + booking.getTutor().getSurname());
+        p.addDynamicTemplateData("studentName", booking.getStudent() != null
+                ? booking.getStudent().getName() + " " + booking.getStudent().getSurname() : "");
+        p.addDynamicTemplateData("subjectName", booking.getSubject().getName());
         p.addDynamicTemplateData("date",        booking.getTimeSlot().getDate().toString());
         p.addDynamicTemplateData("startTime",   booking.getTimeSlot().getStartTime().toString());
         p.addDynamicTemplateData("endTime",     booking.getTimeSlot().getEndTime().toString());

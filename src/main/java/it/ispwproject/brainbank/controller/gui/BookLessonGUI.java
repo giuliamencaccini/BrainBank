@@ -77,7 +77,9 @@ public class BookLessonGUI {
             resetSlotSection();
 
             if (newVal.isBlank()) {
-                view.showSubjectList(false);
+                view.subjectList.getItems().setAll(allSubjects);
+                view.updateSubjectListHeight(allSubjects.size());
+                view.showSubjectList(true);
             } else {
                 List<SubjectBean> filtered = allSubjects.stream()
                         .filter(s -> s.getName().toLowerCase().startsWith(newVal.toLowerCase()))
@@ -85,6 +87,14 @@ public class BookLessonGUI {
                 view.subjectList.getItems().setAll(filtered);
                 view.updateSubjectListHeight(filtered.size());
                 view.showSubjectList(!filtered.isEmpty());
+            }
+        });
+
+        view.subjectField.focusedProperty().addListener((obs, oldVal, focused) -> {
+            if (focused && view.subjectField.getText().isBlank()) {
+                view.subjectList.getItems().setAll(allSubjects);
+                view.updateSubjectListHeight(allSubjects.size());
+                view.showSubjectList(true);
             }
         });
     }
@@ -218,10 +228,10 @@ public class BookLessonGUI {
         try {
             int studentId = SessionManager.getInstance().getLoggedUser().getId();
             if (t.isFavourite()) {
-                bookingController.removeTutorFromFavourites(studentId, t.getId());
+                bookingController.removeTutorFromFavourites(t.getId());
                 t.setFavourite(false);
             } else {
-                bookingController.addTutorToFavourites(studentId, t.getId());
+                bookingController.addTutorToFavourites(t.getId());
                 t.setFavourite(true);
             }
         } catch (DAOException ex) {

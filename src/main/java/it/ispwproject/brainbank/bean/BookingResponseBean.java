@@ -5,6 +5,7 @@ public class BookingResponseBean {
     private int id;
     private String status;
     private String meetLink;
+    private StudentBean student;
     private TutorBean tutor;
     private SubjectBean subject;
     private TimeSlotBean timeSlot;
@@ -12,11 +13,12 @@ public class BookingResponseBean {
     public BookingResponseBean() {}
 
     public BookingResponseBean(int id, String status, String meetLink,
-                               TutorBean tutor, SubjectBean subject,
-                               TimeSlotBean timeSlot) {
+                               StudentBean student, TutorBean tutor,
+                               SubjectBean subject, TimeSlotBean timeSlot) {
         this.id       = id;
         this.status   = status;
         this.meetLink = meetLink;
+        this.student  = student;
         this.tutor    = tutor;
         this.subject  = subject;
         this.timeSlot = timeSlot;
@@ -28,6 +30,8 @@ public class BookingResponseBean {
     public void setStatus(String status) { this.status = status; }
     public String getMeetLink() { return meetLink; }
     public void setMeetLink(String meetLink) { this.meetLink = meetLink; }
+    public StudentBean getStudent() { return student; }
+    public void setStudent(StudentBean student) { this.student = student; }
     public TutorBean getTutor() { return tutor; }
     public void setTutor(TutorBean tutor) { this.tutor = tutor; }
     public SubjectBean getSubject() { return subject; }

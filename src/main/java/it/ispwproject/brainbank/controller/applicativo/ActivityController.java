@@ -56,6 +56,7 @@ public class ActivityController {
             if (tutor == null || subject == null || slot == null) continue;
             result.add(new BookingResponseBean(
                     booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
+                    new StudentBean(booking.getStudent().getId(), booking.getStudent().getName(), booking.getStudent().getSurname(), booking.getStudent().getEmail()),
                     new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), null, null, false),
                     new SubjectBean(subject.getId(), subject.getName()),
                     new TimeSlotBean(slot.getId(), slot.getDate(),

@@ -5,6 +5,7 @@ import it.ispwproject.brainbank.bean.BookingResponseBean;
 import it.ispwproject.brainbank.bean.SubjectBean;
 import it.ispwproject.brainbank.bean.TimeSlotBean;
 import it.ispwproject.brainbank.bean.TutorBean;
+import it.ispwproject.brainbank.bean.StudentBean;
 import it.ispwproject.brainbank.service.NotificationService;
 import it.ispwproject.brainbank.model.Booking;
 import it.ispwproject.brainbank.util.logger.AppLogger;
@@ -22,9 +23,16 @@ public class BookingConfirmationObserver implements Observer {
         try {
             BookingResponseBean response = buildResponse();
 
+            // Notifica studente
             NotificationService.sendBookingConfirmation(
                     booking.getStudent().getEmail(),
                     booking.getStudent().getFullName(),
+                    response);
+
+            // Notifica tutor
+            NotificationService.sendBookingConfirmationToTutor(
+                    booking.getTutor().getEmail(),
+                    booking.getTutor().getFullName(),
                     response);
 
         } catch (it.ispwproject.brainbank.exception.NotificationException e) {
@@ -33,6 +41,12 @@ public class BookingConfirmationObserver implements Observer {
     }
 
     private BookingResponseBean buildResponse() {
+        StudentBean studentBean = new StudentBean(
+                booking.getStudent().getId(),
+                booking.getStudent().getName(),
+                booking.getStudent().getSurname(),
+                booking.getStudent().getEmail());
+
         TutorBean tutorBean = new TutorBean(
                 booking.getTutor().getId(),
                 booking.getTutor().getName(),
@@ -56,6 +70,7 @@ public class BookingConfirmationObserver implements Observer {
                 booking.getId(),
                 booking.getStatus().name(),
                 booking.getMeetLink(),
+                studentBean,
                 tutorBean,
                 subjectBean,
                 slotBean);

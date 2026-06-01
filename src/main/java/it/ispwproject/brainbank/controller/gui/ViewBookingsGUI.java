@@ -35,8 +35,9 @@ public class ViewBookingsGUI {
 
             List<BookingResponseBean> confirmed = bookings.stream()
                     .filter(b -> b.getStatus().equals("CONFIRMED"))
-                    .filter(b -> !b.getTimeSlot().getDate().isBefore(java.time.LocalDate.now()) ||
-                            b.getTimeSlot().getEndTime().isAfter(java.time.LocalTime.now()))
+                    .filter(b -> b.getTimeSlot().getDate().isAfter(java.time.LocalDate.now()) ||
+                            (b.getTimeSlot().getDate().isEqual(java.time.LocalDate.now()) &&
+                                    b.getTimeSlot().getEndTime().isAfter(java.time.LocalTime.now())))
                     .sorted((a, b) -> a.getTimeSlot().getDate().compareTo(b.getTimeSlot().getDate()))
                     .toList();
             List<BookingResponseBean> cancelled = bookings.stream()

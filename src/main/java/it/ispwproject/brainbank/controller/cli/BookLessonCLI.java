@@ -85,10 +85,7 @@ public class BookLessonCLI {
                         "Vuoi aggiungere " + tutor.getFullName() + " ai tutor preferiti?"
                 );
                 if (addFavourite) {
-                    bookingController.addTutorToFavourites(
-                            studentBean.getId(),
-                            tutor.getId()
-                    );
+                    bookingController.addTutorToFavourites(tutor.getId());
                     view.mostraMessaggio("⭐ Tutor aggiunto ai preferiti.");
                 }
             }

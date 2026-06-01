@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 
 import java.time.DayOfWeek;
@@ -93,6 +94,30 @@ public class DashboardStudentGUIView extends DashboardGUIView {
                     (bEnd.getHour() < 12 ? "AM" : "PM"));
             t.getStyleClass().add("calendar-block-time");
             block.getChildren().addAll(s, t);
+
+            // Tooltip
+            Tooltip tooltip = new Tooltip(
+                    b.getSubject().getName() + "\n" +
+                            "Tutor: " + b.getTutor().getName() + " " + b.getTutor().getSurname() + "\n" +
+                            bStart + " – " + bEnd + "\n" +
+                            (b.getMeetLink() != null ? "Meet: " + b.getMeetLink() : ""));
+            Tooltip.install(block, tooltip);
+
+            // Click → dialog
+            block.setOnMouseClicked(e -> {
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                        javafx.scene.control.Alert.AlertType.INFORMATION);
+                alert.setTitle("Dettagli lezione");
+                alert.setHeaderText(b.getSubject().getName());
+                alert.setContentText(
+                        "Tutor:   " + b.getTutor().getName() + " " + b.getTutor().getSurname() + "\n" +
+                                "Data:    " + bDate + "\n" +
+                                "Orario:  " + bStart + " – " + bEnd + "\n" +
+                                (b.getMeetLink() != null ? "Meet:    " + b.getMeetLink() : ""));
+                alert.showAndWait();
+            });
+            block.setStyle(block.getStyle() + " -fx-cursor: hand;");
+
             pane.getChildren().add(block);
         }
     }
