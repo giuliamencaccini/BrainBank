@@ -166,7 +166,9 @@ public class TimeSlotDAODB implements TimeSlotDAO {
     }
 
     private TimeSlot mapToTimeSlot(ResultSet rs) throws SQLException {
-        return new TimeSlot(rs.getInt("id"), rs.getDate("date").toLocalDate(),
+        TimeSlot slot = new TimeSlot(rs.getInt("id"), rs.getDate("date").toLocalDate(),
                 rs.getTime("start_time").toLocalTime(), rs.getTime("end_time").toLocalTime());
+        slot.setAvailable(rs.getBoolean("available"));
+        return slot;
     }
 }

@@ -2,6 +2,7 @@ package it.ispwproject.brainbank.controller.applicativo;
 
 import it.ispwproject.brainbank.bean.*;
 import it.ispwproject.brainbank.dao.*;
+import it.ispwproject.brainbank.enumerator.BookingStatus;
 import it.ispwproject.brainbank.exception.BookingException;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.*;
@@ -19,7 +20,7 @@ public class BookingController {
     private final SubjectDAO  subjectDAO;
     private final TutorDAO    tutorDAO;
     private final TimeSlotDAO timeSlotDAO;
-    private final StudentDAO studentDAO;
+    private final StudentDAO  studentDAO;
 
     public BookingController() {
         this.bookingDAO  = DAOFactory.getBookingDAO();
@@ -47,8 +48,7 @@ public class BookingController {
         }
 
         for (Tutor tutor : tutorDAO.getBySubject(subject)) {
-            boolean favourite =
-                    studentDAO.isFavouriteTutor(student.getId(), tutor.getId());
+            boolean favourite = studentDAO.isFavouriteTutor(student.getId(), tutor.getId());
             result.add(new TutorBean(tutor.getId(), tutor.getName(),
                     tutor.getSurname(), tutor.getBio(), tutor.getEmail(), favourite));
         }
@@ -73,7 +73,7 @@ public class BookingController {
 
     public BookingResponseBean prepareBookingSummary(BookingRequestBean request)
             throws DAOException, BookingException {
-        Tutor tutor   = tutorDAO.findById(request.getTutor().getId());
+        Tutor    tutor   = tutorDAO.findById(request.getTutor().getId());
         Subject  subject = subjectDAO.findById(request.getSubject().getId());
         TimeSlot slot    = timeSlotDAO.findById(request.getTimeSlot().getId());
 
@@ -85,7 +85,7 @@ public class BookingController {
         if (!reserved) throw new BookingException(
                 "Lo slot è stato appena prenotato da un altro studente. Seleziona un altro slot.");
 
-        return new BookingResponseBean(0, "PENDING", null, null,
+        return new BookingResponseBean(0, BookingStatus.PENDING, null, null,
                 new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
                 new SubjectBean(subject.getId(), subject.getName()),
                 new TimeSlotBean(slot.getId(), slot.getDate(),
@@ -109,7 +109,7 @@ public class BookingController {
         if (slot    == null) throw new DAOException("Slot non trovato.");
 
         for (Booking b : bookingDAO.findByStudent(student.getId())) {
-            if (b.getStatus().name().equals("CANCELLED")) continue;
+            if (b.getStatus() == BookingStatus.CANCELLED) continue;
             TimeSlot existing = b.getTimeSlot();
             if (existing != null && slot.overlaps(existing)) {
                 throw new BookingException(
@@ -126,7 +126,7 @@ public class BookingController {
         bookingDAO.save(booking);
 
         return new BookingResponseBean(
-                booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
+                booking.getId(), booking.getStatus(), booking.getMeetLink(),
                 new StudentBean(student.getId(), student.getName(), student.getSurname(), student.getEmail()),
                 new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
                 new SubjectBean(subject.getId(), subject.getName()),
@@ -134,26 +134,21 @@ public class BookingController {
                         slot.getStartTime(), slot.getEndTime(), slot.isAvailable()));
     }
 
-    public List<BookingResponseBean> getStudentBookings(int studentId)
-            throws DAOException{
+    public List<BookingResponseBean> getStudentBookings(int studentId) throws DAOException {
         List<BookingResponseBean> result = new ArrayList<>();
-
         for (Booking booking : bookingDAO.findByStudent(studentId)) {
             Tutor    tutor   = booking.getTutor();
             Subject  subject = booking.getSubject();
             TimeSlot slot    = booking.getTimeSlot();
-
             if (tutor == null || subject == null || slot == null) continue;
-
             result.add(new BookingResponseBean(
-                    booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
+                    booking.getId(), booking.getStatus(), booking.getMeetLink(),
                     new StudentBean(booking.getStudent().getId(), booking.getStudent().getName(), booking.getStudent().getSurname(), booking.getStudent().getEmail()),
                     new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
                     new SubjectBean(subject.getId(), subject.getName()),
                     new TimeSlotBean(slot.getId(), slot.getDate(),
                             slot.getStartTime(), slot.getEndTime(), slot.isAvailable())));
         }
-
         return result;
     }
 
@@ -165,7 +160,7 @@ public class BookingController {
             TimeSlot slot    = booking.getTimeSlot();
             if (tutor == null || subject == null || slot == null) continue;
             result.add(new BookingResponseBean(
-                    booking.getId(), booking.getStatus().name(), booking.getMeetLink(),
+                    booking.getId(), booking.getStatus(), booking.getMeetLink(),
                     new StudentBean(booking.getStudent().getId(), booking.getStudent().getName(), booking.getStudent().getSurname(), booking.getStudent().getEmail()),
                     new TutorBean(tutor.getId(), tutor.getName(), tutor.getSurname(), tutor.getBio(), tutor.getEmail(), false),
                     new SubjectBean(subject.getId(), subject.getName()),
@@ -176,7 +171,6 @@ public class BookingController {
     }
 
     public void cancelBooking(int bookingId, int studentId) throws DAOException {
-
         List<Booking> bookings = bookingDAO.findByStudent(studentId);
         Booking booking = bookings.stream()
                 .filter(b -> b.getId() == bookingId)

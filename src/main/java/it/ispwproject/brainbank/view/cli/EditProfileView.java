@@ -1,55 +1,39 @@
 package it.ispwproject.brainbank.view.cli;
 
-import java.util.Scanner;
-
 public class EditProfileView {
 
-    private static final String SEPARATOR = "─".repeat(50);
-    private final Scanner scanner = new Scanner(System.in);
-
     public void mostraIntestazione() {
-        System.out.println();
-        System.out.println(SEPARATOR);
-        System.out.println("  BrainBank – Profilo");
-        System.out.println(SEPARATOR);
+        CLIRenderer.intestazione("BrainBank  –  Profilo");
     }
 
     public void mostraMenu() {
-        System.out.println("  [1] Modifica email");
-        System.out.println("  [0] Indietro");
+        CLIRenderer.vuota();
+        CLIRenderer.voceMenu(1, "Modifica email");
+        CLIRenderer.voceMenuZero("Indietro");
     }
 
     public String chiediScelta() {
-        System.out.print("\n  Scelta: ");
-        return scanner.nextLine().trim();
+        return CLIRenderer.chiediSceltaStringa("Scelta");
     }
 
     public String chiediCampo(String label) {
-        System.out.printf("  %s: ", label);
-        return scanner.nextLine().trim();
+        return CLIRenderer.chiediCampo(label);
     }
 
     public void mostraSuccesso(String messaggio) {
-        System.out.println("  ✓ " + messaggio);
-        System.out.println(SEPARATOR);
+        CLIRenderer.successo(messaggio);
     }
 
     public void mostraErrore(String messaggio) {
-        System.out.println("  ❌ " + messaggio);
+        CLIRenderer.errore(messaggio);
     }
 
     public void mostraMessaggio(String messaggio) {
-        System.out.println("  " + messaggio);
+        CLIRenderer.messaggio(messaggio);
     }
 
     public boolean chiediConferma(String prompt) {
-        while (true) {
-            System.out.printf("  %s [s/n]: ", prompt);
-            String input = scanner.nextLine().trim().toLowerCase();
-            if (input.equals("s") || input.equals("si") || input.equals("sì")) return true;
-            if (input.equals("n") || input.equals("no")) return false;
-            System.out.println("  Rispondi con 's' oppure 'n'.");
-        }
+        return CLIRenderer.chiediConferma(prompt);
     }
 }
 

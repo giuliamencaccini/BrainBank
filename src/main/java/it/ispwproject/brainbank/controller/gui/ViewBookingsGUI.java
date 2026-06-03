@@ -2,6 +2,7 @@ package it.ispwproject.brainbank.controller.gui;
 
 import it.ispwproject.brainbank.bean.BookingResponseBean;
 import it.ispwproject.brainbank.controller.applicativo.BookingController;
+import it.ispwproject.brainbank.enumerator.BookingStatus;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.pattern.singleton.SessionManager;
 import it.ispwproject.brainbank.view.gui.ViewBookingsGUIView;
@@ -34,14 +35,14 @@ public class ViewBookingsGUI {
             List<BookingResponseBean> past     = bookingController.getStudentPastBookings(studentId);
 
             List<BookingResponseBean> confirmed = bookings.stream()
-                    .filter(b -> b.getStatus().equals("CONFIRMED"))
+                    .filter(b -> b.getStatus() == BookingStatus.CONFIRMED)
                     .filter(b -> b.getTimeSlot().getDate().isAfter(java.time.LocalDate.now()) ||
                             (b.getTimeSlot().getDate().isEqual(java.time.LocalDate.now()) &&
                                     b.getTimeSlot().getEndTime().isAfter(java.time.LocalTime.now())))
                     .sorted((a, b) -> a.getTimeSlot().getDate().compareTo(b.getTimeSlot().getDate()))
                     .toList();
             List<BookingResponseBean> cancelled = bookings.stream()
-                    .filter(b -> b.getStatus().equals("CANCELLED"))
+                    .filter(b -> b.getStatus() == BookingStatus.CANCELLED)
                     .sorted((a, b) -> a.getTimeSlot().getDate().compareTo(b.getTimeSlot().getDate()))
                     .toList();
 

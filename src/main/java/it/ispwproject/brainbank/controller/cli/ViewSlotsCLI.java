@@ -22,7 +22,7 @@ public class ViewSlotsCLI {
             List<TimeSlotBean> passati = availabilityController.getPastSlots();
 
             view.mostraSlots(futuri, subjectBySlot);
-            view.mostraPassati(passati, subjectBySlot);
+            view.mostraPassati(passati);
 
             List<TimeSlotBean> disponibili = futuri.stream()
                     .filter(TimeSlotBean::isAvailable).toList();

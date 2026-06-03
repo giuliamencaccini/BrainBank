@@ -6,46 +6,42 @@ import java.util.Map;
 
 public class ReportStatisticsView {
 
-    private static final String SEPARATOR = "─".repeat(50);
-
     public void mostraIntestazione() {
-        System.out.println();
-        System.out.println(SEPARATOR);
-        System.out.println("  BrainBank – Statistiche");
-        System.out.println(SEPARATOR);
+        CLIRenderer.intestazione("BrainBank  –  Statistiche e report");
     }
 
     public void mostraStatistiche(StatisticsBean stats) {
-        System.out.printf("  Prenotazioni totali  : %d%n", stats.getTotalBookings());
-        System.out.printf("  Prenotazioni annullate: %d%n", stats.getCancelledBookings());
-        System.out.printf("  Tasso cancellazione  : %.1f%%%n", stats.getCancellationRate());
+        CLIRenderer.sezione("Prenotazioni");
+        CLIRenderer.campo("Totali",    String.valueOf(stats.getTotalBookings()));
+        CLIRenderer.campo("Annullate", String.valueOf(stats.getCancelledBookings()));
+        CLIRenderer.campo("Tasso",     String.format("%.1f%%", stats.getCancellationRate()));
 
-        System.out.println("\n  ── Top 3 Tutor");
+        CLIRenderer.sezione("Top 3 Tutor");
         if (stats.getTopTutors().isEmpty()) {
-            System.out.println("  Nessun dato disponibile.");
+            CLIRenderer.messaggio("Nessun dato disponibile.");
         } else {
             int i = 1;
-            for (Map.Entry<String, Integer> entry : stats.getTopTutors().entrySet()) {
-                System.out.printf("  [%d] %-25s %d lezioni%n", i++,
-                        entry.getKey(), entry.getValue());
+            for (Map.Entry<String, Integer> e : stats.getTopTutors().entrySet()) {
+                System.out.printf("  %d.  %-28s  %d lezioni%n",
+                        i++, e.getKey(), e.getValue());
             }
         }
 
-        System.out.println("\n  ── Top 3 Materie");
+        CLIRenderer.sezione("Top 3 Materie");
         if (stats.getTopSubjects().isEmpty()) {
-            System.out.println("  Nessun dato disponibile.");
+            CLIRenderer.messaggio("Nessun dato disponibile.");
         } else {
             int i = 1;
-            for (Map.Entry<String, Integer> entry : stats.getTopSubjects().entrySet()) {
-                System.out.printf("  [%d] %-25s %d prenotazioni%n", i++,
-                        entry.getKey(), entry.getValue());
+            for (Map.Entry<String, Integer> e : stats.getTopSubjects().entrySet()) {
+                System.out.printf("  %d.  %-28s  %d prenotazioni%n",
+                        i++, e.getKey(), e.getValue());
             }
         }
 
-        System.out.println(SEPARATOR);
+        CLIRenderer.separatore();
     }
 
     public void mostraErrore(String messaggio) {
-        System.out.println("  ❌ " + messaggio);
+        CLIRenderer.errore(messaggio);
     }
 }

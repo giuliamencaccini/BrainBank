@@ -1,9 +1,11 @@
 package it.ispwproject.brainbank.bean;
 
+import it.ispwproject.brainbank.enumerator.BookingStatus;
+
 public class BookingResponseBean {
 
     private int id;
-    private String status;
+    private BookingStatus status;
     private String meetLink;
     private StudentBean student;
     private TutorBean tutor;
@@ -12,7 +14,7 @@ public class BookingResponseBean {
 
     public BookingResponseBean() {}
 
-    public BookingResponseBean(int id, String status, String meetLink,
+    public BookingResponseBean(int id, BookingStatus status, String meetLink,
                                StudentBean student, TutorBean tutor,
                                SubjectBean subject, TimeSlotBean timeSlot) {
         this.id       = id;
@@ -26,8 +28,8 @@ public class BookingResponseBean {
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public BookingStatus getStatus() { return status; }
+    public void setStatus(BookingStatus status) { this.status = status; }
     public String getMeetLink() { return meetLink; }
     public void setMeetLink(String meetLink) { this.meetLink = meetLink; }
     public StudentBean getStudent() { return student; }

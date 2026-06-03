@@ -102,6 +102,12 @@ public class RegistrationController {
         if (bean.getPassword() == null || bean.getPassword().length() < 8) {
             throw new RegistrationException("La password deve essere di almeno 8 caratteri.");
         }
+        if (!bean.getPassword().matches(".*[A-Z].*")) {
+            throw new RegistrationException("La password deve contenere almeno una lettera maiuscola.");
+        }
+        if (!bean.getPassword().matches(".*[0-9].*")) {
+            throw new RegistrationException("La password deve contenere almeno un numero.");
+        }
         if (!bean.getPassword().equals(bean.getConfirmPassword())) {
             throw new RegistrationException("Le password non coincidono.");
         }

@@ -109,7 +109,7 @@ public class BookLessonGUIView {
     }
 
     public void updateSubjectListHeight(int itemCount) {
-        subjectList.setPrefHeight(Math.min(itemCount * 36 + 2, 150));
+        subjectList.setPrefHeight(Math.min(itemCount * 32, 180));
     }
 
     public void setError(String message) {

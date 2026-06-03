@@ -1,36 +1,35 @@
 package it.ispwproject.brainbank.view.cli;
 
-import java.util.Scanner;
-
 public class InitialView {
 
-    private static final String SEPARATOR = "─".repeat(50);
-    private final Scanner scanner = new Scanner(System.in);
-
     public void mostraBenvenuto() {
-        System.out.println();
-        System.out.println(SEPARATOR);
-        System.out.println("  Benvenuto in BrainBank!");
-        System.out.println("  La piattaforma per prenotare lezioni con i tutor.");
-        System.out.println(SEPARATOR);
+        CLIRenderer.vuota();
+        System.out.println(CLIRenderer.LINE_DECO);
+        System.out.println(CLIRenderer.centra("B R A I N B A N K"));
+        System.out.println(CLIRenderer.centra("Connettiti al sapere!"));
+        System.out.println(CLIRenderer.LINE_DECO);
     }
 
     public void mostraMenu() {
-        System.out.println("  [1] Accedi");
-        System.out.println("  [2] Registrati");
-        System.out.println("  [0] Esci");
+        CLIRenderer.vuota();
+        CLIRenderer.voceMenu(1, "Accedi");
+        CLIRenderer.voceMenu(2, "Registrati");
+        CLIRenderer.voceMenuZero("Esci");
     }
 
     public String chiediScelta() {
-        System.out.print("\n  Scelta: ");
-        return scanner.nextLine().trim();
+        return CLIRenderer.chiediSceltaStringa("Scelta");
     }
 
     public void mostraErrore(String messaggio) {
-        System.out.println("  ❌ " + messaggio);
+        CLIRenderer.errore(messaggio);
     }
 
     public void mostraArrivederci() {
-        System.out.println("\n  Arrivederci!");
+        CLIRenderer.vuota();
+        System.out.println(CLIRenderer.LINE_DECO);
+        System.out.println(CLIRenderer.centra("Arrivederci!  –  BrainBank"));
+        System.out.println(CLIRenderer.LINE_DECO);
+        CLIRenderer.vuota();
     }
 }

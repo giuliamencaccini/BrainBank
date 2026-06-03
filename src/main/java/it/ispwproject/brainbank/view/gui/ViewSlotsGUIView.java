@@ -116,24 +116,19 @@ public class ViewSlotsGUIView extends PageGUIView {
         if (isPast) {
             if (!s.isAvailable()) {
                 dot.getStyleClass().add("error-label");
-                status.setText("Utilizzato"); status.getStyleClass().add("error-label");
+                status.setText("Utilizzato");
+                status.getStyleClass().add("error-label");
+                aggiungiDettagliPrenotazione(info, subjectName, s);
             } else {
                 dot.getStyleClass().add("past-label");
-                status.setText("Non utilizzato"); status.getStyleClass().add("past-label");
+                status.setText("Non utilizzato");
+                status.getStyleClass().add("past-label");
             }
         } else if (!s.isAvailable()) {
             dot.getStyleClass().add("error-label");
-            status.setText("Prenotato"); status.getStyleClass().add("error-label");
-            if (subjectName != null) {
-                Label subject = new Label("Materia: " + subjectName);
-                subject.getStyleClass().add("small-label");
-                info.getChildren().add(subject);
-            }
-            if (s.getBookedByName() != null) {
-                Label student = new Label("Studente: " + s.getBookedByName());
-                student.getStyleClass().add("register-label");
-                info.getChildren().add(student);
-            }
+            status.setText("Prenotato");
+            status.getStyleClass().add("error-label");
+            aggiungiDettagliPrenotazione(info, subjectName, s);
             if (s.getMeetLink() != null) {
                 Label meet = new Label("Meet: " + s.getMeetLink());
                 meet.getStyleClass().add("info-text");
@@ -142,7 +137,8 @@ public class ViewSlotsGUIView extends PageGUIView {
             }
         } else {
             dot.getStyleClass().add("success-label");
-            status.setText("Disponibile"); status.getStyleClass().add("success-label");
+            status.setText("Disponibile");
+            status.getStyleClass().add("success-label");
             Button deleteBtn = new Button("Elimina");
             deleteBtn.getStyleClass().add("danger-button");
             deleteBtn.setOnAction(e -> onDelete.accept(s));
@@ -153,5 +149,18 @@ public class ViewSlotsGUIView extends PageGUIView {
 
         card.getChildren().add(info);
         return card;
+    }
+
+    private void aggiungiDettagliPrenotazione(VBox info, String subjectName, TimeSlotBean s) {
+        if (subjectName != null) {
+            Label subject = new Label("Materia: " + subjectName);
+            subject.getStyleClass().add("small-label");
+            info.getChildren().add(subject);
+        }
+        if (s.getBookedByName() != null) {
+            Label student = new Label("Studente: " + s.getBookedByName());
+            student.getStyleClass().add("register-label");
+            info.getChildren().add(student);
+        }
     }
 }

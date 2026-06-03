@@ -3,98 +3,83 @@ package it.ispwproject.brainbank.view.cli;
 import it.ispwproject.brainbank.bean.*;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class BookLessonView {
 
-    private static final String SEPARATOR = "─".repeat(50);
-    private final Scanner scanner = new Scanner(System.in);
-
     public void mostraIntestazione() {
-        System.out.println();
-        System.out.println(SEPARATOR);
-        System.out.println("  BrainBank – Prenota una lezione");
-        System.out.println(SEPARATOR);
+        CLIRenderer.intestazione("BrainBank  –  Prenota una lezione");
     }
 
     public void mostraMaterie(List<SubjectBean> subjects) {
-        System.out.println("\n  ── Materie disponibili");
+        CLIRenderer.sezione("Materie disponibili");
         for (int i = 0; i < subjects.size(); i++) {
-            System.out.printf("  [%d] %s%n", i + 1, subjects.get(i).getName());
+            CLIRenderer.voceMenu(i + 1, subjects.get(i).getName());
         }
+        CLIRenderer.voceMenuZero("Indietro");
     }
 
     public void mostraTutor(List<TutorBean> favourites, List<TutorBean> others) {
-        System.out.println("\n  ── Seleziona tutor");
+        CLIRenderer.sezione("Seleziona tutor");
         int index = 1;
 
         if (!favourites.isEmpty()) {
-            System.out.println("  ★ Tutor preferiti");
+            CLIRenderer.messaggio(CLIRenderer.STAR + "  Tutor preferiti");
             for (TutorBean t : favourites) {
-                System.out.printf("  [%d] %-20s  %s%n", index++, t.getName(), t.getBio());
+                System.out.printf("  [%d] %-22s  %s%n",
+                        index++,
+                        t.getName() + " " + t.getSurname(),
+                        t.getBio() != null ? t.getBio() : "");
             }
-            if (!others.isEmpty()) System.out.println();
+            if (!others.isEmpty()) CLIRenderer.vuota();
         }
 
         if (!others.isEmpty()) {
-            if (!favourites.isEmpty()) System.out.println("  Altri tutor");
+            if (!favourites.isEmpty()) CLIRenderer.messaggio("  Altri tutor");
             for (TutorBean t : others) {
-                System.out.printf("  [%d] %-20s  %s%n", index++, t.getName(), t.getBio());
+                System.out.printf("  [%d] %-22s  %s%n",
+                        index++,
+                        t.getName() + " " + t.getSurname(),
+                        t.getBio() != null ? t.getBio() : "");
             }
         }
+        CLIRenderer.voceMenuZero("Indietro");
     }
 
     public void mostraSlot(List<TimeSlotBean> slots) {
-        System.out.println("\n  ── Slot disponibili");
+        CLIRenderer.sezione("Slot disponibili");
         for (int i = 0; i < slots.size(); i++) {
             TimeSlotBean s = slots.get(i);
             System.out.printf("  [%d] %s   %s – %s%n",
                     i + 1, s.getDate(), s.getStartTime(), s.getEndTime());
         }
+        CLIRenderer.voceMenuZero("Indietro");
     }
 
     public void mostraRiepilogo(BookingResponseBean summary) {
-        System.out.println("\n  ── Riepilogo prenotazione");
-        System.out.printf("  Materia  : %s%n", summary.getSubject().getName());
-        System.out.printf("  Tutor    : %s%n", summary.getTutor().getName());
-        System.out.printf("  Data     : %s%n", summary.getTimeSlot().getDate());
-        System.out.printf("  Orario   : %s – %s%n",
-                summary.getTimeSlot().getStartTime(), summary.getTimeSlot().getEndTime());
+        CLIRenderer.sezione("Riepilogo prenotazione");
+        CLIRenderer.campo("Materia",  summary.getSubject().getName());
+        CLIRenderer.campo("Tutor",    summary.getTutor().getName() + " " + summary.getTutor().getSurname());
+        CLIRenderer.campo("Data",     summary.getTimeSlot().getDate().toString());
+        CLIRenderer.campo("Orario",   summary.getTimeSlot().getStartTime()
+                + " – " + summary.getTimeSlot().getEndTime());
     }
 
     public void mostraConferma(BookingResponseBean response) {
-        System.out.println("\n  ── Prenotazione confermata");
-        System.out.printf("  ID       : %d%n", response.getId());
-        System.out.printf("  Stato    : %s%n", response.getStatus());
-        System.out.printf("  Meet     : %s%n", response.getMeetLink());
-        System.out.println(SEPARATOR);
+        CLIRenderer.sezione("Prenotazione confermata");
+        CLIRenderer.campo("Stato",  response.getStatus() != null ? response.getStatus().toString() : "—");
+        CLIRenderer.campo("Meet",   response.getMeetLink());
+        CLIRenderer.separatore();
     }
 
     public void mostraMessaggio(String messaggio) {
-        System.out.println("  " + messaggio);
+        CLIRenderer.messaggio(messaggio);
     }
 
     public int chiediScelta(String prompt, int min, int max) {
-        while (true) {
-            System.out.printf("%n  %s [%d-%d]: ", prompt, min, max);
-            String input = scanner.nextLine().trim();
-            try {
-                int value = Integer.parseInt(input);
-                if (value >= min && value <= max) return value;
-                System.out.printf("  Inserisci un numero tra %d e %d.%n", min, max);
-            } catch (NumberFormatException e) {
-                System.out.println("  Input non valido.");
-            }
-        }
+        return CLIRenderer.chiediScelta(prompt, min, max);
     }
 
     public boolean chiediConferma(String prompt) {
-        while (true) {
-            System.out.printf("  %s [s/n]: ", prompt);
-            String input = scanner.nextLine().trim().toLowerCase();
-            if (input.equals("s") || input.equals("si") || input.equals("sì")) return true;
-            if (input.equals("n") || input.equals("no")) return false;
-            System.out.println("  Rispondi con 's' oppure 'n'.");
-        }
+        return CLIRenderer.chiediConferma(prompt);
     }
 }

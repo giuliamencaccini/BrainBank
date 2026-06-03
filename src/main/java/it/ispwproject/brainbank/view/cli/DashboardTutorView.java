@@ -1,33 +1,25 @@
 package it.ispwproject.brainbank.view.cli;
 
-import java.util.Scanner;
-
 public class DashboardTutorView {
 
-    private static final String SEPARATOR = "─".repeat(50);
-    private final Scanner scanner = new Scanner(System.in);
-
     public void mostraBenvenuto(String nome) {
-        System.out.println();
-        System.out.println(SEPARATOR);
-        System.out.printf("  Bentornato %s!  –  Tutor%n", nome);
-        System.out.println(SEPARATOR);
+        CLIRenderer.intestazioneBenvenuto(nome, "Tutor");
     }
 
     public void mostraMenu() {
-        System.out.println("  [1] Disponibilità");
-        System.out.println("  [2] I miei slot");
-        System.out.println("  [3] Gestisci studenti");
-        System.out.println("  [4] Profilo");
-        System.out.println("  [0] Logout");
+        CLIRenderer.vuota();
+        CLIRenderer.voceMenu(1, "Aggiungi disponibilità");
+        CLIRenderer.voceMenu(2, "I miei slot");
+        CLIRenderer.voceMenu(3, "Gestisci studenti");
+        CLIRenderer.voceMenu(4, "Profilo");
+        CLIRenderer.voceMenuZero("Logout");
     }
 
     public String chiediScelta() {
-        System.out.print("\n  Scelta: ");
-        return scanner.nextLine().trim();
+        return CLIRenderer.chiediSceltaStringa("Scelta");
     }
 
     public void mostraMessaggio(String messaggio) {
-        System.out.println("  " + messaggio);
+        CLIRenderer.messaggio(messaggio);
     }
 }

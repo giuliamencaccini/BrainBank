@@ -1,34 +1,27 @@
 package it.ispwproject.brainbank.view.cli;
 
-import java.util.Scanner;
-
 public class ModeSelectorView {
 
-    private static final String SEPARATOR = "─".repeat(50);
-    private final Scanner scanner = new Scanner(System.in);
-
     public void mostraMenu() {
-        System.out.println();
-        System.out.println(SEPARATOR);
-        System.out.println("  BrainBank — Seleziona modalità");
-        System.out.println(SEPARATOR);
-        System.out.println("  [1] Demo     (in-memory, nessun DB richiesto)");
-        System.out.println("  [2] Database (persistenza MySQL)");
-        System.out.println("  [3] File     (persistenza JSON)");
-        System.out.println("  [0] Esci");
-        System.out.println(SEPARATOR);
+        CLIRenderer.intestazione("BrainBank  –  Seleziona modalità di avvio");
+        CLIRenderer.vuota();
+        CLIRenderer.voceMenu(1, "Demo      (in-memory, nessun DB richiesto)");
+        CLIRenderer.voceMenu(2, "Database  (persistenza MySQL)");
+        CLIRenderer.voceMenu(3, "File      (persistenza JSON)");
+        CLIRenderer.voceMenuZero("Esci");
+        CLIRenderer.vuota();
+        CLIRenderer.separatore();
     }
 
     public String chiediScelta() {
-        System.out.print("\n  Scelta: ");
-        return scanner.nextLine().trim();
+        return CLIRenderer.chiediSceltaStringa("Scelta");
     }
 
     public void mostraErrore(String messaggio) {
-        System.out.println("  ❌ " + messaggio);
+        CLIRenderer.errore(messaggio);
     }
 
     public void mostraModalitaSelezionata(String modalita) {
-        System.out.println("  ✓ Modalità selezionata: " + modalita);
+        CLIRenderer.successo("Modalità selezionata: " + modalita);
     }
 }

@@ -1,34 +1,26 @@
 package it.ispwproject.brainbank.view.cli;
 
-import java.util.Scanner;
-
 public class DashboardStudentView {
 
-    private static final String SEPARATOR = "─".repeat(50);
-    private final Scanner scanner = new Scanner(System.in);
-
     public void mostraBenvenuto(String nome) {
-        System.out.println();
-        System.out.println(SEPARATOR);
-        System.out.printf("  Bentornato %s!  –  Studente%n", nome);
-        System.out.println(SEPARATOR);
+        CLIRenderer.intestazioneBenvenuto(nome, "Studente");
     }
 
     public void mostraMenu() {
-        System.out.println("  [1] Prenota una lezione");
-        System.out.println("  [2] Le mie prenotazioni");
-        System.out.println("  [3] Annulla una prenotazione");
-        System.out.println("  [4] To-do");
-        System.out.println("  [5] Profilo");
-        System.out.println("  [0] Logout");
+        CLIRenderer.vuota();
+        CLIRenderer.voceMenu(1, "Prenota una lezione");
+        CLIRenderer.voceMenu(2, "Le mie prenotazioni");
+        CLIRenderer.voceMenu(3, "Annulla una prenotazione");
+        CLIRenderer.voceMenu(4, "To-do");
+        CLIRenderer.voceMenu(5, "Profilo");
+        CLIRenderer.voceMenuZero("Logout");
     }
 
     public String chiediScelta() {
-        System.out.print("\n  Scelta: ");
-        return scanner.nextLine().trim();
+        return CLIRenderer.chiediSceltaStringa("Scelta");
     }
 
     public void mostraMessaggio(String messaggio) {
-        System.out.println("  " + messaggio);
+        CLIRenderer.messaggio(messaggio);
     }
 }

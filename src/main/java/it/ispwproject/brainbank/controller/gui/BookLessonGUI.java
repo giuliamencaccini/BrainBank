@@ -132,6 +132,7 @@ public class BookLessonGUI {
         view.subjectField.setText(sel.getName());
         view.showSubjectList(false);
         view.setStepDone(view.step1Dot);
+        view.clearError();
         loadTutors(sel);
     }
 
@@ -183,6 +184,7 @@ public class BookLessonGUI {
             view.setSlotSectionEnabled(true);
             selectedSlot = null;
             view.bookBtn.setDisable(true);
+            view.clearError();
 
             if (slots.isEmpty()) {
                 view.slotList.getChildren().add(view.buildHintLabel("Nessuno slot disponibile"));
@@ -314,6 +316,7 @@ public class BookLessonGUI {
         view.tutorList.getChildren().setAll(view.buildHintLabel("Seleziona prima una materia"));
         tutorGroup.getToggles().clear();
         view.setTutorSectionEnabled(false);
+        view.clearError();
         resetSlotSection();
     }
 

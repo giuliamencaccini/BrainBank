@@ -20,7 +20,6 @@ public class BookingCancellationObserver implements Observer {
 
             NotificationService.sendBookingCancellation(
                     booking.getStudent().getEmail(),
-                    booking.getStudent().getFullName(),
                     response);
 
             NotificationService.sendBookingCancellationToTutor(
@@ -60,7 +59,7 @@ public class BookingCancellationObserver implements Observer {
 
         return new BookingResponseBean(
                 booking.getId(),
-                booking.getStatus().name(),
+                booking.getStatus(),
                 booking.getMeetLink(),
                 studentBean,
                 tutorBean,

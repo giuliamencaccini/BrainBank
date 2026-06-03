@@ -5,73 +5,60 @@ import it.ispwproject.brainbank.enumerator.Role;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class RegistrationView {
 
-    private static final String SEPARATOR = "─".repeat(50);
-    private final Scanner scanner = new Scanner(System.in);
-
     public void mostraIntestazione() {
-        System.out.println();
-        System.out.println(SEPARATOR);
-        System.out.println("  BrainBank – Registrazione");
-        System.out.println(SEPARATOR);
+        CLIRenderer.intestazione("BrainBank  –  Registrazione");
     }
 
     public String chiediCampo(String label) {
-        System.out.printf("  %s: ", label);
-        return scanner.nextLine().trim();
+        return CLIRenderer.chiediCampo(label);
     }
 
     public String chiediPassword(String label) {
-        System.out.printf("  %s: ", label);
-        return scanner.nextLine().trim();
+        return CLIRenderer.chiediCampo(label);   // in CLI il testo resta visibile
     }
 
     public Role chiediRuolo() {
         while (true) {
-            System.out.println("\n  Ruolo:");
-            System.out.println("  [1] Studente");
-            System.out.println("  [2] Tutor");
-            System.out.print("\n  Scelta [1-2]: ");
-            String input = scanner.nextLine().trim();
+            CLIRenderer.sezione("Ruolo");
+            CLIRenderer.voceMenu(1, "Studente");
+            CLIRenderer.voceMenu(2, "Tutor");
+            String input = CLIRenderer.chiediSceltaStringa("Scelta [1-2]");
             if (input.equals("1")) return Role.STUDENT;
             if (input.equals("2")) return Role.TUTOR;
-            System.out.println("  ❌ Scelta non valida.");
+            CLIRenderer.errore("Scelta non valida.");
         }
     }
 
     public List<SubjectBean> chiediMaterie(List<SubjectBean> subjects) {
-        System.out.println("\n  ── Materie che insegni (seleziona una o più)");
+        CLIRenderer.sezione("Materie che insegni  (seleziona una o più)");
         for (int i = 0; i < subjects.size(); i++) {
-            System.out.printf("  [%d] %s%n", i + 1, subjects.get(i).getName());
+            CLIRenderer.voceMenu(i + 1, subjects.get(i).getName());
         }
 
         List<SubjectBean> selected = new ArrayList<>();
-        System.out.print("\n  Inserisci i numeri separati da virgola (es. 1,3): ");
-        String input = scanner.nextLine().trim();
+        System.out.print("\n  Numeri separati da virgola (es. 1,3): ");
+        String input = CLIRenderer.SCANNER.nextLine().trim();
 
         for (String part : input.split(",")) {
             try {
                 int idx = Integer.parseInt(part.trim()) - 1;
-                if (idx >= 0 && idx < subjects.size()) {
-                    selected.add(subjects.get(idx));
-                }
+                if (idx >= 0 && idx < subjects.size()) selected.add(subjects.get(idx));
             } catch (NumberFormatException e) {
-                // ignora input non validi
+                // ignora token non numerici
             }
         }
-
         return selected;
     }
 
     public void mostraSuccesso() {
-        System.out.println("\n  ✓ Registrazione completata! Ora puoi effettuare il login.");
-        System.out.println(SEPARATOR);
+        CLIRenderer.vuota();
+        CLIRenderer.successo("Registrazione completata! Ora puoi effettuare il login.");
     }
 
     public void mostraErrore(String messaggio) {
-        System.out.println("  ❌ " + messaggio);
+        CLIRenderer.errore(messaggio);
     }
 }

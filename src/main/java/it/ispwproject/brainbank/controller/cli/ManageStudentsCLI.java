@@ -34,11 +34,10 @@ public class ManageStudentsCLI {
 
     private CLIState manageStudent(StudentBean student) throws DAOException {
         while (true) {
-            List<BookingResponseBean> completed = activityController.getCompletedLessons(student.getId());
             List<BookingResponseBean> upcoming  = activityController.getUpcomingLessons(student.getId());
             ProgressBean progress = activityController.getProgress(student.getId());
 
-            view.mostraSchedaStudente(student, completed, upcoming, progress);
+            view.mostraSchedaStudente(student, upcoming, progress);
             view.mostraMenuStudente();
 
             int choice = view.chiediScelta("Scelta", 0, 5);
@@ -86,11 +85,13 @@ public class ManageStudentsCLI {
     private void visualizzaAttivita(StudentBean student) throws DAOException {
         List<ActivityBean> activities = activityController.getActivities(student.getId());
         view.mostraAttivita(activities);
+        view.attesaInvio();
     }
 
     private void visualizzaStorico(StudentBean student) throws DAOException {
         List<BookingResponseBean> completed = activityController.getCompletedLessons(student.getId());
         view.mostraStoricoLezioni(completed);
+        view.attesaInvio();
     }
 
     private void eliminaAttivita(StudentBean student) throws DAOException {
