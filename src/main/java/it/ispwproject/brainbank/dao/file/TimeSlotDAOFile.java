@@ -3,6 +3,8 @@ package it.ispwproject.brainbank.dao.file;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import it.ispwproject.brainbank.dao.TimeSlotDAO;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.TimeSlot;
@@ -28,6 +30,26 @@ public class TimeSlotDAOFile implements TimeSlotDAO {
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
                 .registerTypeAdapter(LocalTime.class, new LocalTimeAdapter())
+                .addSerializationExclusionStrategy(new ExclusionStrategy() {
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        return f.getName().equals("observers");
+                    }
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false;
+                    }
+                })
+                .addDeserializationExclusionStrategy(new ExclusionStrategy() {
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        return f.getName().equals("observers");
+                    }
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false;
+                    }
+                })
                 .setPrettyPrinting()
                 .create();
         this.cache = loadFromFile();
