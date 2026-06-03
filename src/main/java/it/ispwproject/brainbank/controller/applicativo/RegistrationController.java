@@ -105,7 +105,7 @@ public class RegistrationController {
         if (!bean.getPassword().matches(".*[A-Z].*")) {
             throw new RegistrationException("La password deve contenere almeno una lettera maiuscola.");
         }
-        if (!bean.getPassword().matches(".*[0-9].*")) {
+        if (!bean.getPassword().matches(".*\\d.*")) {
             throw new RegistrationException("La password deve contenere almeno un numero.");
         }
         if (!bean.getPassword().equals(bean.getConfirmPassword())) {

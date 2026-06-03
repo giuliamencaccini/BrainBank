@@ -37,7 +37,7 @@ public class DemoDataStore {
         initData();
     }
 
-    public static DemoDataStore getInstance() {
+    public static synchronized DemoDataStore getInstance() {
         if (instance == null) {
             instance = new DemoDataStore();
         }
