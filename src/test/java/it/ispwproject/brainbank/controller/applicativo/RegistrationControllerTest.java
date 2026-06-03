@@ -32,8 +32,8 @@ class RegistrationControllerTest {
         bean.setName("Mario");
         bean.setSurname("Rossi");
         bean.setEmail("mario@test.com");
-        bean.setPassword("password123");
-        bean.setConfirmPassword("password123");
+        bean.setPassword("Password123");
+        bean.setConfirmPassword("Password123");
         bean.setRole(Role.STUDENT);
 
         registrationController.register(bean);
@@ -43,8 +43,8 @@ class RegistrationControllerTest {
         duplicato.setName("Mario");
         duplicato.setSurname("Rossi");
         duplicato.setEmail("mario@test.com");
-        duplicato.setPassword("password123");
-        duplicato.setConfirmPassword("password123");
+        duplicato.setPassword("Password123");
+        duplicato.setConfirmPassword("Password123");
         duplicato.setRole(Role.STUDENT);
 
         assertThrows(RegistrationException.class, () ->
