@@ -43,8 +43,8 @@ class BookingControllerTest {
     void testPrenotazioneSuSlotGiaRiservato() throws DAOException, BookingException {
 
         SubjectBean  subject = new SubjectBean(3, "Algebra");
-        TutorBean    tutor   = new TutorBean(3, "Demo", "Tutor", null,null, false);
-        TimeSlotBean slot    = new TimeSlotBean(2, null, null, null, true);
+        TutorBean    tutor   = new TutorBean(3, "Demo", "Tutor", null, null, false);
+        TimeSlotBean slot    = new TimeSlotBean(3, null, null, null, true); // slot 3 — libero nel DemoDataStore
 
         // Studente 1 riserva lo slot
         Student s1 = new Student(1, "Demo", "Student", "student@demo", null);
@@ -70,8 +70,8 @@ class BookingControllerTest {
     void testPrenotazioneConcorrente() throws InterruptedException {
 
         SubjectBean  subject = new SubjectBean(3, "Algebra");
-        TutorBean    tutor   = new TutorBean(3, "Demo", "Tutor", null,null, false);
-        TimeSlotBean slot    = new TimeSlotBean(2, null, null, null, true);
+        TutorBean    tutor   = new TutorBean(3, "Demo", "Tutor", null, null, false);
+        TimeSlotBean slot    = new TimeSlotBean(4, null, null, null, true); // slot 4 — libero nel DemoDataStore
 
         CountDownLatch latch    = new CountDownLatch(1);
         AtomicInteger successi  = new AtomicInteger(0);
