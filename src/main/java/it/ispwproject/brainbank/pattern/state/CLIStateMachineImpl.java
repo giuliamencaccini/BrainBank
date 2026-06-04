@@ -63,7 +63,4 @@ public class CLIStateMachineImpl implements CLIStateMachine {
         this.currentState = state;
     }
 
-    public boolean isRunning() {
-        return currentState != null;
-    }
 }
