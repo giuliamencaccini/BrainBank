@@ -5,6 +5,7 @@ import it.ispwproject.brainbank.model.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,13 +73,13 @@ public class DemoDataStore {
         subjectsByTutor.put(4, new ArrayList<>(List.of(2, 4)));
 
         // ── Slot ─────────────────────────────────────────────────
-        timeSlots.add(new TimeSlot(1, t1, LocalDate.now().plusDays(1),
+        timeSlots.add(new TimeSlot(1, t1, LocalDate.now(ZoneId.systemDefault()).plusDays(1),
                 LocalTime.of(9, 0),  LocalTime.of(11, 0)));
-        timeSlots.add(new TimeSlot(2, t1, LocalDate.now().plusDays(1),
+        timeSlots.add(new TimeSlot(2, t1, LocalDate.now(ZoneId.systemDefault()).plusDays(1),
                 LocalTime.of(11, 0), LocalTime.of(13, 0)));
-        timeSlots.add(new TimeSlot(3, t1, LocalDate.now().plusDays(2),
+        timeSlots.add(new TimeSlot(3, t1, LocalDate.now(ZoneId.systemDefault()).plusDays(2),
                 LocalTime.of(14, 0), LocalTime.of(16, 0)));
-        timeSlots.add(new TimeSlot(4, t2, LocalDate.now().plusDays(1),
+        timeSlots.add(new TimeSlot(4, t2, LocalDate.now(ZoneId.systemDefault()).plusDays(1),
                 LocalTime.of(10, 0), LocalTime.of(12, 0)));
 
         // ── Prenotazioni ─────────────────────────────────────────
@@ -99,23 +100,23 @@ public class DemoDataStore {
         // ── Attività ─────────────────────────────────────────────
         Activity a1 = new Activity(t1, s1, "Esercizi pagine 45-50 sul libro di Algebra");
         a1.setId(1);
-        a1.setCreatedAt(LocalDateTime.now().minusDays(5));
+        a1.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()).minusDays(5));
         a1.setCompleted(true);
         activities.add(a1);
 
         Activity a2 = new Activity(t1, s1, "Ripasso teoremi del capitolo 3");
         a2.setId(2);
-        a2.setCreatedAt(LocalDateTime.now().minusDays(3));
+        a2.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()).minusDays(3));
         activities.add(a2);
 
         Activity a3 = new Activity(t1, s1, "Preparare domande per la prossima lezione");
         a3.setId(3);
-        a3.setCreatedAt(LocalDateTime.now().minusDays(1));
+        a3.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
         activities.add(a3);
 
         Activity a4 = new Activity(t1, s2, "Svolgere esercizi di Analisi 1 capitolo 2");
         a4.setId(4);
-        a4.setCreatedAt(LocalDateTime.now().minusDays(2));
+        a4.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()).minusDays(2));
         activities.add(a4);
 
         // ── Progressi ────────────────────────────────────────────
@@ -124,14 +125,14 @@ public class DemoDataStore {
                         "Ha completato gli esercizi assegnati con pochi errori. " +
                         "Da approfondire: dimostrazioni dei teoremi principali.");
         p1.setId(1);
-        p1.setUpdatedAt(LocalDateTime.now().minusDays(3));
+        p1.setUpdatedAt(LocalDateTime.now(ZoneId.systemDefault()).minusDays(3));
         progresses.add(p1);
 
         Progress p2 = new Progress(t1, s2,
                 "Emma è molto motivata e partecipa attivamente. " +
                         "Buona base teorica, deve esercitarsi maggiormente sui calcoli.");
         p2.setId(2);
-        p2.setUpdatedAt(LocalDateTime.now().minusDays(1));
+        p2.setUpdatedAt(LocalDateTime.now(ZoneId.systemDefault()).minusDays(1));
         progresses.add(p2);
     }
 

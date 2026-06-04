@@ -6,6 +6,7 @@ import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Progress;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class ProgressDAOMemory implements ProgressDAO {
 
@@ -17,11 +18,11 @@ public class ProgressDAOMemory implements ProgressDAO {
                 progress.getTutor().getId(), progress.getStudent().getId());
         if (existing == null) {
             progress.setId(store.nextProgressId());
-            progress.setUpdatedAt(LocalDateTime.now());
+            progress.setUpdatedAt(LocalDateTime.now(ZoneId.systemDefault()));
             store.getProgresses().add(progress);
         } else {
             existing.setNotes(progress.getNotes());
-            existing.setUpdatedAt(LocalDateTime.now());
+            existing.setUpdatedAt(LocalDateTime.now(ZoneId.systemDefault()));
         }
     }
 

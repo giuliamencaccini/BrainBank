@@ -16,6 +16,7 @@ import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +62,8 @@ public class TimeSlotDAOFile implements TimeSlotDAO {
                 .filter(s -> s.getTutor() != null
                         && s.getTutor().getId() == tutor.getId()
                         && s.isAvailable()
-                        && (s.getDate().isAfter(LocalDate.now()) ||
-                        (s.getDate().isEqual(LocalDate.now()) && s.getStartTime().isAfter(LocalTime.now()))))
+                        && (s.getDate().isAfter(LocalDate.now(ZoneId.systemDefault())) ||
+                        (s.getDate().isEqual(LocalDate.now(ZoneId.systemDefault())) && s.getStartTime().isAfter(LocalTime.now(ZoneId.systemDefault())))))
                 .toList();
     }
 
@@ -71,8 +72,8 @@ public class TimeSlotDAOFile implements TimeSlotDAO {
         return cache.stream()
                 .filter(s -> s.getTutor() != null
                         && s.getTutor().getId() == tutorId
-                        && (s.getDate().isAfter(LocalDate.now()) ||
-                        (s.getDate().isEqual(LocalDate.now()) && s.getStartTime().isAfter(LocalTime.now()))))
+                        && (s.getDate().isAfter(LocalDate.now(ZoneId.systemDefault())) ||
+                        (s.getDate().isEqual(LocalDate.now(ZoneId.systemDefault())) && s.getStartTime().isAfter(LocalTime.now(ZoneId.systemDefault())))))
                 .toList();
     }
 
@@ -81,8 +82,8 @@ public class TimeSlotDAOFile implements TimeSlotDAO {
         return cache.stream()
                 .filter(s -> s.getTutor() != null
                         && s.getTutor().getId() == tutorId
-                        && (s.getDate().isBefore(LocalDate.now()) ||
-                        (s.getDate().isEqual(LocalDate.now()) && s.getEndTime().isBefore(LocalTime.now()))))
+                        && (s.getDate().isBefore(LocalDate.now(ZoneId.systemDefault())) ||
+                        (s.getDate().isEqual(LocalDate.now(ZoneId.systemDefault())) && s.getEndTime().isBefore(LocalTime.now(ZoneId.systemDefault())))))
                 .toList();
     }
 
@@ -134,11 +135,11 @@ public class TimeSlotDAOFile implements TimeSlotDAO {
             TimeSlot slot = cache.stream()
                     .filter(s -> s.getId() == slotId && s.isAvailable()
                             && (s.getReservedUntil() == null ||
-                            s.getReservedUntil().isBefore(java.time.LocalDateTime.now())))
+                            s.getReservedUntil().isBefore(java.time.LocalDateTime.now(ZoneId.systemDefault()))))
                     .findFirst()
                     .orElse(null);
             if (slot == null) return false;
-            slot.setReservedUntil(java.time.LocalDateTime.now().plusMinutes(minutes));
+            slot.setReservedUntil(java.time.LocalDateTime.now(ZoneId.systemDefault()).plusMinutes(minutes));
             saveToFile();
             return true;
         }

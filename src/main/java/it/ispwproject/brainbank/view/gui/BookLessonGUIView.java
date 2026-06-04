@@ -1,7 +1,6 @@
 package it.ispwproject.brainbank.view.gui;
 
 import it.ispwproject.brainbank.bean.SubjectBean;
-import it.ispwproject.brainbank.bean.TimeSlotBean;
 import it.ispwproject.brainbank.bean.TutorBean;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

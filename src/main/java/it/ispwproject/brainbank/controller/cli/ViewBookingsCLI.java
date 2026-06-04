@@ -12,6 +12,7 @@ import it.ispwproject.brainbank.view.cli.ViewBookingsView;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 
 public class ViewBookingsCLI extends AbstractCLIState {
@@ -33,9 +34,9 @@ public class ViewBookingsCLI extends AbstractCLIState {
 
             List<BookingResponseBean> confirmed = all.stream()
                     .filter(b -> b.getStatus() == BookingStatus.CONFIRMED)
-                    .filter(b -> b.getTimeSlot().getDate().isAfter(LocalDate.now()) ||
-                            (b.getTimeSlot().getDate().isEqual(LocalDate.now()) &&
-                                    b.getTimeSlot().getEndTime().isAfter(LocalTime.now())))
+                    .filter(b -> b.getTimeSlot().getDate().isAfter(LocalDate.now(ZoneId.systemDefault())) ||
+                            (b.getTimeSlot().getDate().isEqual(LocalDate.now(ZoneId.systemDefault())) &&
+                                    b.getTimeSlot().getEndTime().isAfter(LocalTime.now(ZoneId.systemDefault()))))
                     .sorted((a, b) -> a.getTimeSlot().getDate().compareTo(b.getTimeSlot().getDate()))
                     .toList();
 

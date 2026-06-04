@@ -6,10 +6,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 public class SetAvailabilityGUIView extends PageGUIView {
 
-    public final DatePicker datePicker     = new DatePicker(LocalDate.now().plusDays(1));
+    public final DatePicker datePicker     = new DatePicker(LocalDate.now(ZoneId.systemDefault()).plusDays(1));
     public final TextField  startTimeField = new TextField();
     public final TextField  endTimeField   = new TextField();
     public final Button     saveBtn        = new Button("Aggiungi");
@@ -20,7 +21,7 @@ public class SetAvailabilityGUIView extends PageGUIView {
         datePicker.setDayCellFactory(dp -> new DateCell() {
             @Override public void updateItem(LocalDate item, boolean empty) {
                 super.updateItem(item, empty);
-                setDisable(empty || item.isBefore(LocalDate.now()));
+                setDisable(empty || item.isBefore(LocalDate.now(ZoneId.systemDefault())));
             }
         });
 

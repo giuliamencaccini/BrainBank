@@ -9,6 +9,7 @@ import it.ispwproject.brainbank.model.Student;
 import it.ispwproject.brainbank.model.TimeSlot;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,7 @@ public class BookingDAOMemory implements BookingDAO {
                         && b.getTutor() != null && b.getTutor().getId() == tutorId
                         && b.getStatus() == BookingStatus.CONFIRMED
                         && b.getTimeSlot() != null
-                        && !b.getTimeSlot().getDate().isAfter(LocalDate.now()))
+                        && !b.getTimeSlot().getDate().isAfter(LocalDate.now(ZoneId.systemDefault())))
                 .toList();
     }
 
@@ -68,7 +69,7 @@ public class BookingDAOMemory implements BookingDAO {
                         && b.getTutor() != null && b.getTutor().getId() == tutorId
                         && b.getStatus() == BookingStatus.CONFIRMED
                         && b.getTimeSlot() != null
-                        && b.getTimeSlot().getDate().isAfter(LocalDate.now()))
+                        && b.getTimeSlot().getDate().isAfter(LocalDate.now(ZoneId.systemDefault())))
                 .toList();
     }
 
@@ -78,9 +79,9 @@ public class BookingDAOMemory implements BookingDAO {
                 .filter(b -> b.getStudent() != null && b.getStudent().getId() == studentId
                         && b.getStatus() == BookingStatus.CONFIRMED
                         && b.getTimeSlot() != null
-                        && (b.getTimeSlot().getDate().isBefore(LocalDate.now()) ||
-                        (b.getTimeSlot().getDate().isEqual(LocalDate.now()) &&
-                                b.getTimeSlot().getEndTime().isBefore(LocalTime.now()))))
+                        && (b.getTimeSlot().getDate().isBefore(LocalDate.now(ZoneId.systemDefault())) ||
+                        (b.getTimeSlot().getDate().isEqual(LocalDate.now(ZoneId.systemDefault())) &&
+                                b.getTimeSlot().getEndTime().isBefore(LocalTime.now(ZoneId.systemDefault())))))
                 .toList();
     }
 

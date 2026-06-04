@@ -3,6 +3,7 @@ package it.ispwproject.brainbank.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 
 public class TimeSlot {
 
@@ -25,7 +26,7 @@ public class TimeSlot {
     private LocalDateTime reservedUntil;
 
     public boolean isReserved() {
-        return reservedUntil != null && reservedUntil.isAfter(LocalDateTime.now());
+        return reservedUntil != null && reservedUntil.isAfter(LocalDateTime.now(ZoneId.systemDefault()));
     }
 
     public LocalDateTime getReservedUntil() { return reservedUntil; }

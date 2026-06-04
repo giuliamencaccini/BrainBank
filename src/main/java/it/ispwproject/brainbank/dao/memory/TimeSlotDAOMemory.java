@@ -7,6 +7,7 @@ import it.ispwproject.brainbank.model.TimeSlot;
 import it.ispwproject.brainbank.model.Tutor;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -21,7 +22,7 @@ public class TimeSlotDAOMemory implements TimeSlotDAO {
                 .filter(s -> s.getTutor() != null
                         && s.getTutor().getId() == tutor.getId()
                         && s.isAvailable()
-                        && !s.getDate().isBefore(LocalDate.now()))
+                        && !s.getDate().isBefore(LocalDate.now(ZoneId.systemDefault())))
                 .toList();
     }
 
@@ -30,8 +31,8 @@ public class TimeSlotDAOMemory implements TimeSlotDAO {
         return store.getTimeSlots().stream()
                 .filter(s -> s.getTutor() != null
                         && s.getTutor().getId() == tutorId
-                        && (s.getDate().isAfter(LocalDate.now()) ||
-                        (s.getDate().isEqual(LocalDate.now()) && s.getStartTime().isAfter(LocalTime.now()))))
+                        && (s.getDate().isAfter(LocalDate.now(ZoneId.systemDefault())) ||
+                        (s.getDate().isEqual(LocalDate.now(ZoneId.systemDefault())) && s.getStartTime().isAfter(LocalTime.now(ZoneId.systemDefault())))))
                 .toList();
     }
 
@@ -40,8 +41,8 @@ public class TimeSlotDAOMemory implements TimeSlotDAO {
         return store.getTimeSlots().stream()
                 .filter(s -> s.getTutor() != null
                         && s.getTutor().getId() == tutorId
-                        && (s.getDate().isBefore(LocalDate.now()) ||
-                        (s.getDate().isEqual(LocalDate.now()) && s.getEndTime().isBefore(LocalTime.now()))))
+                        && (s.getDate().isBefore(LocalDate.now(ZoneId.systemDefault())) ||
+                        (s.getDate().isEqual(LocalDate.now(ZoneId.systemDefault())) && s.getEndTime().isBefore(LocalTime.now(ZoneId.systemDefault())))))
                 .toList();
     }
 
@@ -70,11 +71,11 @@ public class TimeSlotDAOMemory implements TimeSlotDAO {
             TimeSlot slot = store.getTimeSlots().stream()
                     .filter(s -> s.getId() == slotId && s.isAvailable()
                             && (s.getReservedUntil() == null ||
-                            s.getReservedUntil().isBefore(LocalDateTime.now())))
+                            s.getReservedUntil().isBefore(LocalDateTime.now(ZoneId.systemDefault()))))
                     .findFirst()
                     .orElse(null);
             if (slot == null) return false;
-            slot.setReservedUntil(LocalDateTime.now().plusMinutes(minutes));
+            slot.setReservedUntil(LocalDateTime.now(ZoneId.systemDefault()).plusMinutes(minutes));
             return true;
         }
     }

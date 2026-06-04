@@ -1,6 +1,7 @@
 package it.ispwproject.brainbank.model;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class Progress {
 
@@ -37,7 +38,7 @@ public class Progress {
     public String getNotes() { return notes; }
     public void updateNotes(String newNotes) {
         this.notes = newNotes;
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now(ZoneId.systemDefault());
     }
     public void setNotes(String notes) { this.notes = notes; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }

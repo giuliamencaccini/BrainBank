@@ -12,6 +12,7 @@ import it.ispwproject.brainbank.model.Tutor;
 import it.ispwproject.brainbank.pattern.singleton.SessionManager;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +29,7 @@ public class AvailabilityController {
     }
 
     public void addSlot(TimeSlotBean slotBean) throws DAOException, AvailabilityException {
-        if (slotBean.getDate().isBefore(LocalDate.now())) {
+        if (slotBean.getDate().isBefore(LocalDate.now(ZoneId.systemDefault()))) {
             throw new AvailabilityException("Non puoi aggiungere slot nel passato.");
         }
         if (!slotBean.getStartTime().isBefore(slotBean.getEndTime())) {

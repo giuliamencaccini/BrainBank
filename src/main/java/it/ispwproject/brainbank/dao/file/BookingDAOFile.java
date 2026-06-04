@@ -18,6 +18,7 @@ import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,7 +91,7 @@ public class BookingDAOFile extends AbstractBookingDAO {
                 .filter(b -> b.getStudent() != null && b.getStudent().getId() == studentId
                         && b.getTutor() != null && b.getTutor().getId() == tutorId
                         && b.getStatus() == BookingStatus.CONFIRMED
-                        && !b.getTimeSlot().getDate().isAfter(LocalDate.now()))
+                        && !b.getTimeSlot().getDate().isAfter(LocalDate.now(ZoneId.systemDefault())))
                 .toList();
     }
 
@@ -100,7 +101,7 @@ public class BookingDAOFile extends AbstractBookingDAO {
                 .filter(b -> b.getStudent() != null && b.getStudent().getId() == studentId
                         && b.getTutor() != null && b.getTutor().getId() == tutorId
                         && b.getStatus() == BookingStatus.CONFIRMED
-                        && b.getTimeSlot().getDate().isAfter(LocalDate.now()))
+                        && b.getTimeSlot().getDate().isAfter(LocalDate.now(ZoneId.systemDefault())))
                 .toList();
     }
 
@@ -110,9 +111,9 @@ public class BookingDAOFile extends AbstractBookingDAO {
                 .filter(b -> b.getStudent() != null && b.getStudent().getId() == studentId
                         && b.getStatus() == BookingStatus.CONFIRMED
                         && b.getTimeSlot() != null
-                        && (b.getTimeSlot().getDate().isBefore(LocalDate.now()) ||
-                        (b.getTimeSlot().getDate().isEqual(LocalDate.now()) &&
-                                b.getTimeSlot().getEndTime().isBefore(LocalTime.now()))))
+                        && (b.getTimeSlot().getDate().isBefore(LocalDate.now(ZoneId.systemDefault())) ||
+                        (b.getTimeSlot().getDate().isEqual(LocalDate.now(ZoneId.systemDefault())) &&
+                                b.getTimeSlot().getEndTime().isBefore(LocalTime.now(ZoneId.systemDefault())))))
                 .toList();
     }
 

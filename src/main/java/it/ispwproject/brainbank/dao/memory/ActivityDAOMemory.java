@@ -6,6 +6,7 @@ import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Activity;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 public class ActivityDAOMemory implements ActivityDAO {
@@ -15,7 +16,7 @@ public class ActivityDAOMemory implements ActivityDAO {
     @Override
     public void save(Activity activity) throws DAOException {
         activity.setId(store.nextActivityId());
-        activity.setCreatedAt(LocalDateTime.now());
+        activity.setCreatedAt(LocalDateTime.now(ZoneId.systemDefault()));
         store.getActivities().add(activity);
     }
 

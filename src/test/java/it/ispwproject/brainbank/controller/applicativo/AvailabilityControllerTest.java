@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -36,7 +37,7 @@ class AvailabilityControllerTest {
 
     @Test
     void testSlotSovrapposto() throws DAOException, AvailabilityException {
-        LocalDate domani = LocalDate.now().plusDays(1);
+        LocalDate domani = LocalDate.now(ZoneId.systemDefault()).plusDays(1);
 
         // Primo slot — deve andare a buon fine
         TimeSlotBean slot1 = new TimeSlotBean(0, domani,

@@ -13,6 +13,7 @@ import javafx.scene.layout.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 
 public class DashboardTutorGUIView extends DashboardGUIView {
@@ -46,7 +47,7 @@ public class DashboardTutorGUIView extends DashboardGUIView {
 
     private Pane buildWeekCalendar(List<TimeSlotBean> slots,
                                    int weekOffset, double availWidth) {
-        LocalDate today  = LocalDate.now();
+        LocalDate today  = LocalDate.now(ZoneId.systemDefault());
         LocalDate monday = today.with(DayOfWeek.MONDAY).plusWeeks(weekOffset);
 
         int totalHours = HOUR_END - HOUR_START;

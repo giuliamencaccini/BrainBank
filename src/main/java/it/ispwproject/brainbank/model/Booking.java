@@ -4,6 +4,7 @@ import it.ispwproject.brainbank.enumerator.BookingStatus;
 import it.ispwproject.brainbank.pattern.observer.Observable;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class Booking extends Observable {
 
@@ -35,7 +36,7 @@ public class Booking extends Observable {
         this.subject   = subject;
         this.timeSlot  = timeSlot;
         this.status    = BookingStatus.PENDING;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now(ZoneId.systemDefault());
     }
 
     public void confirm() {

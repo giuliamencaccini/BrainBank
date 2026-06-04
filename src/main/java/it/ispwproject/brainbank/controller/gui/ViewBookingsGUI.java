@@ -12,6 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
 import java.util.List;
 
 public class ViewBookingsGUI {
@@ -33,9 +34,9 @@ public class ViewBookingsGUI {
 
             List<BookingResponseBean> confirmed = bookings.stream()
                     .filter(b -> b.getStatus() == BookingStatus.CONFIRMED)
-                    .filter(b -> b.getTimeSlot().getDate().isAfter(java.time.LocalDate.now()) ||
-                            (b.getTimeSlot().getDate().isEqual(java.time.LocalDate.now()) &&
-                                    b.getTimeSlot().getEndTime().isAfter(java.time.LocalTime.now())))
+                    .filter(b -> b.getTimeSlot().getDate().isAfter(java.time.LocalDate.now(ZoneId.systemDefault())) ||
+                            (b.getTimeSlot().getDate().isEqual(java.time.LocalDate.now(ZoneId.systemDefault())) &&
+                                    b.getTimeSlot().getEndTime().isAfter(java.time.LocalTime.now(ZoneId.systemDefault()))))
                     .sorted((a, b) -> a.getTimeSlot().getDate().compareTo(b.getTimeSlot().getDate()))
                     .toList();
             List<BookingResponseBean> cancelled = bookings.stream()
