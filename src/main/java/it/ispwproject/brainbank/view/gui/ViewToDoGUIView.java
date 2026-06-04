@@ -11,6 +11,11 @@ import java.util.function.Consumer;
 
 public class ViewToDoGUIView extends PageGUIView {
 
+    public final Label errorLabel = buildErrorLabel();
+
+    public void setError(String message) { errorLabel.setText(message); }
+    public void clearError()             { errorLabel.setText(""); }
+
     public BorderPane buildRoot(Runnable onBack) {
         return buildShell("To-do", onBack);
     }
@@ -18,7 +23,6 @@ public class ViewToDoGUIView extends PageGUIView {
     public void buildContent(BorderPane root,
                              List<ActivityBean> pending,
                              List<ActivityBean> completed,
-                             Label errorLabel,
                              Consumer<ActivityBean> onMarkDone) {
         VBox content = new VBox(16);
         content.setPadding(new Insets(24));
@@ -34,14 +38,14 @@ public class ViewToDoGUIView extends PageGUIView {
                 t.getStyleClass().add("small-label");
                 content.getChildren().add(t);
                 for (ActivityBean a : pending)
-                    content.getChildren().add(buildActivityCard(a, false, errorLabel, onMarkDone));
+                    content.getChildren().add(buildActivityCard(a, false, onMarkDone));
             }
             if (!completed.isEmpty()) {
                 Label t = new Label("Completate");
                 t.getStyleClass().add("small-label");
                 content.getChildren().add(t);
                 for (ActivityBean a : completed)
-                    content.getChildren().add(buildActivityCard(a, true, errorLabel, onMarkDone));
+                    content.getChildren().add(buildActivityCard(a, true, onMarkDone));
             }
         }
 
@@ -50,7 +54,6 @@ public class ViewToDoGUIView extends PageGUIView {
     }
 
     private HBox buildActivityCard(ActivityBean a, boolean done,
-                                   Label errorLabel,
                                    Consumer<ActivityBean> onMarkDone) {
         HBox card = new HBox(16);
         card.getStyleClass().add("info-card");

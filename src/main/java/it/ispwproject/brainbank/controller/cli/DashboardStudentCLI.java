@@ -1,36 +1,46 @@
 package it.ispwproject.brainbank.controller.cli;
 
+import it.ispwproject.brainbank.pattern.state.AbstractCLIState;
+import it.ispwproject.brainbank.pattern.state.CLIStateMachine;
+
 import it.ispwproject.brainbank.dao.ConnectionFactory;
 import it.ispwproject.brainbank.pattern.singleton.SessionManager;
 import it.ispwproject.brainbank.view.cli.DashboardStudentView;
 
-public class DashboardStudentCLI {
+public class DashboardStudentCLI extends AbstractCLIState {
 
     private final DashboardStudentView view = new DashboardStudentView();
 
-    public CLIState start() {
+    @Override
+    public void entry(CLIStateMachine context) {
         String nome = SessionManager.getInstance().getLoggedUser().getName();
         view.mostraBenvenuto(nome);
-        view.mostraMenu();
-
-        return switch (view.chiediScelta()) {
-            case "1" -> CLIState.BOOK_LESSON;
-            case "2" -> CLIState.VIEW_BOOKINGS;
-            case "3" -> CLIState.CANCEL_BOOKING;
-            case "4" -> CLIState.VIEW_TODO;
-            case "5" -> CLIState.EDIT_PROFILE;
-            case "0" -> onLogout();
-            default  -> {
-                view.mostraMessaggio("❌ Scelta non valida.");
-                yield CLIState.DASHBOARD_STUDENT;
-            }
-        };
     }
 
-    private CLIState onLogout() {
-        try { ConnectionFactory.clearRole(); } catch (java.sql.SQLException ex) { /* ignora */ }
-        SessionManager.getInstance().clearSession();
-        view.mostraMessaggio("✓ Logout effettuato.");
-        return CLIState.INIZIALE;
+    @Override
+    public void action(CLIStateMachine context) {
+        view.mostraMenu();
+        switch (view.chiediScelta()) {
+            case "1" -> goNext(context, new BookLessonCLI());
+            case "2" -> goNext(context, new ViewBookingsCLI());
+            case "3" -> goNext(context, new CancelBookingCLI());
+            case "4" -> goNext(context, new ViewToDoCLI());
+            case "5" -> goNext(context, new EditProfileCLI());
+            case "0" -> {
+                try {
+                    ConnectionFactory.clearRole();
+                    SessionManager.getInstance().clearSession();
+                    view.mostraMessaggio("✓ Logout effettuato.");
+                    goNext(context, new InitialCLI());
+                } catch (java.sql.SQLException ex) {
+                    view.mostraMessaggio("❌ Errore: impossibile effettuare il logout in sicurezza. Riprova.");
+                    goNext(context, this);
+                }
+            }
+            default -> {
+                view.mostraMessaggio("❌ Scelta non valida.");
+                goNext(context, this);
+            }
+        }
     }
 }

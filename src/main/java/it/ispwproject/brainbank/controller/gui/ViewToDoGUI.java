@@ -4,7 +4,6 @@ import it.ispwproject.brainbank.bean.ActivityBean;
 import it.ispwproject.brainbank.controller.applicativo.ActivityController;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.view.gui.ViewToDoGUIView;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -19,19 +18,17 @@ public class ViewToDoGUI {
     public ViewToDoGUI(Stage stage) { this.stage = stage; }
 
     public void show() {
-        BorderPane root  = view.buildRoot(MainGUI::showDashboardStudent);
-        Label errorLabel = view.buildErrorLabel();
+        BorderPane root = view.buildRoot(MainGUI::showDashboardStudent);
+        view.clearError();
 
         try {
             List<ActivityBean> activities = activityController.getMyActivities();
-            List<ActivityBean> pending    = activities.stream().filter(a -> !a.isCompleted()).toList();
-            List<ActivityBean> completed  = activities.stream().filter(ActivityBean::isCompleted).toList();
-
-            view.buildContent(root, pending, completed, errorLabel, this::handleMarkDone);
-
+            List<ActivityBean> pending   = activities.stream().filter(a -> !a.isCompleted()).toList();
+            List<ActivityBean> completed = activities.stream().filter(ActivityBean::isCompleted).toList();
+            view.buildContent(root, pending, completed, this::handleMarkDone);
         } catch (DAOException e) {
-            errorLabel.setText("Errore: " + e.getMessage());
-            root.setCenter(errorLabel);
+            view.setError("Errore: " + e.getMessage());
+            root.setCenter(view.errorLabel);
         }
 
         stage.setScene(GUIUtils.createScene(root));
@@ -43,7 +40,7 @@ public class ViewToDoGUI {
             activityController.markActivityCompleted(a.getId());
             show();
         } catch (DAOException ex) {
-            // in una versione più robusta si passerebbe errorLabel
+            view.setError("Errore: " + ex.getMessage());
         }
     }
 }

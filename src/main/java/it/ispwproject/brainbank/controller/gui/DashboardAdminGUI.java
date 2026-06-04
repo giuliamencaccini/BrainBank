@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 
 public class DashboardAdminGUI {
 
-    private final Stage              stage;
+    private final Stage stage;
     private final DashboardAdminGUIView view = new DashboardAdminGUIView();
 
     public DashboardAdminGUI(Stage stage) { this.stage = stage; }

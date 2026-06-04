@@ -9,9 +9,9 @@ import javafx.stage.Stage;
 
 public class ReportStatisticsGUI {
 
-    private final Stage                     stage;
+    private final Stage stage;
     private final ReportStatisticsController controller = new ReportStatisticsController();
-    private final ReportStatisticsGUIView       view       = new ReportStatisticsGUIView();
+    private final ReportStatisticsGUIView view = new ReportStatisticsGUIView();
 
     public ReportStatisticsGUI(Stage stage) { this.stage = stage; }
 

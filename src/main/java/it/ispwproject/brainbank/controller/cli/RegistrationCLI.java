@@ -1,5 +1,8 @@
 package it.ispwproject.brainbank.controller.cli;
 
+import it.ispwproject.brainbank.pattern.state.AbstractCLIState;
+import it.ispwproject.brainbank.pattern.state.CLIStateMachine;
+
 import it.ispwproject.brainbank.bean.RegistrationBean;
 import it.ispwproject.brainbank.bean.SubjectBean;
 import it.ispwproject.brainbank.controller.applicativo.RegistrationController;
@@ -10,17 +13,20 @@ import it.ispwproject.brainbank.view.cli.RegistrationView;
 
 import java.util.List;
 
-public class RegistrationCLI {
+public class RegistrationCLI extends AbstractCLIState {
 
     private final RegistrationController registrationController = new RegistrationController();
     private final RegistrationView view = new RegistrationView();
 
-    public CLIState start() {
+    @Override
+    public void entry(CLIStateMachine context) {
         view.mostraIntestazione();
+    }
 
+    @Override
+    public void action(CLIStateMachine context) {
         try {
             RegistrationBean bean = new RegistrationBean();
-
             bean.setName(view.chiediCampo("Nome"));
             bean.setSurname(view.chiediCampo("Cognome"));
             bean.setEmail(view.chiediCampo("Email"));
@@ -32,22 +38,20 @@ public class RegistrationCLI {
 
             if (role == Role.TUTOR) {
                 bean.setBio(view.chiediCampo("Bio (breve descrizione)"));
-
                 List<SubjectBean> allSubjects = registrationController.getAvailableSubjects();
-                List<SubjectBean> selected = view.chiediMaterie(allSubjects);
-                bean.setSubjects(selected);
+                bean.setSubjects(view.chiediMaterie(allSubjects));
             }
 
             registrationController.register(bean);
             view.mostraSuccesso();
+            goNext(context, new LoginCLI());
 
         } catch (RegistrationException e) {
             view.mostraErrore(e.getMessage());
-            return CLIState.REGISTRAZIONE;
+            goNext(context, this);
         } catch (DAOException e) {
             view.mostraErrore("Errore di sistema: " + e.getMessage());
+            goNext(context, new LoginCLI());
         }
-
-        return CLIState.LOGIN;
     }
 }

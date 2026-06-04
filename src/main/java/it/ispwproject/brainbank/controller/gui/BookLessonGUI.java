@@ -35,10 +35,8 @@ public class BookLessonGUI {
 
     public BookLessonGUI(javafx.stage.Stage stage) { this.stage = stage; }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Entry point
-    // ────────────────────────────────────────────────────────────────────────
 
+    // Entry point
     public void show() {
         loadSubjects();
         bindSubjectField();
@@ -49,10 +47,8 @@ public class BookLessonGUI {
         stage.show();
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Caricamento dati iniziale
-    // ────────────────────────────────────────────────────────────────────────
 
+    // Caricamento dati iniziale
     private void loadSubjects() {
         try {
             allSubjects = bookingController.getAvailableSubjects();
@@ -62,10 +58,8 @@ public class BookLessonGUI {
         }
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Binding listener
-    // ────────────────────────────────────────────────────────────────────────
 
+    // Binding listener
     private void bindSubjectField() {
         view.subjectField.textProperty().addListener((obs, oldVal, newVal) -> {
             // Non resettare se il testo corrisponde alla materia già selezionata
@@ -123,10 +117,8 @@ public class BookLessonGUI {
         });
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Gestione cascata selezioni
-    // ────────────────────────────────────────────────────────────────────────
 
+    // Gestione cascata selezioni
     private void onSubjectSelected(SubjectBean sel) {
         selectedSubject = sel;
         view.subjectField.setText(sel.getName());
@@ -211,10 +203,8 @@ public class BookLessonGUI {
         }
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Azioni sui tutor
-    // ────────────────────────────────────────────────────────────────────────
 
+    // Azioni sui tutor
     private void showTutorBio(TutorBean t) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Bio tutor");
@@ -241,10 +231,8 @@ public class BookLessonGUI {
         }
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Dialogo countdown e conferma
-    // ────────────────────────────────────────────────────────────────────────
 
+    // Dialogo countdown e conferma
     private void showCountdownDialog(BookingRequestBean request) {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         int[] secondsLeft = {180};
@@ -308,10 +296,8 @@ public class BookLessonGUI {
         }
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Reset sezioni
-    // ────────────────────────────────────────────────────────────────────────
 
+    // Reset sezioni
     private void resetTutorSection() {
         view.tutorList.getChildren().setAll(view.buildHintLabel("Seleziona prima una materia"));
         tutorGroup.getToggles().clear();
@@ -327,10 +313,8 @@ public class BookLessonGUI {
         selectedSlot = null;
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Utility
-    // ────────────────────────────────────────────────────────────────────────
 
+    // Utility
     private BookingRequestBean buildRequest() {
         Student s = (Student) SessionManager.getInstance().getLoggedUser();
         StudentBean sb = new StudentBean(s.getId(), s.getName(), s.getSurname(), s.getEmail());

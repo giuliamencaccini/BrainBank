@@ -1,43 +1,11 @@
 package it.ispwproject.brainbank.controller.cli;
 
-import it.ispwproject.brainbank.view.cli.InitialView;
+import it.ispwproject.brainbank.pattern.state.CLIStateMachineImpl;
 
 public class MainCLI {
 
     public static void start() {
-        CLIState stato = CLIState.INIZIALE;
-        InitialView initialView = new InitialView();
-
-        while (stato != CLIState.USCITA) {
-            stato = switch (stato) {
-
-                // ── Comuni ───────────────────────────────────────────────
-                case INIZIALE      -> new InitialCLI().start();
-                case LOGIN         -> new LoginCLI().start();
-                case REGISTRAZIONE -> new RegistrationCLI().start();
-                case EDIT_PROFILE  -> new EditProfileCLI().start();
-
-                // ── Student ──────────────────────────────────────────────
-                case DASHBOARD_STUDENT -> new DashboardStudentCLI().start();
-                case BOOK_LESSON       -> new BookLessonCLI().start();
-                case VIEW_BOOKINGS     -> new ViewBookingsCLI().start();
-                case CANCEL_BOOKING    -> new CancelBookingCLI().start();
-                case VIEW_TODO         -> new ViewToDoCLI().start();
-
-                // ── Tutor ────────────────────────────────────────────────
-                case DASHBOARD_TUTOR  -> new DashboardTutorCLI().start();
-                case SET_AVAILABILITY -> new SetAvailabilityCLI().start();
-                case VIEW_SLOTS       -> new ViewSlotsCLI().start();
-                case MANAGE_STUDENTS  -> new ManageStudentsCLI().start();
-
-                // ── Admin ────────────────────────────────────────────────
-                case DASHBOARD_ADMIN    -> new DashboardAdminCLI().start();
-                case REPORT_STATISTICS  -> new ReportStatisticsCLI().start();
-
-                default -> CLIState.USCITA;
-            };
-        }
-
-        initialView.mostraArrivederci();
+        CLIStateMachineImpl machine = new CLIStateMachineImpl();
+        machine.start();
     }
 }

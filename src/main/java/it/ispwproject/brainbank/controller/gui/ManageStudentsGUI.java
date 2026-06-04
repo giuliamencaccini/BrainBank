@@ -38,10 +38,8 @@ public class ManageStudentsGUI {
         stage.show();
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Caricamento card studente
-    // ────────────────────────────────────────────────────────────────────────
 
+    // Caricamento card studente
     private void loadStudentCard(StudentBean student) {
         VBox card = view.getStudentCard();
         try {

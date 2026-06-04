@@ -12,6 +12,11 @@ import java.util.function.Consumer;
 
 public class ViewSlotsGUIView extends PageGUIView {
 
+    public final Label errorLabel = buildErrorLabel();
+
+    public void setError(String message) { errorLabel.setText(message); }
+    public void clearError()             { errorLabel.setText(""); }
+
     public BorderPane buildRoot(Runnable onBack) {
         return buildShell("I miei slot", onBack);
     }
@@ -21,7 +26,6 @@ public class ViewSlotsGUIView extends PageGUIView {
                              List<TimeSlotBean> prenotati,
                              List<TimeSlotBean> passati,
                              Map<Integer, String> subjectBySlot,
-                             Label errorLabel,
                              Consumer<TimeSlotBean> onDelete) {
         VBox content = new VBox(12);
         content.setPadding(new Insets(24));
@@ -57,9 +61,9 @@ public class ViewSlotsGUIView extends PageGUIView {
             List<TimeSlotBean> current;
             String emptyMsg;
             boolean isPast;
-            if (btnDisponibili.isSelected())     { current = disponibili; emptyMsg = "Nessuno slot disponibile."; isPast = false; }
-            else if (btnPrenotati.isSelected())  { current = prenotati;   emptyMsg = "Nessuno slot prenotato.";   isPast = false; }
-            else                                 { current = passati;     emptyMsg = "Nessuno slot passato.";     isPast = true;  }
+            if (btnDisponibili.isSelected())    { current = disponibili; emptyMsg = "Nessuno slot disponibile."; isPast = false; }
+            else if (btnPrenotati.isSelected()) { current = prenotati;   emptyMsg = "Nessuno slot prenotato.";   isPast = false; }
+            else                                { current = passati;     emptyMsg = "Nessuno slot passato.";     isPast = true;  }
 
             if (current.isEmpty()) {
                 Label empty = new Label(emptyMsg);

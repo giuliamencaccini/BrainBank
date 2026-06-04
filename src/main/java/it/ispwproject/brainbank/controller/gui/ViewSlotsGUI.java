@@ -6,7 +6,6 @@ import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.view.gui.ViewSlotsGUIView;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -17,28 +16,24 @@ public class ViewSlotsGUI {
 
     private final Stage stage;
     private final AvailabilityController availabilityController = new AvailabilityController();
-    private final ViewSlotsGUIView  view = new ViewSlotsGUIView();
+    private final ViewSlotsGUIView view = new ViewSlotsGUIView();
 
     public ViewSlotsGUI(Stage stage) { this.stage = stage; }
 
     public void show() {
-        BorderPane root       = view.buildRoot(MainGUI::showDashboardTutor);
-        Label      errorLabel = view.buildErrorLabel();
+        BorderPane root = view.buildRoot(MainGUI::showDashboardTutor);
+        view.clearError();
 
         try {
             List<TimeSlotBean> futuri  = availabilityController.getSlots();
             List<TimeSlotBean> passati = availabilityController.getPastSlots();
             Map<Integer, String> subjectBySlot = availabilityController.getSubjectBySlot();
-
             List<TimeSlotBean> prenotati   = futuri.stream().filter(s -> !s.isAvailable()).toList();
             List<TimeSlotBean> disponibili = futuri.stream().filter(TimeSlotBean::isAvailable).toList();
-
-            view.buildContent(root, disponibili, prenotati, passati,
-                    subjectBySlot, errorLabel, this::handleDelete);
-
+            view.buildContent(root, disponibili, prenotati, passati, subjectBySlot, this::handleDelete);
         } catch (DAOException e) {
-            errorLabel.setText("Errore: " + e.getMessage());
-            root.setCenter(errorLabel);
+            view.setError("Errore: " + e.getMessage());
+            root.setCenter(view.errorLabel);
         }
 
         stage.setScene(GUIUtils.createScene(root));
@@ -57,7 +52,7 @@ public class ViewSlotsGUI {
                     availabilityController.deleteSlot(s.getId());
                     show();
                 } catch (DAOException ex) {
-                    // errore eliminazione — in una versione più robusta si passerebbe errorLabel
+                    view.setError("Errore: " + ex.getMessage());
                 }
             }
         });

@@ -21,7 +21,7 @@ public class DashboardStudentGUI {
     private final UserController userController = new UserController();
     private final DashboardStudentGUIView view = new DashboardStudentGUIView();
 
-    private int         weekOffset = 0;
+    private int weekOffset = 0;
     private final int[] weekOffRef = {0};
 
     public DashboardStudentGUI(Stage stage) { this.stage = stage; }
@@ -68,10 +68,8 @@ public class DashboardStudentGUI {
         stage.show();
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Azioni
-    // ────────────────────────────────────────────────────────────────────────
 
+    // Azioni
     private List<BookingResponseBean> loadBookings() {
         try {
             return bookingController.getStudentBookings(

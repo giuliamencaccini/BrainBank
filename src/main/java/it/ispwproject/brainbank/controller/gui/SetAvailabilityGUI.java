@@ -14,7 +14,7 @@ import java.time.format.DateTimeParseException;
 
 public class SetAvailabilityGUI {
 
-    private final Stage                  stage;
+    private final Stage stage;
     private final AvailabilityController availabilityController = new AvailabilityController();
     private final SetAvailabilityGUIView view = new SetAvailabilityGUIView();
 

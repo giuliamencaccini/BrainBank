@@ -8,7 +8,6 @@ import it.ispwproject.brainbank.pattern.singleton.SessionManager;
 import it.ispwproject.brainbank.view.gui.ViewBookingsGUIView;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -17,18 +16,16 @@ import java.util.List;
 
 public class ViewBookingsGUI {
 
-    private final Stage              stage;
+    private final Stage stage;
     private final BookingController bookingController = new BookingController();
-    private final ViewBookingsGUIView view  = new ViewBookingsGUIView();
-
-    private Label errorLabel;
+    private final ViewBookingsGUIView view = new ViewBookingsGUIView();
 
     public ViewBookingsGUI(Stage stage) { this.stage = stage; }
 
     public void show() {
         int studentId = SessionManager.getInstance().getLoggedUser().getId();
         BorderPane root = view.buildRoot(MainGUI::showDashboardStudent);
-        errorLabel = view.buildErrorLabel();
+        view.clearError();
 
         try {
             List<BookingResponseBean> bookings = bookingController.getStudentBookings(studentId);
@@ -46,12 +43,11 @@ public class ViewBookingsGUI {
                     .sorted((a, b) -> a.getTimeSlot().getDate().compareTo(b.getTimeSlot().getDate()))
                     .toList();
 
-            view.buildContent(root, confirmed, cancelled, past, errorLabel,
-                    this::confirmCancel, studentId);
+            view.buildContent(root, confirmed, cancelled, past, this::confirmCancel, studentId);
 
         } catch (DAOException e) {
-            errorLabel.setText("Errore: " + e.getMessage());
-            root.setCenter(errorLabel);
+            view.setError("Errore: " + e.getMessage());
+            root.setCenter(view.errorLabel);
         }
 
         stage.setScene(GUIUtils.createScene(root));
@@ -73,7 +69,7 @@ public class ViewBookingsGUI {
                     bookingController.cancelBooking(b.getId(), studentId);
                     show();
                 } catch (DAOException e) {
-                    errorLabel.setText("Errore: " + e.getMessage());
+                    view.setError("Errore: " + e.getMessage());
                 }
             }
         });

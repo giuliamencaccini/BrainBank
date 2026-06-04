@@ -10,6 +10,7 @@ import it.ispwproject.brainbank.enumerator.BookingStatus;
 import it.ispwproject.brainbank.exception.DAOException;
 import it.ispwproject.brainbank.model.Booking;
 import it.ispwproject.brainbank.model.Student;
+import it.ispwproject.brainbank.model.TimeSlot;
 import it.ispwproject.brainbank.util.logger.AppLogger;
 
 import java.io.*;
@@ -22,7 +23,8 @@ import java.util.List;
 
 public class BookingDAOFile extends AbstractBookingDAO {
 
-    private static final String FILE_PATH = "bookings.json";
+    private static final String FILE_PATH      = "bookings.json";
+    private static final String SLOTS_FILE_PATH = "timeslots.json";
     private final Gson gson;
 
     public BookingDAOFile() {
@@ -36,9 +38,7 @@ public class BookingDAOFile extends AbstractBookingDAO {
                         return f.getName().equals("observers");
                     }
                     @Override
-                    public boolean shouldSkipClass(Class<?> clazz) {
-                        return false;
-                    }
+                    public boolean shouldSkipClass(Class<?> clazz) { return false; }
                 })
                 .addDeserializationExclusionStrategy(new ExclusionStrategy() {
                     @Override
@@ -46,9 +46,7 @@ public class BookingDAOFile extends AbstractBookingDAO {
                         return f.getName().equals("observers");
                     }
                     @Override
-                    public boolean shouldSkipClass(Class<?> clazz) {
-                        return false;
-                    }
+                    public boolean shouldSkipClass(Class<?> clazz) { return false; }
                 })
                 .setPrettyPrinting()
                 .create();
@@ -62,6 +60,7 @@ public class BookingDAOFile extends AbstractBookingDAO {
         booking.setStatus(BookingStatus.CONFIRMED);
         addToCache(booking);
         saveToFile();
+        markSlotAsBooked(booking.getTimeSlot().getId());
     }
 
     @Override
@@ -105,8 +104,9 @@ public class BookingDAOFile extends AbstractBookingDAO {
                 .toList();
     }
 
+    @Override
     public List<Booking> findPastByStudent(int studentId) throws DAOException {
-        return identityMap.stream() // o store.getBookings()
+        return identityMap.stream()
                 .filter(b -> b.getStudent() != null && b.getStudent().getId() == studentId
                         && b.getStatus() == BookingStatus.CONFIRMED
                         && b.getTimeSlot() != null
@@ -129,7 +129,10 @@ public class BookingDAOFile extends AbstractBookingDAO {
         booking.cancel();
         updateInCache(bookingId);
         saveToFile();
+        markSlotAsAvailable(booking.getTimeSlot().getId());
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
 
     private int generateId() {
         return identityMap.stream()
@@ -155,6 +158,43 @@ public class BookingDAOFile extends AbstractBookingDAO {
             gson.toJson(identityMap, writer);
         } catch (IOException e) {
             AppLogger.logError("Errore salvataggio bookings su file: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Imposta available=false e azzera reservedUntil sullo slot prenotato.
+     * Chiamato dopo save() per mantenere consistenza tra bookings.json e timeslots.json.
+     */
+    private void markSlotAsBooked(int slotId) {
+        updateSlotAvailability(slotId, false);
+    }
+
+    /**
+     * Ripristina available=true sullo slot quando una prenotazione viene cancellata.
+     */
+    private void markSlotAsAvailable(int slotId) {
+        updateSlotAvailability(slotId, true);
+    }
+
+    private void updateSlotAvailability(int slotId, boolean available) {
+        File file = new File(SLOTS_FILE_PATH);
+        if (!file.exists()) return;
+        try (Reader reader = new FileReader(file)) {
+            Type listType = new TypeToken<List<TimeSlot>>() {}.getType();
+            List<TimeSlot> slots = gson.fromJson(reader, listType);
+            if (slots == null) return;
+            slots.stream()
+                    .filter(s -> s.getId() == slotId)
+                    .findFirst()
+                    .ifPresent(s -> {
+                        s.setAvailable(available);
+                        s.setReservedUntil(null);
+                    });
+            try (Writer writer = new FileWriter(file)) {
+                gson.toJson(slots, writer);
+            }
+        } catch (IOException e) {
+            AppLogger.logError("Errore aggiornamento slot disponibilità: " + e.getMessage());
         }
     }
 }

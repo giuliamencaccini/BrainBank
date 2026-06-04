@@ -21,7 +21,7 @@ public class DashboardTutorGUI {
     private final UserController userController = new UserController();
     private final DashboardTutorGUIView view = new DashboardTutorGUIView();
 
-    private int         weekOffset = 0;
+    private int weekOffset = 0;
     private final int[] weekOffRef = {0};
 
     public DashboardTutorGUI(Stage stage) { this.stage = stage; }
@@ -29,10 +29,10 @@ public class DashboardTutorGUI {
     public void show() {
         User user = SessionManager.getInstance().getLoggedUser();
 
-        // ── Navbar ───────────────────────────────────────────────────────────
+        // Navbar
         HBox navbar = view.buildNavbar("Tutor", this::handleLogout);
 
-        // ── Calendario ───────────────────────────────────────────────────────
+        // Calendario
         VBox calendarSection = view.buildCalendarSection(
                 () -> { weekOffset--; weekOffRef[0] = weekOffset; view.refreshCalendar(loadSlots(), weekOffset); },
                 () -> { weekOffset++; weekOffRef[0] = weekOffset; view.refreshCalendar(loadSlots(), weekOffset); },
@@ -42,7 +42,7 @@ public class DashboardTutorGUI {
         view.bindCalendarWidth(slots, weekOffRef);
         view.refreshCalendar(slots, weekOffset);
 
-        // ── Sezione destra ───────────────────────────────────────────────────
+        //  Sezione destra
         VBox actionGrid   = view.buildActionGrid(
                 e -> new SetAvailabilityGUI(stage).show(),
                 e -> new ViewSlotsGUI(stage).show(),
@@ -51,7 +51,7 @@ public class DashboardTutorGUI {
         VBox accordion    = view.buildUserInfoAccordion(user, this::handleSaveEmail);
         VBox rightSection = view.buildRightSection(actionGrid, accordion);
 
-        // ── Layout ───────────────────────────────────────────────────────────
+        // Layout
         HBox body = new HBox(20);
         body.getStyleClass().add("brainbank-background");
         body.setPadding(new Insets(20, 24, 20, 24));
@@ -68,10 +68,8 @@ public class DashboardTutorGUI {
         stage.show();
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Azioni
-    // ────────────────────────────────────────────────────────────────────────
 
+    // Azioni
     private List<TimeSlotBean> loadSlots() {
         try { return availabilityController.getSlots(); }
         catch (DAOException e) { return List.of(); }

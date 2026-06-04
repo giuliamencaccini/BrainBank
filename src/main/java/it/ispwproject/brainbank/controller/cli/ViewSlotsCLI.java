@@ -1,5 +1,8 @@
 package it.ispwproject.brainbank.controller.cli;
 
+import it.ispwproject.brainbank.pattern.state.AbstractCLIState;
+import it.ispwproject.brainbank.pattern.state.CLIStateMachine;
+
 import it.ispwproject.brainbank.bean.TimeSlotBean;
 import it.ispwproject.brainbank.controller.applicativo.AvailabilityController;
 import it.ispwproject.brainbank.exception.DAOException;
@@ -8,14 +11,18 @@ import it.ispwproject.brainbank.view.cli.ViewSlotsView;
 import java.util.List;
 import java.util.Map;
 
-public class ViewSlotsCLI {
+public class ViewSlotsCLI extends AbstractCLIState {
 
     private final AvailabilityController availabilityController = new AvailabilityController();
     private final ViewSlotsView view = new ViewSlotsView();
 
-    public CLIState start() {
+    @Override
+    public void entry(CLIStateMachine context) {
         view.mostraIntestazione();
+    }
 
+    @Override
+    public void action(CLIStateMachine context) {
         try {
             Map<Integer, String> subjectBySlot = availabilityController.getSubjectBySlot();
             List<TimeSlotBean> futuri  = availabilityController.getSlots();
@@ -39,11 +46,9 @@ public class ViewSlotsCLI {
                     }
                 }
             }
-
         } catch (DAOException e) {
             view.mostraErrore(e.getMessage());
         }
-
-        return CLIState.DASHBOARD_TUTOR;
+        goBack(context);
     }
 }

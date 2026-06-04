@@ -8,9 +8,9 @@ import javafx.stage.Stage;
 
 public class LoginGUI {
 
-    private final Stage           stage;
+    private final Stage stage;
     private final LoginController loginController = new LoginController();
-    private final LoginGUIView       view            = new LoginGUIView();
+    private final LoginGUIView view  = new LoginGUIView();
 
     public LoginGUI(Stage stage) { this.stage = stage; }
 
@@ -21,7 +21,7 @@ public class LoginGUI {
     }
 
     private void handleLogin() {
-        String email    = view.emailField.getText().trim();
+        String email = view.emailField.getText().trim();
         String password = view.passwordField.getText().trim();
 
         if (email.isEmpty() || password.isEmpty()) {

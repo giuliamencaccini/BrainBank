@@ -3,6 +3,7 @@ package it.ispwproject.brainbank.demo;
 import it.ispwproject.brainbank.model.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,12 +26,12 @@ public class DemoDataStore {
     private final List<Activity> activities = new ArrayList<>();
     private final List<Progress> progresses = new ArrayList<>();
     private final Map<Integer, List<Integer>> favouritesByStudent = new HashMap<>();
-    private final Map<Integer, List<Integer>> subjectsByTutor     = new HashMap<>(); // ← aggiunto
+    private final Map<Integer, List<Integer>> subjectsByTutor     = new HashMap<>();
 
     private int nextUserId     = 10;
-    private int nextBookingId  = 1;
-    private int nextActivityId = 1;
-    private int nextProgressId = 1;
+    private int nextBookingId  = 3;
+    private int nextActivityId = 5;
+    private int nextProgressId = 3;
     private int nextSlotId     = 10;
 
     private DemoDataStore() {
@@ -49,32 +50,30 @@ public class DemoDataStore {
     }
 
     private void initData() {
-        Student s1 = new Student(1, "Demo", "Student", "student@demo", null);
-        Student s2 = new Student(2, "Emma", "Rossi", "emma@demo", null);
-        Tutor   t1 = new Tutor(3, "Demo", "Tutor", "tutor@demo", null, "Tutor demo");
-        Tutor   t2 = new Tutor(4, "Gabriele", "Bianchi", "gabriele@demo", null,
+
+        // ── Utenti ───────────────────────────────────────────────
+        Student s1    = new Student(1, "Demo",     "Student", "student@demo",  null);
+        Student s2    = new Student(2, "Emma",     "Rossi",   "emma@demo",     null);
+        Tutor   t1    = new Tutor(3,   "Demo",     "Tutor",   "tutor@demo",    null, "Tutor demo");
+        Tutor   t2    = new Tutor(4,   "Gabriele", "Bianchi", "gabriele@demo", null,
                 "Laurea in Matematica, 5 anni di esperienza");
-        Admin admin = new Admin(5, "Admin", "BrainBank", "admin@demo", null);
+        Admin   admin = new Admin(5,   "Admin",    "BrainBank","admin@demo",   null);
 
-        users.add(s1);
-        users.add(s2);
-        users.add(t1);
-        users.add(t2);
-        users.add(admin);
+        users.add(s1); users.add(s2); users.add(t1); users.add(t2); users.add(admin);
 
+        // ── Materie ──────────────────────────────────────────────
         subjects.add(new Subject(1, "Analisi 1"));
         subjects.add(new Subject(2, "Fisica 1"));
         subjects.add(new Subject(3, "Algebra"));
         subjects.add(new Subject(4, "Chimica"));
         subjects.add(new Subject(5, "Programmazione"));
 
-        // t1 insegna Analisi 1, Fisica 1, Algebra
         subjectsByTutor.put(3, new ArrayList<>(List.of(1, 2, 3)));
-        // t2 insegna Fisica 1, Chimica
         subjectsByTutor.put(4, new ArrayList<>(List.of(2, 4)));
 
+        // ── Slot ─────────────────────────────────────────────────
         timeSlots.add(new TimeSlot(1, t1, LocalDate.now().plusDays(1),
-                LocalTime.of(9, 0), LocalTime.of(11, 0)));
+                LocalTime.of(9, 0),  LocalTime.of(11, 0)));
         timeSlots.add(new TimeSlot(2, t1, LocalDate.now().plusDays(1),
                 LocalTime.of(11, 0), LocalTime.of(13, 0)));
         timeSlots.add(new TimeSlot(3, t1, LocalDate.now().plusDays(2),
@@ -82,13 +81,58 @@ public class DemoDataStore {
         timeSlots.add(new TimeSlot(4, t2, LocalDate.now().plusDays(1),
                 LocalTime.of(10, 0), LocalTime.of(12, 0)));
 
-        // Prenotazione demo già confermata
-        Booking b = new Booking(s1, t1, subjects.get(2), timeSlots.get(0));
-        b.setId(nextBookingId++);
-        b.confirm();
-        b.setMeetLink("https://meet.jit.si/brainbank-demo");
+        // ── Prenotazioni ─────────────────────────────────────────
+        Booking b1 = new Booking(s1, t1, subjects.get(2), timeSlots.get(0));
+        b1.setId(1);
+        b1.confirm();
+        b1.setMeetLink("https://meet.jit.si/brainbank-demo");
         timeSlots.get(0).setAvailable(false);
-        bookings.add(b);
+        bookings.add(b1);
+
+        Booking b2 = new Booking(s2, t1, subjects.get(0), timeSlots.get(1));
+        b2.setId(2);
+        b2.confirm();
+        b2.setMeetLink("https://meet.jit.si/brainbank-demo2");
+        timeSlots.get(1).setAvailable(false);
+        bookings.add(b2);
+
+        // ── Attività ─────────────────────────────────────────────
+        Activity a1 = new Activity(t1, s1, "Esercizi pagine 45-50 sul libro di Algebra");
+        a1.setId(1);
+        a1.setCreatedAt(LocalDateTime.now().minusDays(5));
+        a1.setCompleted(true);
+        activities.add(a1);
+
+        Activity a2 = new Activity(t1, s1, "Ripasso teoremi del capitolo 3");
+        a2.setId(2);
+        a2.setCreatedAt(LocalDateTime.now().minusDays(3));
+        activities.add(a2);
+
+        Activity a3 = new Activity(t1, s1, "Preparare domande per la prossima lezione");
+        a3.setId(3);
+        a3.setCreatedAt(LocalDateTime.now().minusDays(1));
+        activities.add(a3);
+
+        Activity a4 = new Activity(t1, s2, "Svolgere esercizi di Analisi 1 capitolo 2");
+        a4.setId(4);
+        a4.setCreatedAt(LocalDateTime.now().minusDays(2));
+        activities.add(a4);
+
+        // ── Progressi ────────────────────────────────────────────
+        Progress p1 = new Progress(t1, s1,
+                "Lo studente mostra buona comprensione degli argomenti di Algebra. " +
+                        "Ha completato gli esercizi assegnati con pochi errori. " +
+                        "Da approfondire: dimostrazioni dei teoremi principali.");
+        p1.setId(1);
+        p1.setUpdatedAt(LocalDateTime.now().minusDays(3));
+        progresses.add(p1);
+
+        Progress p2 = new Progress(t1, s2,
+                "Emma è molto motivata e partecipa attivamente. " +
+                        "Buona base teorica, deve esercitarsi maggiormente sui calcoli.");
+        p2.setId(2);
+        p2.setUpdatedAt(LocalDateTime.now().minusDays(1));
+        progresses.add(p2);
     }
 
     public List<User>     getUsers()      { return users; }
@@ -98,7 +142,7 @@ public class DemoDataStore {
     public List<Activity> getActivities() { return activities; }
     public List<Progress> getProgresses() { return progresses; }
     public Map<Integer, List<Integer>> getFavouritesByStudent() { return favouritesByStudent; }
-    public Map<Integer, List<Integer>> getSubjectsByTutor()     { return subjectsByTutor; }  // ← aggiunto
+    public Map<Integer, List<Integer>> getSubjectsByTutor()     { return subjectsByTutor; }
 
     public int nextUserId()     { return nextUserId++; }
     public int nextBookingId()  { return nextBookingId++; }

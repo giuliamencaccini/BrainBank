@@ -14,7 +14,7 @@ import java.util.List;
 
 public class RegistrationGUI {
 
-    private final Stage                  stage;
+    private final Stage stage;
     private final RegistrationController registrationController = new RegistrationController();
     private final RegistrationGUIView view = new RegistrationGUIView();
 
