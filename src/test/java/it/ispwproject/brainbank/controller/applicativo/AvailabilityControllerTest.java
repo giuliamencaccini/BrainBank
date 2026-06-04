@@ -37,7 +37,7 @@ class AvailabilityControllerTest {
 
     @Test
     void testSlotSovrapposto() throws DAOException, AvailabilityException {
-        LocalDate domani = LocalDate.of(2030, 6, 16);
+        LocalDate domani = LocalDate.of(2030, java.time.Month.JUNE, 16);
 
         // Primo slot — deve andare a buon fine
         TimeSlotBean slot1 = new TimeSlotBean(0, domani,
