@@ -12,6 +12,13 @@ public class EditProfileView {
         CLIRenderer.voceMenuZero("Indietro");
     }
 
+    public void mostraDatiAttuali(String nome, String cognome, String email) {
+        CLIRenderer.sezione("Profilo attuale");
+        CLIRenderer.campo("Nome",    nome);
+        CLIRenderer.campo("Cognome", cognome);
+        CLIRenderer.campo("Email",   email);
+    }
+
     public String chiediScelta() {
         return CLIRenderer.chiediSceltaStringa("Scelta");
     }

@@ -11,12 +11,17 @@ public class ViewSlotsView {
         CLIRenderer.intestazione("BrainBank  –  I miei slot");
     }
 
-    public void mostraSlots(List<TimeSlotBean> slots, Map<Integer, String> subjectBySlot) {
-        List<TimeSlotBean> disponibili = slots.stream().filter(TimeSlotBean::isAvailable).toList();
-        List<TimeSlotBean> prenotati   = slots.stream().filter(s -> !s.isAvailable()).toList();
+    public void mostraTab(int nDisponibili, int nPrenotati, int nPassati) {
+        CLIRenderer.vuota();
+        CLIRenderer.voceMenu(1, "Disponibili  (" + nDisponibili + ")");
+        CLIRenderer.voceMenu(2, "Prenotati    (" + nPrenotati + ")");
+        CLIRenderer.voceMenu(3, "Scaduti      (" + nPassati + ")");
+        CLIRenderer.voceMenu(4, "Elimina slot");
+        CLIRenderer.voceMenuZero("Indietro");
+    }
 
-        // ── Slot futuri disponibili
-        CLIRenderer.sezione("Slot futuri disponibili  (" + disponibili.size() + ")");
+    public void mostraDisponibili(List<TimeSlotBean> disponibili) {
+        CLIRenderer.sezione("Slot disponibili  (" + disponibili.size() + ")");
         if (disponibili.isEmpty()) {
             CLIRenderer.messaggio("Nessuno slot disponibile.");
         } else {
@@ -25,41 +30,48 @@ public class ViewSlotsView {
                         s.getDate(), s.getStartTime(), s.getEndTime(), CLIRenderer.AVAIL);
             }
         }
+        CLIRenderer.separatore();
+    }
 
-        // ── Slot futuri prenotati
-        CLIRenderer.sezione("Slot futuri prenotati  (" + prenotati.size() + ")");
+    public void mostraPrenotati(List<TimeSlotBean> prenotati, Map<Integer, String> subjectBySlot) {
+        CLIRenderer.sezione("Slot prenotati  (" + prenotati.size() + ")");
         if (prenotati.isEmpty()) {
             CLIRenderer.messaggio("Nessuno slot prenotato.");
         } else {
             for (TimeSlotBean s : prenotati) {
                 String nome    = s.getBookedByName() != null ? s.getBookedByName() : "Studente";
                 String materia = subjectBySlot.getOrDefault(s.getId(), "—");
-                System.out.printf("  %s  %s – %s    %s Prenotato%n",
-                        s.getDate(), s.getStartTime(), s.getEndTime(), CLIRenderer.BOOKED);
-                CLIRenderer.campo("  Materia",   materia);
-                CLIRenderer.campo("  Studente",  nome);
+                System.out.printf("  %s  %s – %s    %s Prenotato  |  %s  –  %s%n",
+                        s.getDate(), s.getStartTime(), s.getEndTime(),
+                        CLIRenderer.BOOKED, materia, nome);
                 if (s.getMeetLink() != null)
-                    CLIRenderer.campo("  Link",  s.getMeetLink());
+                    CLIRenderer.campo("  Link", s.getMeetLink());
             }
         }
         CLIRenderer.separatore();
     }
 
-    public void mostraPassati(List<TimeSlotBean> passati) {
-        if (passati.isEmpty()) return;
+    public void mostraPassati(List<TimeSlotBean> passati, Map<Integer, String> subjectBySlot) {
+        if (passati.isEmpty()) {
+            CLIRenderer.messaggio("Nessuno slot scaduto.");
+            CLIRenderer.separatore();
+            return;
+        }
 
         CLIRenderer.sezione("Slot scaduti  (" + passati.size() + ")");
         for (TimeSlotBean s : passati) {
             String simbolo = s.isAvailable() ? CLIRenderer.AVAIL : CLIRenderer.BOOKED;
             String stato   = s.isAvailable() ? "Non utilizzato" : "Utilizzato";
-            System.out.printf("  %s  %s – %s    %s %s%n",
-                    s.getDate(), s.getStartTime(), s.getEndTime(), simbolo, stato);
+            String extra   = "";
+            if (!s.isAvailable()) {
+                String materia = subjectBySlot.getOrDefault(s.getId(), "—");
+                String nome    = s.getBookedByName() != null ? s.getBookedByName() : "Studente";
+                extra = String.format("  |  %-12s  –  %s", materia, nome);
+            }
+            System.out.printf("  %s  %s – %s    %s %s%s%n",
+                    s.getDate(), s.getStartTime(), s.getEndTime(), simbolo, stato, extra);
         }
         CLIRenderer.separatore();
-    }
-
-    public boolean chiediEliminazioneSlot() {
-        return CLIRenderer.chiediConferma("Vuoi eliminare uno slot disponibile?");
     }
 
     public void mostraSlotDisponibili(List<TimeSlotBean> disponibili) {

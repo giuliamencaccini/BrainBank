@@ -1,5 +1,6 @@
 package it.ispwproject.brainbank.controller.cli;
 
+import it.ispwproject.brainbank.pattern.singleton.SessionManager;
 import it.ispwproject.brainbank.pattern.state.AbstractCLIState;
 import it.ispwproject.brainbank.pattern.state.CLIStateMachine;
 
@@ -15,6 +16,8 @@ public class EditProfileCLI extends AbstractCLIState {
     @Override
     public void entry(CLIStateMachine context) {
         view.mostraIntestazione();
+        var user = SessionManager.getInstance().getLoggedUser();
+        view.mostraDatiAttuali(user.getName(), user.getSurname(), user.getEmail());
     }
 
     @Override
