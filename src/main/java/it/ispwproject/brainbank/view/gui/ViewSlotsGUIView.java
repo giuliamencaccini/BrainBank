@@ -134,9 +134,12 @@ public class ViewSlotsGUIView extends PageGUIView {
             status.getStyleClass().add("error-label");
             aggiungiDettagliPrenotazione(info, subjectName, s);
             if (s.getMeetLink() != null) {
-                Label meet = new Label("Meet: " + s.getMeetLink());
+                Hyperlink meet = new Hyperlink("🎥  Apri Meet");
                 meet.getStyleClass().add("info-text");
-                meet.setStyle("-fx-text-fill: #3498DB;");
+                meet.setOnAction(e -> {
+                    try { java.awt.Desktop.getDesktop().browse(new java.net.URI(s.getMeetLink())); }
+                    catch (Exception ex) { /* link non apribile */ }
+                });
                 info.getChildren().add(meet);
             }
         } else {
