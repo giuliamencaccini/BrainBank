@@ -1,14 +1,16 @@
-Progetto sviluppato per il corso di Ingegneria del Software e Progettazione Web — Università degli Studi di Roma Tor Vergata.
+## Header
+Developed for the Software Engineering and Web Design course — University of Rome Tor Vergata.
 ![BrainBank Logo](src/main/resources/images/brand_logo.png)
-## Descrizione
 
-BrainBank permette a studenti e tutor di interagire tramite un'interfaccia CLI o GUI (JavaFX):
+## Description
 
-- Gli **studenti** possono cercare tutor per materia, prenotare lezioni e ricevere notifiche via email
-- I **tutor** possono gestire la propria disponibilità e monitorare i progressi degli studenti
-- Gli **amministatori** possono visualizzare report e statistiche sull'utilizzo della piattaforma
+BrainBank is a Java-based educational platform that connects university students and tutors. It enables students to find tutors by subject, book private lessons, and track assigned activities. Tutors can manage their availability, assign tasks, and monitor student progress. An administrator role provides access to platform usage statistics and reports. The application supports both a graphical interface (JavaFX) and a command-line interface, with automatic Meet link generation and email notifications for every confirmed booking.
 
-## Tecnologie
+- **Students** can search for tutors by subject, book lessons and receive email notifications
+- **Tutors** can manage their availability, assign activities and monitor student progress
+- **Administrators** can view reports and statistics on platform usage
+
+## Tecnologies
 
 - Java 17
 - Maven
@@ -17,43 +19,42 @@ BrainBank permette a studenti e tutor di interagire tramite un'interfaccia CLI o
 - SendGrid API *(notifiche email)*
 - Jitsi Meet *(link videolezioni)*
 
-## Architettura
-
-Pattern **MVC** con separazione netta tra:
-- `controller/applicativo` — logica di business
-- `controller/cli` — interfaccia utente CLI
-- `controller/gui` — interfaccia utente GUI
-- `dao` — accesso ai dati (DB, File, Memory)
-- `model` — entità del dominio
-- `bean` — oggetti di trasferimento dati
-- `view/cli` — boundary view CLI
-- `view/gui` — boundary view GUI
+## Architecture
+**BCE** (Boundary-Control-Entity)- **MVC** (Model-View-Controller) pattern with clear separation between:
+- `controller/applicativo` — business logic
+- `controller/cli` — CLI user interface
+- `controller/gui` — GUI user interface
+- `view/cli` — CLI boundary view
+- `view/gui` — GUI boundary view 
+- `dao` — data access layer (DB, File, Memory)
+- `model` — domain entities
+- `bean` — data transfer objects
 - `pattern` — GoF patterns (Singleton, Observer, State)
 
-Il sistema supporta tre modalità di persistenza:
+The system supports three peristence mode:
 - **DATABASE** — MySQL (full-version)
 - **FILE** — JSON (full-version)
 - **MEMORY** — in-memory (demo-version)
 
-## Avvio
+## Getting started
 
-All’avvio dell’applicazione viene richiesto di selezionare la modalità di persistenza:
+At startup, the application asks to select the persistence mode:
 
-- `Demo` → dati simulati in memoria
-- `Database` → persistenza MySQL
-- `File` → persistenza su file JSON
+- `Demo` → simulated in-memory data
+- `Database` → MySQL persistence
+- `File` → JSON file persistence
 
-Successivamente viene richiesto di selezionare l’interfaccia:
+Then, the interface must be selected:
 
-- `CLI` → interfaccia testuale
-- `GUI` → interfaccia grafica
+- `CLI` → text-based interface
+- `GUI` → graphical interface
 
-Per utilizzare la modalità database è necessario configurare:
+To use the database mode, create and configure the following file:
 
 ```text
 src/main/resources/db.properties
 ```
-con il seguente contenuto:
+with the following content:
 ```text
 db.url=jdbc:mysql://localhost:3306/brainbankdb
 db.user.login=bb_login
@@ -67,18 +68,18 @@ db.user.admin.password=bb_admin
 sendgrid.api.key=YOUR_SENDGRID_API_KEY
 ```
 
-## Credenziali demo
+## Demo credentials
 
-| Ruolo     | Email             | Password   |
+| Role     | Email             | Password   |
 |------------|------------------|------------|
 | Studente  | `student@demo`   | qualsiasi |
 | Tutor     | `tutor@demo`     | qualsiasi |
 | Admin     | `admin@demo`     | qualsiasi |
 
 
-## Credenziali Database (modalità MySQL)
+## Database credentials (modalità MySQL)
 
-| Ruolo     | Email             | Password   |
+| Role     | Email             | Password   |
 |------------|------------------|------------|
 | Studente  | `emma@test.com`      | password123 |
 | Tutor     | `gabriele@test.com`  | password123 |
@@ -86,5 +87,5 @@ sendgrid.api.key=YOUR_SENDGRID_API_KEY
 
 
 Other test accounts available — see BrainBank_db.sql for the full list.
-## Autrice
+## Author
 Mencaccini Giulia
