@@ -209,10 +209,19 @@ public class BookLessonGUI {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Bio tutor");
         alert.setHeaderText(t.getName() + " " + t.getSurname());
-        alert.setContentText(
-                t.getBio() == null || t.getBio().isBlank()
-                        ? "Bio non disponibile."
-                        : t.getBio());
+        alert.setResizable(true);
+
+        String bio = t.getBio() == null || t.getBio().isBlank()
+                ? "Bio non disponibile."
+                : t.getBio();
+
+        TextArea textArea = new TextArea(bio);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setPrefWidth(400);
+        textArea.setPrefHeight(Math.min(30 + bio.length() / 2.0, 300));
+
+        alert.getDialogPane().setContent(textArea);
         alert.showAndWait();
     }
 
