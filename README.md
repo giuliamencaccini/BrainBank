@@ -1,4 +1,4 @@
-## Header
+## BrainBank - Connect to knowledge!
 Developed for the Software Engineering and Web Design course — University of Rome Tor Vergata.
 ![BrainBank Logo](src/main/resources/images/brand_logo.png)
 
