@@ -1,7 +1,8 @@
 ## BrainBank - Connect to knowledge!
 Developed for the Software Engineering and Web Design course — University of Rome Tor Vergata.
-![BrainBank Logo](src/main/resources/images/brand_logo.png)
-
+<p align="center">
+  <img src="src/main/resources/images/brand_logo.png" width="150"/>
+</p>
 ## Description
 
 BrainBank is a Java-based educational platform that connects university students and tutors. It enables students to find tutors by subject, book private lessons, and track assigned activities. Tutors can manage their availability, assign tasks, and monitor student progress. An administrator role provides access to platform usage statistics and reports. The application supports both a graphical interface (JavaFX) and a command-line interface, with automatic Meet link generation and email notifications for every confirmed booking.
