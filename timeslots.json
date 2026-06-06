@@ -58,5 +58,20 @@
     "startTime": "10:00",
     "endTime": "11:00",
     "available": true
+  },
+  {
+    "id": 5,
+    "tutor": {
+      "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+      "id": 5,
+      "name": "Gabriele",
+      "surname": "Conti",
+      "email": "gabriele@test.com",
+      "role": "TUTOR"
+    },
+    "date": "2026-07-07",
+    "startTime": "11:00",
+    "endTime": "13:00",
+    "available": false
   }
 ]
