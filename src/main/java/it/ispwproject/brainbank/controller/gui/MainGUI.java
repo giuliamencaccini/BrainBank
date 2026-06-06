@@ -23,10 +23,6 @@ public class MainGUI extends Application {
         showLogin();
     }
 
-    public static Stage getPrimaryStage() {
-        return primaryStage;
-    }
-
     public static void showLogin() {
         new LoginGUI(primaryStage).show();
     }

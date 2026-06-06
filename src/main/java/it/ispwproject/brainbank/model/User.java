@@ -4,13 +4,6 @@ import it.ispwproject.brainbank.enumerator.Role;
 
 public abstract class User {
 
-    /**
-     * id — IDENTIFICATORE PROPRIO dell'entità User.
-     * Serve al DAO per:
-     *   - identificare univocamente l'utente nelle query SQL
-     *   - costruire i puntatori negli altri model (es. Booking.student)
-     * NON è una FK — è l'identità di questo oggetto.
-     */
     private int id;
 
     private String name;

@@ -29,20 +29,20 @@ public class DashboardStudentGUI {
     public void show() {
         User user = SessionManager.getInstance().getLoggedUser();
 
-        // ── Navbar ───────────────────────────────────────────────────────────
+        // Navbar
         HBox navbar = view.buildNavbar("Studente", this::handleLogout);
 
-        // ── Calendario ───────────────────────────────────────────────────────
+        // Calendario
         VBox calendarSection = view.buildCalendarSection(
                 () -> { weekOffset--; weekOffRef[0] = weekOffset; view.refreshCalendar(loadBookings(), weekOffset); },
                 () -> { weekOffset++; weekOffRef[0] = weekOffset; view.refreshCalendar(loadBookings(), weekOffset); },
-                () -> { weekOffset = 0; weekOffRef[0] = 0;        view.refreshCalendar(loadBookings(), weekOffset); }
+                () -> { weekOffset = 0; weekOffRef[0] = 0; view.refreshCalendar(loadBookings(), weekOffset); }
         );
         List<BookingResponseBean> bookings = loadBookings();
         view.bindCalendarWidth(bookings, weekOffRef);
         view.refreshCalendar(bookings, weekOffset);
 
-        // ── Sezione destra ───────────────────────────────────────────────────
+        // Sezione destra
         VBox actionButtons = view.buildActionButtons(
                 e -> new BookLessonGUI(stage).show(),
                 e -> new ViewBookingsGUI(stage).show(),
@@ -51,7 +51,7 @@ public class DashboardStudentGUI {
         VBox accordion    = view.buildUserInfoAccordion(user, this::handleSaveEmail);
         VBox rightSection = view.buildRightSection(actionButtons, accordion);
 
-        // ── Layout ───────────────────────────────────────────────────────────
+        // Layout
         HBox body = new HBox(20);
         body.getStyleClass().add("brainbank-background");
         body.setPadding(new Insets(20, 24, 20, 24));

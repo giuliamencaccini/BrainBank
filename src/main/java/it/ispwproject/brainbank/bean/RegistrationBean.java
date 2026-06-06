@@ -16,10 +16,6 @@ public class RegistrationBean {
     // Solo per tutor
     private String bio;
 
-    /**
-     * subjects — lista di SubjectBean invece di List<Integer>.
-     * Coerente con il pattern OO — oggetti, non ID.
-     */
     private List<SubjectBean> subjects;
 
     public RegistrationBean() {

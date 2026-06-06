@@ -2,11 +2,6 @@ package it.ispwproject.brainbank.model;
 
 public class Subject {
 
-    /**
-     * id — IDENTIFICATORE PROPRIO dell'entità Subject.
-     * Serve al DAO per identificare la materia nelle query SQL.
-     * NON è una FK — è l'identità di questo oggetto.
-     */
     private int id;
 
     private String name;

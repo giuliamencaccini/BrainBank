@@ -8,16 +8,8 @@ import java.time.ZoneId;
 
 public class Booking extends Observable {
 
-    /**
-     * id — IDENTIFICATORE PROPRIO di questa prenotazione.
-     * NON è una FK — è l'identità di questo oggetto.
-     */
     private int id;
 
-    /**
-     * Puntatori diretti agli oggetti correlati.
-     * NON sono FK (studentId, tutorId, ecc.) — sono riferimenti in memoria.
-     */
     private Student  student;
     private Tutor    tutor;
     private Subject  subject;

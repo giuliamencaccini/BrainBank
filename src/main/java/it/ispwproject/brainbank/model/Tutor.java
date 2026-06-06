@@ -4,11 +4,6 @@ import it.ispwproject.brainbank.enumerator.Role;
 
 public class Tutor extends User {
 
-    /**
-     * bio — attributo proprio del Tutor.
-     * Nessun ID aggiuntivo — Tutor eredita id da User.
-     * Non ha FK verso altre entità.
-     */
     private String bio;
 
     public Tutor() {

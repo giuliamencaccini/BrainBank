@@ -7,16 +7,8 @@ import java.time.ZoneId;
 
 public class TimeSlot {
 
-    /**
-     * id — IDENTIFICATORE PROPRIO di questo slot.
-     * NON è una FK — è l'identità di questo oggetto.
-     */
     private int id;
 
-    /**
-     * tutor — PUNTATORE diretto all'oggetto Tutor proprietario.
-     * NON è tutorId (FK) — è un riferimento in memoria.
-     */
     private Tutor tutor;
 
     private LocalDate date;

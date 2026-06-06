@@ -58,10 +58,8 @@ public class ManageStudentsGUI {
         }
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Azioni
-    // ────────────────────────────────────────────────────────────────────────
 
+    // Azioni
     private void handleUpdateProgress(StudentBean student, String notes, VBox card) {
         if (notes.isBlank()) { view.errorLabel.setText("Le note non possono essere vuote."); return; }
         try {

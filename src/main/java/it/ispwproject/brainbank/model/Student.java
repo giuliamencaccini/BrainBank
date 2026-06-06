@@ -7,10 +7,6 @@ import java.util.List;
 
 public class Student extends User {
 
-    /**
-     * favouriteTutors — PUNTATORI a oggetti Tutor.
-     * NON è una lista di ID — sono riferimenti diretti in memoria.
-     */
     private List<Tutor> favouriteTutors;
 
     public Student() {

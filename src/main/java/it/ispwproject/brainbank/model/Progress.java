@@ -5,16 +5,8 @@ import java.time.ZoneId;
 
 public class Progress {
 
-    /**
-     * id — IDENTIFICATORE PROPRIO di questo record di progresso.
-     * NON è una FK — è l'identità di questo oggetto.
-     */
     private int id;
 
-    /**
-     * Puntatori diretti agli oggetti correlati.
-     * NON sono FK (tutorId, studentId) — sono riferimenti in memoria.
-     */
     private Tutor   tutor;
     private Student student;
 
