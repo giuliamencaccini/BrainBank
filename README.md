@@ -1,5 +1,5 @@
 ## BrainBank - Connect to knowledge!
-Developed for the Software Engineering and Web Design course — University of Rome Tor Vergata.
+Developed for the Software Engineering and Web Design course, University of Rome Tor Vergata.
 
 <p align="center">
   <img src="src/main/resources/images/brand_logo.png" width="300" style="background-color: white; padding: 10px; border-radius: 10px;"/>
@@ -70,6 +70,8 @@ db.user.admin=bb_admin
 db.user.admin.password=bb_admin
 sendgrid.api.key=YOUR_SENDGRID_API_KEY
 ```
+⚠️ The `db.properties` file includes database credentials and a placeholder for the SendGrid API key.
+Email notifications in action can be seen in the [project demo video](https://youtu.be/BgFq779UIsI?si=oTgrq_BstdgU95Th).
 
 ## Demo credentials
 
@@ -89,6 +91,6 @@ sendgrid.api.key=YOUR_SENDGRID_API_KEY
 | Admin     | `admin@test.com`     | password123 |
 
 
-Other test accounts available — see BrainBank_db.sql for the full list.
+Other test accounts available, see BrainBank_db.sql for the full list.
 ## Author
 Mencaccini Giulia
