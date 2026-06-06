@@ -166,5 +166,89 @@
     "status": "CONFIRMED",
     "meetLink": "https://meet.jit.si/brainbank-85974d4d",
     "createdAt": "2026-06-06T14:40:35.4169243"
+  },
+  {
+    "id": 5,
+    "student": {
+      "favouriteTutors": [],
+      "id": 12,
+      "name": "Giulia",
+      "surname": "Mencaccini",
+      "email": "giuliamencaccini@gmail.com",
+      "role": "STUDENT"
+    },
+    "tutor": {
+      "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+      "id": 5,
+      "name": "Gabriele",
+      "surname": "Conti",
+      "email": "gabriele@test.com",
+      "role": "TUTOR"
+    },
+    "subject": {
+      "id": 8,
+      "name": "Algebra"
+    },
+    "timeSlot": {
+      "id": 3,
+      "tutor": {
+        "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+        "id": 5,
+        "name": "Gabriele",
+        "surname": "Conti",
+        "email": "gabriele@test.com",
+        "role": "TUTOR"
+      },
+      "date": "2026-06-15",
+      "startTime": "07:00",
+      "endTime": "09:00",
+      "available": true,
+      "reservedUntil": "2026-06-06T14:55:37.723143"
+    },
+    "status": "CANCELLED",
+    "meetLink": "https://meet.jit.si/brainbank-cdecac2f",
+    "createdAt": "2026-06-06T14:52:40.1717883"
+  },
+  {
+    "id": 6,
+    "student": {
+      "favouriteTutors": [],
+      "id": 12,
+      "name": "Giulia",
+      "surname": "Mencaccini",
+      "email": "giuliamencaccini@gmail.com",
+      "role": "STUDENT"
+    },
+    "tutor": {
+      "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+      "id": 5,
+      "name": "Gabriele",
+      "surname": "Conti",
+      "email": "gabriele@test.com",
+      "role": "TUTOR"
+    },
+    "subject": {
+      "id": 8,
+      "name": "Algebra"
+    },
+    "timeSlot": {
+      "id": 6,
+      "tutor": {
+        "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+        "id": 5,
+        "name": "Gabriele",
+        "surname": "Conti",
+        "email": "gabriele@test.com",
+        "role": "TUTOR"
+      },
+      "date": "2026-06-12",
+      "startTime": "12:00",
+      "endTime": "14:00",
+      "available": true,
+      "reservedUntil": "2026-06-06T14:58:52.1198617"
+    },
+    "status": "CONFIRMED",
+    "meetLink": "https://meet.jit.si/brainbank-11792944",
+    "createdAt": "2026-06-06T14:55:53.3576886"
   }
 ]
