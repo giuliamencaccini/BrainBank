@@ -70,6 +70,8 @@ db.user.admin=bb_admin
 db.user.admin.password=bb_admin
 sendgrid.api.key=YOUR_SENDGRID_API_KEY
 ```
+⚠️ The `db.properties` file includes database credentials and a placeholder for the SendGrid API key.
+Email notifications in action can be seen in the [project demo video](https://youtu.be/BgFq779UIsI?si=oTgrq_BstdgU95Th).
 
 ## Demo credentials
 
