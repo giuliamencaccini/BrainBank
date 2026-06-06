@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "tutor": {
+      "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+      "id": 5,
+      "name": "Gabriele",
+      "surname": "Conti",
+      "email": "gabriele@test.com",
+      "role": "TUTOR"
+    },
+    "date": "2026-06-06",
+    "startTime": "17:00",
+    "endTime": "19:00",
+    "available": false
+  },
+  {
+    "id": 2,
+    "tutor": {
+      "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+      "id": 5,
+      "name": "Gabriele",
+      "surname": "Conti",
+      "email": "gabriele@test.com",
+      "role": "TUTOR"
+    },
+    "date": "2026-06-12",
+    "startTime": "08:00",
+    "endTime": "10:00",
+    "available": false
+  },
+  {
+    "id": 3,
+    "tutor": {
+      "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+      "id": 5,
+      "name": "Gabriele",
+      "surname": "Conti",
+      "email": "gabriele@test.com",
+      "role": "TUTOR"
+    },
+    "date": "2026-06-15",
+    "startTime": "07:00",
+    "endTime": "09:00",
+    "available": true
+  },
+  {
+    "id": 4,
+    "tutor": {
+      "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+      "id": 5,
+      "name": "Gabriele",
+      "surname": "Conti",
+      "email": "gabriele@test.com",
+      "role": "TUTOR"
+    },
+    "date": "2026-06-07",
+    "startTime": "10:00",
+    "endTime": "11:00",
+    "available": true
+  }
+]

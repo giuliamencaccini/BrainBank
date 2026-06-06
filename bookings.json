@@ -1,0 +1,128 @@
+[
+  {
+    "id": 1,
+    "student": {
+      "favouriteTutors": [],
+      "id": 1,
+      "name": "Emma",
+      "surname": "Rossi",
+      "email": "emma@test.com",
+      "role": "STUDENT"
+    },
+    "tutor": {
+      "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+      "id": 5,
+      "name": "Gabriele",
+      "surname": "Conti",
+      "email": "gabriele@test.com",
+      "role": "TUTOR"
+    },
+    "subject": {
+      "id": 8,
+      "name": "Algebra"
+    },
+    "timeSlot": {
+      "id": 1,
+      "tutor": {
+        "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+        "id": 5,
+        "name": "Gabriele",
+        "surname": "Conti",
+        "email": "gabriele@test.com",
+        "role": "TUTOR"
+      },
+      "date": "2026-06-06",
+      "startTime": "17:00",
+      "endTime": "19:00",
+      "available": true,
+      "reservedUntil": "2026-06-06T14:28:28.6425024"
+    },
+    "status": "CONFIRMED",
+    "meetLink": "https://meet.jit.si/brainbank-2b64a52f",
+    "createdAt": "2026-06-06T14:25:30.2945306"
+  },
+  {
+    "id": 2,
+    "student": {
+      "favouriteTutors": [],
+      "id": 1,
+      "name": "Emma",
+      "surname": "Rossi",
+      "email": "emma@test.com",
+      "role": "STUDENT"
+    },
+    "tutor": {
+      "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+      "id": 5,
+      "name": "Gabriele",
+      "surname": "Conti",
+      "email": "gabriele@test.com",
+      "role": "TUTOR"
+    },
+    "subject": {
+      "id": 1,
+      "name": "Analisi 1"
+    },
+    "timeSlot": {
+      "id": 3,
+      "tutor": {
+        "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+        "id": 5,
+        "name": "Gabriele",
+        "surname": "Conti",
+        "email": "gabriele@test.com",
+        "role": "TUTOR"
+      },
+      "date": "2026-06-15",
+      "startTime": "07:00",
+      "endTime": "09:00",
+      "available": true,
+      "reservedUntil": "2026-06-06T14:28:38.9000074"
+    },
+    "status": "CANCELLED",
+    "meetLink": "https://meet.jit.si/brainbank-46b6c8ad",
+    "createdAt": "2026-06-06T14:25:40.4926169"
+  },
+  {
+    "id": 3,
+    "student": {
+      "favouriteTutors": [],
+      "id": 1,
+      "name": "Emma",
+      "surname": "Rossi",
+      "email": "emma@test.com",
+      "role": "STUDENT"
+    },
+    "tutor": {
+      "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+      "id": 5,
+      "name": "Gabriele",
+      "surname": "Conti",
+      "email": "gabriele@test.com",
+      "role": "TUTOR"
+    },
+    "subject": {
+      "id": 2,
+      "name": "Analisi 2"
+    },
+    "timeSlot": {
+      "id": 2,
+      "tutor": {
+        "bio": "Laurea magistrale in Matematica, 6 anni di esperienza in analisi e algebra",
+        "id": 5,
+        "name": "Gabriele",
+        "surname": "Conti",
+        "email": "gabriele@test.com",
+        "role": "TUTOR"
+      },
+      "date": "2026-06-12",
+      "startTime": "08:00",
+      "endTime": "10:00",
+      "available": true,
+      "reservedUntil": "2026-06-06T14:28:59.6816926"
+    },
+    "status": "CONFIRMED",
+    "meetLink": "https://meet.jit.si/brainbank-eaea3d80",
+    "createdAt": "2026-06-06T14:26:00.9187519"
+  }
+]
