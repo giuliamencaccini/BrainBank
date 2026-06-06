@@ -17,8 +17,16 @@ import java.time.LocalTime;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Verifica che non sia possibile aggiungere due slot con orari sovrapposti.
+ * ------------------------------------------------------------
+ * Test Class : AvailabilityControllerTest
+ * Author     : Giulia Mencaccini
+ * Description: Verifica che un tutor non possa aggiungere due
+ *              slot con orari sovrapposti. Il primo slot viene
+ *              aggiunto con successo, mentre il secondo deve
+ *              lanciare una AvailabilityException.
+ * ------------------------------------------------------------
  */
+
 class AvailabilityControllerTest {
 
     private AvailabilityController availabilityController;

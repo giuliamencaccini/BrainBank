@@ -12,8 +12,17 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Verifica la corretta gestione della registrazione con email già esistente.
+ * ------------------------------------------------------------
+ * Test Class : RegistrationControllerTest
+ * Author     : Giulia Mencaccini
+ * Description: Verifica che il sistema impedisca la registrazione
+ *              di due account con la stessa email. Dopo una prima
+ *              registrazione avvenuta con successo, un secondo
+ *              tentativo con la stessa email deve lanciare una
+ *              RegistrationException.
+ * ------------------------------------------------------------
  */
+
 class RegistrationControllerTest {
 
     private RegistrationController registrationController;

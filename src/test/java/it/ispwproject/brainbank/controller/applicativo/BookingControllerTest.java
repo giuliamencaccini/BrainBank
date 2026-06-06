@@ -18,12 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Test Class : BookingControllerTest
  * Author     : Giulia Mencaccini
  * Description: Verifica il meccanismo di prenotazione temporanea
- *              degli slot. Comprende due scenari:
- *              1) Tentativo di prenotare uno slot già riservato
- *                 da un altro studente (test sequenziale).
- *              2) Due studenti che tentano di prenotare lo stesso
- *                 slot contemporaneamente (test di concorrenza).
- *              In entrambi i casi solo uno deve riuscire.
+ *              degli slot.
+ *              Tentativo di prenotare uno slot già riservato
+ *              da un altro studente prima che la finestra di
+ *              3 minuti sia scaduta.
  * ------------------------------------------------------------
  */
 class BookingControllerTest {

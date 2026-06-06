@@ -8,8 +8,16 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Verifica la corretta gestione del login con credenziali errate.
+ * ------------------------------------------------------------
+ * Test Class : LoginControllerTest
+ * Author     : Giulia Mencaccini
+ * Description: Verifica la corretta gestione del login con
+ *              credenziali non valide. Il sistema deve rifiutare
+ *              l'accesso e lanciare una LoginException quando
+ *              l'email non è registrata nella piattaforma.
+ * ------------------------------------------------------------
  */
+
 class LoginControllerTest {
 
     private LoginController loginController;
